@@ -1,0 +1,3755 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صيدليات الصيرفي — لوحة التحكم المالية 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:    #020353;
+  --navy2:   #030570;
+  --green:   #00a624;
+  --green2:  #00c92d;
+  --red:     #e03030;
+  --gold:    #f0b429;
+  --bg:      #f0f2f8;
+  --surface: #ffffff;
+  --border:  #dde3f0;
+  --text:    #0a0e2a;
+  --muted:   #6b7399;
+  --shadow:  0 2px 16px rgba(2,3,83,0.10);
+  --radius:  14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  direction: rtl;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  background: var(--navy);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  height: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(2,3,83,0.4);
+}
+.topbar-logo { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.5px; }
+.topbar-logo span { color: var(--green2); }
+.topbar-meta { font-size: 0.78rem; color: rgba(255,255,255,0.6); font-family: 'IBM Plex Mono', monospace; }
+.topbar-meta strong { color: #fff; }
+
+/* ── TABS ── */
+.tabs {
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  gap: 0;
+  padding: 0 20px;
+  overflow-x: auto;
+}
+.tab {
+  padding: 14px 22px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.tab:hover { color: var(--navy); }
+.tab.active { color: var(--navy); border-bottom-color: var(--green); }
+
+/* ── CONTENT ── */
+.content { padding: 24px 20px; max-width: 1400px; margin: 0 auto; }
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── KPI CARDS ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.kpi-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  border-top: 4px solid var(--navy);
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card.green  { border-top-color: var(--green); }
+.kpi-card.red    { border-top-color: var(--red); }
+.kpi-card.gold   { border-top-color: var(--gold); }
+.kpi-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.kpi-value {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.kpi-value.positive { color: var(--green); }
+.kpi-value.negative { color: var(--red); }
+.kpi-sub {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* ── MONTH SELECTOR ── */
+.month-bar {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.month-bar label { font-size: 0.82rem; font-weight: 700; color: var(--muted); }
+.month-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 2px solid var(--border);
+  background: transparent;
+  font-family: 'Cairo', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.month-btn.active {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+.month-btn:hover:not(.active) { border-color: var(--navy); color: var(--navy); }
+.month-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ── SECTION TITLE ── */
+.section-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+}
+
+/* ── DATA TABLE ── */
+.table-wrap {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: auto;
+  margin-bottom: 24px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.83rem;
+}
+th {
+  background: var(--navy);
+  color: #fff;
+  padding: 12px 14px;
+  text-align: right;
+  font-weight: 700;
+  font-size: 0.78rem;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+th:last-child, td:last-child { text-align: left; }
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+}
+tr:hover td { background: #f5f7ff; }
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.badge-green { background: #e6faea; color: var(--green); }
+.badge-red   { background: #fdeaea; color: var(--red); }
+.badge-navy  { background: #e8eaf8; color: var(--navy); }
+.badge-gold  { background: #fef8e6; color: #b07d00; }
+.profit-pos { color: var(--green); font-weight: 700; }
+.profit-neg { color: var(--red); font-weight: 700; }
+
+/* ── CHART ── */
+.chart-wrap {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 180px; }
+.bar-group { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 0; }
+.bar-inner { width: 100%; border-radius: 6px 6px 0 0; transition: all 0.4s; position: relative; }
+.bar-inner:hover { opacity: 0.85; }
+.bar-label { font-size: 0.68rem; color: var(--muted); margin-top: 4px; font-family: 'Cairo', sans-serif; }
+
+/* ── PASSWORD SCREEN ── */
+.lock-screen {
+  position: fixed; inset: 0;
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  gap: 20px;
+}
+.lock-logo { font-size: 2rem; font-weight: 900; color: #fff; }
+.lock-logo span { color: var(--green2); }
+.lock-subtitle { color: rgba(255,255,255,0.5); font-size: 0.9rem; }
+.lock-input {
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.07);
+  color: #fff;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1rem;
+  width: 280px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.lock-input:focus { border-color: var(--green2); }
+.lock-btn {
+  padding: 12px 40px;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.lock-btn:hover { background: var(--green2); }
+.lock-error { color: var(--red); font-size: 0.85rem; display: none; }
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  align-items: center;
+}
+.filter-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 2px solid var(--border);
+  background: transparent;
+  font-family: 'Cairo', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.filter-btn.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+/* ── GRID 2 COL ── */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+@media (max-width: 700px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+  .kpi-value { font-size: 1.3rem; }
+  .topbar { padding: 0 14px; }
+  .tabs { padding: 0 10px; }
+  .tab { padding: 12px 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOCK SCREEN ══ -->
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-logo">الصيرفي <span>Rx</span></div>
+  <div class="lock-subtitle">لوحة التحكم المالية 2026</div>
+  <input class="lock-input" type="password" id="pwInput" placeholder="كلمة المرور" autocomplete="off">
+  <button class="lock-btn" onclick="unlock()">دخول</button>
+  <div class="lock-error" id="lockError">كلمة المرور غلط ❌</div>
+</div>
+
+<!-- ══ TOP BAR ══ -->
+<div class="topbar">
+  <div class="topbar-logo">الصيرفي <span>Rx</span> — لوحة التحكم المالية</div>
+  <div class="topbar-meta" id="topbarMeta">تحميل...</div>
+</div>
+
+<!-- ══ TABS ══ -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('overview')">📊 نظرة عامة</div>
+  <div class="tab" onclick="showTab('branches')">🏪 الفروع</div>
+  <div class="tab" onclick="showTab('monthly')">📅 شهري</div>
+  <div class="tab" onclick="showTab('expenses')">💸 المصروفات</div>
+</div>
+
+<!-- ══ MAIN CONTENT ══ -->
+<div class="content">
+
+  <!-- ── OVERVIEW ── -->
+  <div class="section active" id="section-overview">
+    <div class="month-bar">
+      <label>الفترة:</label>
+      <button class="month-btn active" onclick="setPeriod('ytd',this)">تراكمي (YTD)</button>
+      <div id="monthBtns"></div>
+    </div>
+
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <div class="section-title">أداء الفروع — إجمالي الربح</div>
+    <div class="chart-wrap">
+      <div class="bar-chart" id="branchChart"></div>
+    </div>
+
+    <div class="section-title">ملخص مالي شهري</div>
+    <div class="table-wrap">
+      <table id="summaryTable">
+        <thead>
+          <tr>
+            <th>الشهر</th>
+            <th>إجمالي المبيعات</th>
+            <th>خصم المبيعات</th>
+            <th>صافي المبيعات</th>
+            <th>تكلفة البضاعة</th>
+            <th>مجمل الربح</th>
+            <th>إجمالي المصروفات</th>
+            <th>صافي الربح</th>
+          </tr>
+        </thead>
+        <tbody id="summaryBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── BRANCHES ── -->
+  <div class="section" id="section-branches">
+    <div class="month-bar">
+      <label>الشهر:</label>
+      <button class="month-btn active" id="brMonthYTD" onclick="setBranchPeriod(-1,this)">YTD</button>
+      <div id="brMonthBtns"></div>
+    </div>
+
+    <div class="filter-bar">
+      <label style="font-size:0.82rem;font-weight:700;color:var(--muted)">تصفية:</label>
+      <button class="filter-btn active" onclick="filterBranches('all',this)">الكل</button>
+      <button class="filter-btn" onclick="filterBranches('Branch',this)">فروع</button>
+      <button class="filter-btn" onclick="filterBranches('POS',this)">POS</button>
+      <button class="filter-btn" onclick="filterBranches('profit',this)">رابحة فقط</button>
+      <button class="filter-btn" onclick="filterBranches('loss',this)">خاسرة فقط</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>الفرع</th>
+            <th>النوع</th>
+            <th>إجمالي المبيعات</th>
+            <th>تكلفة البضاعة</th>
+            <th>COGS%</th>
+            <th>مجمل الربح</th>
+            <th>المصروفات</th>
+            <th>صافي الربح</th>
+            <th>هامش %</th>
+          </tr>
+        </thead>
+        <tbody id="branchBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── MONTHLY ── -->
+  <div class="section" id="section-monthly">
+    <div class="section-title">مقارنة شهرية — إجمالي المبيعات</div>
+    <div class="chart-wrap">
+      <div class="bar-chart" id="monthlyChart"></div>
+    </div>
+    <div class="section-title">تفاصيل الأداء الشهري</div>
+    <div class="table-wrap">
+      <table id="monthlyTable">
+        <thead>
+          <tr>
+            <th>الشهر</th>
+            <th>إجمالي المبيعات</th>
+            <th>صافي المبيعات</th>
+            <th>تكلفة البضاعة</th>
+            <th>مجمل الربح</th>
+            <th>هامش مجمل%</th>
+            <th>المصروفات</th>
+            <th>صافي الربح</th>
+            <th>هامش صافي%</th>
+          </tr>
+        </thead>
+        <tbody id="monthlyBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── EXPENSES ── -->
+  <div class="section" id="section-expenses">
+    <div class="month-bar">
+      <label>الشهر:</label>
+      <button class="month-btn active" id="expMonthYTD" onclick="setExpPeriod(-1,this)">YTD</button>
+      <div id="expMonthBtns"></div>
+    </div>
+    <div class="section-title">أعلى المصروفات بالفروع</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>الفرع</th>
+            <th>إجمالي المصروفات</th>
+            <th>% من المبيعات</th>
+            <th>خصم الأبليكيشن</th>
+            <th>المرتبات</th>
+            <th>الإيجار</th>
+          </tr>
+        </thead>
+        <tbody id="expBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<script>
+const DASHBOARD_DATA = {
+  "generated_at": "2026-06-03 19:44",
+  "months_with_data": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "months_ar": [
+    "يناير",
+    "فبراير",
+    "مارس",
+    "ابريل",
+    "مايو",
+    "يونيو",
+    "يوليو",
+    "اغسطس",
+    "سبتمبر",
+    "اكتوبر",
+    "نوفمبر",
+    "ديسمبر"
+  ],
+  "months_en": [
+    "Jan",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ],
+  "ytd_sales": {
+    "gross_sales": 323935490.73399997,
+    "discount": 14530894.089999998,
+    "net_sales": 322864042.91999996,
+    "cogs": 259520375.27000004
+  },
+  "ytd_summary": {
+    "gross_profit": 64415115.46400002,
+    "expenses": 60692957.78299999,
+    "net_profit": 9348960.58100002
+  },
+  "sales_monthly": [
+    {
+      "gross_sales": 62570427.55999999,
+      "discount": 2698312.4999999995,
+      "net_sales": 62570427.55999999,
+      "cogs": 50036278.85
+    },
+    {
+      "gross_sales": 53972139.57,
+      "discount": 2447425.1099999994,
+      "net_sales": 53972139.57,
+      "cogs": 43447227.82000001
+    },
+    {
+      "gross_sales": 67087108.61,
+      "discount": 3058854.569999999,
+      "net_sales": 67087108.61,
+      "cogs": 53880856.10000001
+    },
+    {
+      "gross_sales": 67586212.11,
+      "discount": 3084737.8100000005,
+      "net_sales": 67586212.11,
+      "cogs": 54356703.77
+    },
+    {
+      "gross_sales": 72719602.884,
+      "discount": 3241564.1,
+      "net_sales": 71648155.07,
+      "cogs": 57799308.73000001
+    },
+    {
+      "gross_sales": 0.0,
+      "discount": 0.0,
+      "net_sales": 0.0,
+      "cogs": 0.0
+    },
+    {
+      "gross_sales": 0.0,
+      "discount": 0.0,
+      "net_sales": 0.0,
+      "cogs": 0.0
+    },
+    {
+      "gross_sales": 0.0,
+      "discount": 0.0,
+      "net_sales": 0.0,
+      "cogs": 0.0
+    },
+    {
+      "gross_sales": 0.0,
+      "discount": 0.0,
+      "net_sales": 0.0,
+      "cogs": 0.0
+    },
+    {
+      "gross_sales": 0.0,
+      "discount": 0.0,
+      "net_sales": 0.0,
+      "cogs": 0.0
+    },
+    {
+      "gross_sales": 0.0,
+      "discount": 0.0,
+      "net_sales": 0.0,
+      "cogs": 0.0
+    },
+    {
+      "gross_sales": 0.0,
+      "discount": 0.0,
+      "net_sales": 0.0,
+      "cogs": 0.0
+    }
+  ],
+  "summary_monthly": [
+    {
+      "gross_profit": 12534148.710000003,
+      "expenses": 13391338.043,
+      "net_profit": 98589.46700000227
+    },
+    {
+      "gross_profit": 10524911.75,
+      "expenses": 12519613.649999999,
+      "net_profit": -536628.6599999958
+    },
+    {
+      "gross_profit": 13206252.510000002,
+      "expenses": 13105861.47,
+      "net_profit": 1019383.7100000009
+    },
+    {
+      "gross_profit": 13229508.340000007,
+      "expenses": 13979217.809999995,
+      "net_profit": 1544248.7200000123
+    },
+    {
+      "gross_profit": 14920294.154000001,
+      "expenses": 7696926.8100000005,
+      "net_profit": 7223367.3440000005
+    },
+    {
+      "gross_profit": 0.0,
+      "expenses": 0.0,
+      "net_profit": 0.0
+    },
+    {
+      "gross_profit": 0.0,
+      "expenses": 0.0,
+      "net_profit": 0.0
+    },
+    {
+      "gross_profit": 0.0,
+      "expenses": 0.0,
+      "net_profit": 0.0
+    },
+    {
+      "gross_profit": 0.0,
+      "expenses": 0.0,
+      "net_profit": 0.0
+    },
+    {
+      "gross_profit": 0.0,
+      "expenses": 0.0,
+      "net_profit": 0.0
+    },
+    {
+      "gross_profit": 0.0,
+      "expenses": 0.0,
+      "net_profit": 0.0
+    },
+    {
+      "gross_profit": 0.0,
+      "expenses": 0.0,
+      "net_profit": 0.0
+    }
+  ],
+  "branches": {
+    "HQ (Admin)": {
+      "type": "HQ",
+      "monthly": [
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        }
+      ]
+    },
+    "AGOUZA": {
+      "type": "Branch",
+      "monthly": [
+        {
+          "gross_sales": 7433176.619999999,
+          "cogs": 5833081.07,
+          "gross_profit": 1600095.5499999989,
+          "expenses": 1410764.5199999996,
+          "net_profit": 189331.02999999933
+        },
+        {
+          "gross_sales": 6302491.11,
+          "cogs": 4993948.59,
+          "gross_profit": 1313573.3200000005,
+          "expenses": 1276622.1600000001,
+          "net_profit": 36951.16000000038
+        },
+        {
+          "gross_sales": 8102573.42,
+          "cogs": 6465151.24,
+          "gross_profit": 1637422.3399999996,
+          "expenses": 1223542.8700000003,
+          "net_profit": 413879.4699999993
+        },
+        {
+          "gross_sales": 8394480.629999999,
+          "cogs": 6707669.29,
+          "gross_profit": 1686811.339999999,
+          "expenses": 1345757.5900000003,
+          "net_profit": 341053.7499999986
+        },
+        {
+          "gross_sales": 9610286.09,
+          "cogs": 7518966.64,
+          "gross_profit": 2091319.4500000002,
+          "expenses": 612457.9600000001,
+          "net_profit": 1478861.4900000002
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        }
+      ]
+    },
+    "OCTOBER": {
+      "type": "Branch",
+      "monthly": [
+        {
+          "gross_sales": 6542367.09,
+          "cogs": 5137181.67,
+          "gross_profit": 1405283.75,
+          "expenses": 1193811.9500000002,
+          "net_profit": 211471.7999999998
+        },
+        {
+          "gross_sales": 5567842.900000001,
+          "cogs": 4391436.97,
+          "gross_profit": 1182812.2400000016,
+          "expenses": 1105411.48,
+          "net_profit": 77400.76000000164
+        },
+        {
+          "gross_sales": 6909065.900000002,
+          "cogs": 5479952.95,
+          "gross_profit": 1429631.640000002,
+          "expenses": 1131065.0299999998,
+          "net_profit": 298566.6100000022
+        },
+        {
+          "gross_sales": 6203775.2,
+          "cogs": 4932173.05,
+          "gross_profit": 1281814.9100000004,
+          "expenses": 1195858.26,
+          "net_profit": 85956.65000000037
+        },
+        {
+          "gross_sales": 6774086.119999999,
+          "cogs": 5281383.56,
+          "gross_profit": 1492702.5599999996,
+          "expenses": 642797.12,
+          "net_profit": 849905.4399999996
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        }
+      ]
+    },
+    "BATAL": {
+      "type": "Branch",
+      "monthly": [
+        {
+          "gross_sales": 4219483.220000001,
+          "cogs": 3382313.19,
+          "gross_profit": 0,
+          "expenses": 0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 3218448.4899999998,
+          "cogs": 2553456.93,
+          "gross_profit": 0,
+          "expenses": 0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 3869132.96,
+          "cogs": 3092649.6,
+          "gross_profit": 0,
+          "expenses": 0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 4194374.96,
+          "cogs": 3291739.26,
+          "gross_profit": 0,
+          "expenses": 0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 4393530.529999999,
+          "cogs": 3468541.93,
+          "gross_profit": 0,
+          "expenses": 0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "NASR CITY": {
+      "type": "Branch",
+      "monthly": [
+        {
+          "gross_sales": 9245620.6,
+          "cogs": 7478139.4,
+          "gross_profit": 0,
+          "expenses": 114715.61,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 8242666.360000001,
+          "cogs": 6611265.05,
+          "gross_profit": 0,
+          "expenses": 67747.68,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 10096831.82,
+          "cogs": 8201344.23,
+          "gross_profit": 0,
+          "expenses": 120095.26,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 10883654.98,
+          "cogs": 8700793.62,
+          "gross_profit": 0,
+          "expenses": 117005.58,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 10949321.75,
+          "cogs": 8763781.45,
+          "gross_profit": 0,
+          "expenses": 0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "SWEDY": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 1248476.21,
+          "cogs": 1094037.73,
+          "gross_profit": 0,
+          "expenses": 254640.8500000001,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 1729590.72,
+          "cogs": 1537583.06,
+          "gross_profit": 0,
+          "expenses": 455278.6999999999,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 1710654.61,
+          "cogs": 1498886.74,
+          "gross_profit": 0,
+          "expenses": 211767.8700000001,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 1685296.03,
+          "cogs": 1439895.8,
+          "gross_profit": 0,
+          "expenses": 509448.03999999986,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 1572349.73,
+          "cogs": 1380696.65,
+          "gross_profit": 0,
+          "expenses": 191653.08000000007,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "ntra": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 680699.88,
+          "cogs": 590107.85,
+          "gross_profit": 0,
+          "expenses": 94929.53000000003,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 647655.94,
+          "cogs": 561559.71,
+          "gross_profit": 0,
+          "expenses": 100549.12999999998,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 715264.77,
+          "cogs": 616588.12,
+          "gross_profit": 0,
+          "expenses": 98676.65000000002,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 744692.39,
+          "cogs": 632651.65,
+          "gross_profit": 0,
+          "expenses": 112040.73999999999,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 675661.93,
+          "cogs": 565560.73,
+          "gross_profit": 0,
+          "expenses": 110101.20000000007,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "ETISALAT": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 298352.86,
+          "cogs": 256921.75,
+          "gross_profit": 0,
+          "expenses": 44624.83999999998,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 279217.00999999995,
+          "cogs": 239736.82,
+          "gross_profit": 0,
+          "expenses": 39480.189999999944,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 251372.6,
+          "cogs": 217371.25,
+          "gross_profit": 0,
+          "expenses": 34095.850000000006,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 295692.89,
+          "cogs": 256565.05,
+          "gross_profit": 0,
+          "expenses": 42547.79000000002,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 241678.7,
+          "cogs": 205781.55,
+          "gross_profit": 0,
+          "expenses": 35897.15000000002,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "7azim 7assan": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 158646.66,
+          "cogs": 139033.96,
+          "gross_profit": 0,
+          "expenses": 21098.080000000013,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 152987.42,
+          "cogs": 133935.66,
+          "gross_profit": 0,
+          "expenses": 19990.700000000008,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 157793.31,
+          "cogs": 138026.94,
+          "gross_profit": 0,
+          "expenses": 20155.609999999997,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 159269.94999999998,
+          "cogs": 138671.08,
+          "gross_profit": 0,
+          "expenses": 21558.929999999993,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 137724.78,
+          "cogs": 118429.45,
+          "gross_profit": 0,
+          "expenses": 19295.33,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "SENA3IA": {
+      "type": "Branch",
+      "monthly": [
+        {
+          "gross_sales": 2595272.84,
+          "cogs": 2125002.51,
+          "gross_profit": 470270.3300000001,
+          "expenses": 518377.32,
+          "net_profit": -48106.98999999993
+        },
+        {
+          "gross_sales": 2204732.71,
+          "cogs": 1794195.04,
+          "gross_profit": 410537.6699999999,
+          "expenses": 496204.95999999996,
+          "net_profit": -85667.29000000004
+        },
+        {
+          "gross_sales": 2909436.99,
+          "cogs": 2272615.57,
+          "gross_profit": 639167.6300000004,
+          "expenses": 482527.79999999993,
+          "net_profit": 156639.83000000042
+        },
+        {
+          "gross_sales": 3001597.93,
+          "cogs": 2413084.3,
+          "gross_profit": 588513.6300000004,
+          "expenses": 571040.4299999999,
+          "net_profit": 17473.20000000042
+        },
+        {
+          "gross_sales": 3046915.27,
+          "cogs": 2416659.91,
+          "gross_profit": 630255.3599999999,
+          "expenses": 323796.32,
+          "net_profit": 306459.03999999986
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        }
+      ]
+    },
+    "KHARGIA": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 564904.4200000002,
+          "cogs": 475236.0,
+          "gross_profit": 89668.42000000016,
+          "expenses": 54316.45999999999,
+          "net_profit": 35351.96000000017
+        },
+        {
+          "gross_sales": 577051.89,
+          "cogs": 495264.86,
+          "gross_profit": 81787.03000000003,
+          "expenses": 50043.26999999999,
+          "net_profit": 31743.76000000004
+        },
+        {
+          "gross_sales": 569618.73,
+          "cogs": 487099.97,
+          "gross_profit": 82518.76000000001,
+          "expenses": 50729.24,
+          "net_profit": 31789.52000000001
+        },
+        {
+          "gross_sales": 614824.4500000001,
+          "cogs": 522656.89,
+          "gross_profit": 92167.56000000006,
+          "expenses": 54762.649999999994,
+          "net_profit": 37404.91000000006
+        },
+        {
+          "gross_sales": 582296.4,
+          "cogs": 492267.07,
+          "gross_profit": 90029.33000000002,
+          "expenses": 45735.67,
+          "net_profit": 44293.66000000002
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        }
+      ]
+    },
+    "TAGAMO3": {
+      "type": "Branch",
+      "monthly": [
+        {
+          "gross_sales": 4278614.8500000015,
+          "cogs": 3381484.01,
+          "gross_profit": 897130.8400000017,
+          "expenses": 810825.19,
+          "net_profit": 86305.65000000177
+        },
+        {
+          "gross_sales": 3156339.33,
+          "cogs": 2526353.31,
+          "gross_profit": 629986.02,
+          "expenses": 738642.3299999998,
+          "net_profit": -108656.30999999982
+        },
+        {
+          "gross_sales": 4774358.139999999,
+          "cogs": 3911003.33,
+          "gross_profit": 863354.8099999987,
+          "expenses": 819991.2799999999,
+          "net_profit": 43363.52999999875
+        },
+        {
+          "gross_sales": 4798076.010000001,
+          "cogs": 3917437.65,
+          "gross_profit": 880638.3600000008,
+          "expenses": 957263.7000000001,
+          "net_profit": -76625.33999999927
+        },
+        {
+          "gross_sales": 5425018.859999999,
+          "cogs": 4389818.47,
+          "gross_profit": 1035200.3899999997,
+          "expenses": 500101.04999999993,
+          "net_profit": 535099.3399999997
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        }
+      ]
+    },
+    "Maadi": {
+      "type": "Branch",
+      "monthly": [
+        {
+          "gross_sales": 3037292.64,
+          "cogs": 2404169.69,
+          "gross_profit": 633122.9500000002,
+          "expenses": 607624.79,
+          "net_profit": 25498.16000000015
+        },
+        {
+          "gross_sales": 2438535.7800000003,
+          "cogs": 1932907.0,
+          "gross_profit": 509306.6200000002,
+          "expenses": 554709.9099999999,
+          "net_profit": -45403.28999999969
+        },
+        {
+          "gross_sales": 3706854.04,
+          "cogs": 2944605.62,
+          "gross_profit": 776232.2899999999,
+          "expenses": 648825.71,
+          "net_profit": 127406.57999999996
+        },
+        {
+          "gross_sales": 3706421.05,
+          "cogs": 2999205.74,
+          "gross_profit": 714980.8199999996,
+          "expenses": 701224.14,
+          "net_profit": 13756.679999999586
+        },
+        {
+          "gross_sales": 3563487.06,
+          "cogs": 2808963.51,
+          "gross_profit": 754523.5500000003,
+          "expenses": 329000.03,
+          "net_profit": 425523.52000000025
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        }
+      ]
+    },
+    "SAND BEACH": {
+      "type": "Branch",
+      "monthly": [
+        {
+          "gross_sales": 812667.85,
+          "cogs": 611103.6,
+          "gross_profit": 203185.97,
+          "expenses": 119368.34000000001,
+          "net_profit": 83817.62999999999
+        },
+        {
+          "gross_sales": 475683.11,
+          "cogs": 355313.66,
+          "gross_profit": 120369.45000000001,
+          "expenses": 129005.58,
+          "net_profit": -8636.12999999999
+        },
+        {
+          "gross_sales": 608376.47,
+          "cogs": 454648.76,
+          "gross_profit": 153727.70999999996,
+          "expenses": 125080.40999999997,
+          "net_profit": 28647.29999999999
+        },
+        {
+          "gross_sales": 808965.94,
+          "cogs": 605361.1,
+          "gross_profit": 203604.83999999997,
+          "expenses": 122553.10999999999,
+          "net_profit": 81051.72999999998
+        },
+        {
+          "gross_sales": 1000183.95,
+          "cogs": 733165.52,
+          "gross_profit": 267018.42999999993,
+          "expenses": 101399.87000000001,
+          "net_profit": 165618.55999999994
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        }
+      ]
+    },
+    "ZAID": {
+      "type": "Branch",
+      "monthly": [
+        {
+          "gross_sales": 7751870.91,
+          "cogs": 6052550.27,
+          "gross_profit": 1699320.6400000006,
+          "expenses": 1365202.73,
+          "net_profit": 334117.9100000006
+        },
+        {
+          "gross_sales": 6608786.760000001,
+          "cogs": 5228872.87,
+          "gross_profit": 1379913.8900000006,
+          "expenses": 1296068.54,
+          "net_profit": 83845.35000000056
+        },
+        {
+          "gross_sales": 9755734.09,
+          "cogs": 7612695.6,
+          "gross_profit": 2143038.49,
+          "expenses": 1509335.34,
+          "net_profit": 633703.1500000001
+        },
+        {
+          "gross_sales": 8951219.98,
+          "cogs": 7153145.48,
+          "gross_profit": 1801673.77,
+          "expenses": 1651543.94,
+          "net_profit": 150129.83000000007
+        },
+        {
+          "gross_sales": 10105192.834,
+          "cogs": 7903513.38,
+          "gross_profit": 2201679.454000001,
+          "expenses": 893626.9500000001,
+          "net_profit": 1308052.5040000007
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        }
+      ]
+    },
+    "AL ALAMYA": {
+      "type": "Branch",
+      "monthly": [
+        {
+          "gross_sales": 3430603.4299999997,
+          "cogs": 2722534.4,
+          "gross_profit": 711083.7399999998,
+          "expenses": 553936.93,
+          "net_profit": 157146.8099999997
+        },
+        {
+          "gross_sales": 2503837.55,
+          "cogs": 2031682.48,
+          "gross_profit": 472179.6699999998,
+          "expenses": 515382.05000000005,
+          "net_profit": -43202.38000000024
+        },
+        {
+          "gross_sales": 3014760.45,
+          "cogs": 2407152.0,
+          "gross_profit": 608505.8000000002,
+          "expenses": 501945.34,
+          "net_profit": 106560.46000000014
+        },
+        {
+          "gross_sales": 2557381.1799999997,
+          "cogs": 2060907.94,
+          "gross_profit": 496473.23999999976,
+          "expenses": 534960.99,
+          "net_profit": -38487.75000000023
+        },
+        {
+          "gross_sales": 3004602.54,
+          "cogs": 2367383.46,
+          "gross_profit": 637219.0800000001,
+          "expenses": 291404.11000000004,
+          "net_profit": 345814.97000000003
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        }
+      ]
+    },
+    "ON-LINE": {
+      "type": "Branch",
+      "monthly": [
+        {
+          "gross_sales": 422657.96,
+          "cogs": 346030.75,
+          "gross_profit": 0,
+          "expenses": 76627.21000000002,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 388067.66,
+          "cogs": 328426.72,
+          "gross_profit": 0,
+          "expenses": 59640.94,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 450200.71,
+          "cogs": 393990.56,
+          "gross_profit": 0,
+          "expenses": 56210.15000000002,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 273749.5699999999,
+          "cogs": 239909.47,
+          "gross_profit": 0,
+          "expenses": 33840.09999999989,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 605487.19,
+          "cogs": 469552.04,
+          "gross_profit": 0,
+          "expenses": 135935.14999999997,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "ORANGE": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 499339.73,
+          "cogs": 423651.04,
+          "gross_profit": 0,
+          "expenses": 75688.69,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 442213.0,
+          "cogs": 382306.01,
+          "gross_profit": 0,
+          "expenses": 59906.98999999999,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 728024.35,
+          "cogs": 624407.52,
+          "gross_profit": 0,
+          "expenses": 103616.82999999996,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 548534.76,
+          "cogs": 451849.26,
+          "gross_profit": 0,
+          "expenses": 96685.5,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 489263.96,
+          "cogs": 415186.22,
+          "gross_profit": 0,
+          "expenses": 74077.74000000005,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "VODAFONE SMART": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 755276.9300000002,
+          "cogs": 626063.52,
+          "gross_profit": 0,
+          "expenses": 129213.41000000015,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 766811.46,
+          "cogs": 633357.85,
+          "gross_profit": 0,
+          "expenses": 133453.61,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 716418.74,
+          "cogs": 587809.2,
+          "gross_profit": 0,
+          "expenses": 128609.54000000004,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 762522.43,
+          "cogs": 633978.38,
+          "gross_profit": 0,
+          "expenses": 133544.05000000005,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 745108.33,
+          "cogs": 619197.71,
+          "gross_profit": 0,
+          "expenses": 125910.62,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "VODAFONE ZAHRAA": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 412933.37,
+          "cogs": 332742.6,
+          "gross_profit": 0,
+          "expenses": 80194.18000000002,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 337885.4,
+          "cogs": 291337.34,
+          "gross_profit": 0,
+          "expenses": 46548.06,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 371088.63,
+          "cogs": 298428.49,
+          "gross_profit": 0,
+          "expenses": 82152.43000000001,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 484578.44999999995,
+          "cogs": 368149.2,
+          "gross_profit": 0,
+          "expenses": 116432.04999999994,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 514394.04000000004,
+          "cogs": 393433.64,
+          "gross_profit": 0,
+          "expenses": 120960.40000000002,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "MO7WLAT": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 642514.0700000001,
+          "cogs": 539892.0,
+          "gross_profit": 0,
+          "expenses": 159221.13000000006,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 668725.8300000001,
+          "cogs": 585276.1,
+          "gross_profit": 0,
+          "expenses": 155344.0800000001,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 597049.48,
+          "cogs": 523636.01,
+          "gross_profit": 0,
+          "expenses": 133558.59999999998,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 702732.9,
+          "cogs": 605624.35,
+          "gross_profit": 0,
+          "expenses": 172286.38000000006,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 590086.12,
+          "cogs": 515785.21,
+          "gross_profit": 0,
+          "expenses": 74300.90999999997,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "ELECTRIC": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 80594.68,
+          "cogs": 71618.4,
+          "gross_profit": 0,
+          "expenses": 8977.239999999998,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 301759.23,
+          "cogs": 266686.44,
+          "gross_profit": 0,
+          "expenses": 35072.78999999998,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 337715.39999999997,
+          "cogs": 289317.08,
+          "gross_profit": 0,
+          "expenses": 48398.31999999995,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 411084.28,
+          "cogs": 356435.56,
+          "gross_profit": 0,
+          "expenses": 87273.14000000003,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 357730.96,
+          "cogs": 311175.09,
+          "gross_profit": 0,
+          "expenses": 46555.869999999995,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "FINE": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 20556.97,
+          "cogs": 17453.47,
+          "gross_profit": 0,
+          "expenses": 3103.5,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 162572.82,
+          "cogs": 140494.47,
+          "gross_profit": 0,
+          "expenses": 22078.350000000006,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 256602.22,
+          "cogs": 220652.55,
+          "gross_profit": 0,
+          "expenses": 36268.99000000001,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 203014.13,
+          "cogs": 173476.1,
+          "gross_profit": 0,
+          "expenses": 29538.03,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "EgyPlast": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 300179.73000000004,
+          "cogs": 249221.14,
+          "gross_profit": 0,
+          "expenses": 50958.590000000026,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 294277.11,
+          "cogs": 245505.53,
+          "gross_profit": 0,
+          "expenses": 48771.57999999999,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 289010.81,
+          "cogs": 240672.63,
+          "gross_profit": 0,
+          "expenses": 48338.17999999999,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 318040.68,
+          "cogs": 263675.57,
+          "gross_profit": 0,
+          "expenses": 126432.87999999999,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 262150.67,
+          "cogs": 213170.58,
+          "gross_profit": 0,
+          "expenses": 48980.09,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "etisalat katamya": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 621118.31,
+          "cogs": 519745.61,
+          "gross_profit": 0,
+          "expenses": 131444.56000000006,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 550960.3099999999,
+          "cogs": 461116.1,
+          "gross_profit": 0,
+          "expenses": 93619.89999999997,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 597582.39,
+          "cogs": 493815.37,
+          "gross_profit": 0,
+          "expenses": 108858.23000000003,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 495362.22000000003,
+          "cogs": 412166.77,
+          "gross_profit": 0,
+          "expenses": 83195.45000000001,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 518389.94,
+          "cogs": 428145.03,
+          "gross_profit": 0,
+          "expenses": 90244.90999999997,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "cairo festival": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 676182.79,
+          "cogs": 580028.87,
+          "gross_profit": 0,
+          "expenses": 96153.92000000004,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 690004.13,
+          "cogs": 593333.39,
+          "gross_profit": 0,
+          "expenses": 96670.73999999999,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 575192.55,
+          "cogs": 493641.25,
+          "gross_profit": 0,
+          "expenses": 90551.30000000005,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 734702.66,
+          "cogs": 628456.86,
+          "gross_profit": 0,
+          "expenses": 106245.80000000005,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 737482.98,
+          "cogs": 623872.31,
+          "gross_profit": 0,
+          "expenses": 113610.66999999993,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "North Coast": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "REHAB": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 4431982.17,
+          "cogs": 3473937.74,
+          "gross_profit": 958044.4299999997,
+          "expenses": 1067959.633,
+          "net_profit": -109915.20300000021
+        },
+        {
+          "gross_sales": 3867984.21,
+          "cogs": 2994868.41,
+          "gross_profit": 873217.0499999998,
+          "expenses": 1051544.21,
+          "net_profit": -178327.16000000015
+        },
+        {
+          "gross_sales": 3730418.6,
+          "cogs": 2857151.81,
+          "gross_profit": 873266.79,
+          "expenses": 972524.26,
+          "net_profit": -99257.46999999997
+        },
+        {
+          "gross_sales": 4185714.42,
+          "cogs": 3245433.55,
+          "gross_profit": 940280.8700000001,
+          "expenses": 963911.5699999998,
+          "net_profit": -23630.69999999972
+        },
+        {
+          "gross_sales": 5358955.909999999,
+          "cogs": 4194123.38,
+          "gross_profit": 1164832.5299999993,
+          "expenses": 570864.73,
+          "net_profit": 593967.7999999993
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0.0,
+          "expenses": 0.0,
+          "net_profit": 0.0
+        }
+      ]
+    },
+    "Bank Maadi hsbc": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 622156.41,
+          "cogs": 487520.51,
+          "gross_profit": 0,
+          "expenses": 181790.75000000003,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 697285.29,
+          "cogs": 532092.21,
+          "gross_profit": 0,
+          "expenses": 165193.08000000007,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 562017.04,
+          "cogs": 432912.69,
+          "gross_profit": 0,
+          "expenses": 129105.87000000004,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 520727.77,
+          "cogs": 399437.06,
+          "gross_profit": 0,
+          "expenses": 129940.69000000002,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 561693.7,
+          "cogs": 433683.47,
+          "gross_profit": 0,
+          "expenses": 128010.22999999998,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "hsbc smart": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 807441.3300000001,
+          "cogs": 702929.57,
+          "gross_profit": 0,
+          "expenses": 104759.67000000013,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 839741.8899999999,
+          "cogs": 727956.24,
+          "gross_profit": 0,
+          "expenses": 113467.11999999991,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 817988.79,
+          "cogs": 704787.1,
+          "gross_profit": 0,
+          "expenses": 113201.69000000006,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 892136.18,
+          "cogs": 758977.29,
+          "gross_profit": 0,
+          "expenses": 133158.89,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 693508.4099999999,
+          "cogs": 593594.67,
+          "gross_profit": 0,
+          "expenses": 99913.73999999987,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    },
+    "Vois": {
+      "type": "POS",
+      "monthly": [
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0.0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        },
+        {
+          "gross_sales": 0.0,
+          "cogs": 0,
+          "gross_profit": 0,
+          "expenses": 0.0,
+          "net_profit": 0
+        }
+      ]
+    }
+  }
+};
+
+// ── Password
+function unlock() {
+  const pw = document.getElementById('pwInput').value;
+  if (pw === 'admin.1999') {
+    document.getElementById('lockScreen').style.display = 'none';
+    init();
+  } else {
+    document.getElementById('lockError').style.display = 'block';
+  }
+}
+document.getElementById('pwInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') unlock();
+});
+
+// ── Tab switching
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('section-' + id).classList.add('active');
+}
+
+// ── Formatting
+function fmt(n) {
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  const abs = Math.abs(n);
+  let s;
+  if (abs >= 1e6) s = (n / 1e6).toFixed(2) + 'M';
+  else if (abs >= 1e3) s = (n / 1e3).toFixed(1) + 'K';
+  else s = n.toFixed(0);
+  return n < 0 ? `(${s.replace('-','')})` : s;
+}
+function fmtFull(n) {
+  if (!n) return '—';
+  return new Intl.NumberFormat('ar-EG').format(Math.round(n));
+}
+function pct(a, b) {
+  if (!b) return '—';
+  return ((a / b) * 100).toFixed(1) + '%';
+}
+
+// ── State
+let currentPeriod = 'ytd';   // 'ytd' or month index 0-11
+let branchPeriod  = -1;       // -1 = YTD
+let expPeriod     = -1;
+let branchFilter  = 'all';
+
+// ── Aggregate data for period
+function aggSales(monthIdx) {
+  const D = DASHBOARD_DATA;
+  const months = monthIdx === -1 ? D.months_with_data : [monthIdx];
+  let gs=0, disc=0, ns=0, cogs=0;
+  for (const m of months) {
+    const s = D.sales_monthly[m];
+    gs   += s.gross_sales  || 0;
+    disc += s.discount     || 0;
+    ns   += s.net_sales    || 0;
+    cogs += s.cogs         || 0;
+  }
+  return { gross_sales: gs, discount: disc, net_sales: ns, cogs };
+}
+
+function aggSummary(monthIdx) {
+  const D = DASHBOARD_DATA;
+  const months = monthIdx === -1 ? D.months_with_data : [monthIdx];
+  let gp=0, exp=0, np=0;
+  for (const m of months) {
+    const s = D.summary_monthly[m] || {};
+    gp  += s.gross_profit || 0;
+    exp += s.expenses     || 0;
+    np  += s.net_profit   || 0;
+  }
+  return { gross_profit: gp, expenses: exp, net_profit: np };
+}
+
+function aggBranch(brName, monthIdx) {
+  const D = DASHBOARD_DATA;
+  const br = D.branches[brName];
+  if (!br) return null;
+  const months = monthIdx === -1 ? D.months_with_data : [monthIdx];
+  let gs=0, cogs=0, gp=0, exp=0, np=0;
+  for (const m of months) {
+    const mo = br.monthly[m] || {};
+    gs   += mo.gross_sales  || 0;
+    cogs += mo.cogs         || 0;
+    gp   += mo.gross_profit || 0;
+    exp  += mo.expenses     || 0;
+    np   += mo.net_profit   || 0;
+  }
+  return { gross_sales: gs, cogs, gross_profit: gp, expenses: exp, net_profit: np };
+}
+
+// ── Init
+function init() {
+  const D = DASHBOARD_DATA;
+
+  // Meta
+  document.getElementById('topbarMeta').innerHTML =
+    `تحديث: <strong>${D.generated_at}</strong> | أشهر بيانات: <strong>${D.months_with_data.map(i => D.months_ar[i]).join(' · ')}</strong>`;
+
+  buildMonthBtns();
+  renderOverview();
+  renderBranches();
+  renderMonthly();
+}
+
+function buildMonthBtns() {
+  const D = DASHBOARD_DATA;
+  const ids = ['monthBtns', 'brMonthBtns', 'expMonthBtns'];
+  const handlers = ['setPeriod', 'setBranchPeriod', 'setExpPeriod'];
+
+  ids.forEach((id, hi) => {
+    const wrap = document.getElementById(id);
+    wrap.innerHTML = '';
+    D.months_with_data.forEach(m => {
+      const btn = document.createElement('button');
+      btn.className = 'month-btn';
+      btn.textContent = D.months_ar[m];
+      btn.onclick = function() {
+        window[handlers[hi]](m, this);
+      };
+      wrap.appendChild(btn);
+    });
+  });
+}
+
+// ── Overview
+function setPeriod(val, btn) {
+  currentPeriod = val;
+  document.querySelectorAll('#section-overview .month-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOverview();
+}
+
+function renderOverview() {
+  const D = DASHBOARD_DATA;
+  const mIdx = currentPeriod === 'ytd' ? -1 : currentPeriod;
+  const sales = aggSales(mIdx);
+  const summ  = aggSummary(mIdx);
+  const gp    = summ.gross_profit || (sales.net_sales - sales.cogs);
+  const exp   = summ.expenses;
+  const np    = summ.net_profit || (gp - exp);
+
+  const kpis = [
+    { label: 'إجمالي المبيعات', value: fmt(sales.gross_sales), sub: fmtFull(sales.gross_sales) + ' ج.م', color: '' },
+    { label: 'خصم المبيعات',    value: fmt(sales.discount),    sub: pct(sales.discount, sales.gross_sales) + ' من المبيعات', color: 'gold' },
+    { label: 'صافي المبيعات',   value: fmt(sales.net_sales),   sub: fmtFull(sales.net_sales) + ' ج.م', color: '' },
+    { label: 'تكلفة البضاعة',   value: fmt(sales.cogs),        sub: pct(sales.cogs, sales.net_sales) + ' من الصافي', color: '' },
+    { label: 'مجمل الربح',      value: fmt(gp),                sub: pct(gp, sales.net_sales), color: 'green' },
+    { label: 'إجمالي المصروفات',value: fmt(exp),               sub: pct(exp, sales.net_sales), color: 'gold' },
+    { label: 'صافي الربح',      value: fmt(np),                sub: pct(np, sales.net_sales), color: np >= 0 ? 'green' : 'red' },
+  ];
+
+  const grid = document.getElementById('kpiGrid');
+  grid.innerHTML = kpis.map(k => `
+    <div class="kpi-card ${k.color}">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value ${k.color === 'green' ? 'positive' : k.color === 'red' ? 'negative' : ''}">${k.value}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>`).join('');
+
+  // Summary table
+  const body = document.getElementById('summaryBody');
+  body.innerHTML = '';
+  D.months_with_data.forEach(m => {
+    const s = D.sales_monthly[m];
+    const su = D.summary_monthly[m] || {};
+    const gpM  = su.gross_profit || 0;
+    const expM = su.expenses || 0;
+    const npM  = su.net_profit || 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${D.months_ar[m]}</td>
+      <td>${fmt(s.gross_sales)}</td>
+      <td style="color:var(--red)">${fmt(s.discount)}</td>
+      <td>${fmt(s.net_sales)}</td>
+      <td>${fmt(s.cogs)}</td>
+      <td>${fmt(gpM)}</td>
+      <td>${fmt(expM)}</td>
+      <td class="${npM >= 0 ? 'profit-pos' : 'profit-neg'}">${fmt(npM)}</td>`;
+    body.appendChild(tr);
+  });
+
+  renderBranchChart(mIdx);
+}
+
+// ── Branch bar chart
+function renderBranchChart(mIdx) {
+  const D = DASHBOARD_DATA;
+  const branchData = Object.entries(D.branches).map(([name, br]) => {
+    const agg = aggBranch(name, mIdx);
+    return { name, gp: agg ? agg.gross_profit : 0 };
+  }).filter(b => b.gp !== 0).sort((a,b) => b.gp - a.gp).slice(0, 15);
+
+  const maxGP = Math.max(...branchData.map(b => Math.abs(b.gp)));
+  const chart = document.getElementById('branchChart');
+  chart.innerHTML = '';
+
+  branchData.forEach(b => {
+    const heightPct = maxGP > 0 ? (Math.abs(b.gp) / maxGP) * 100 : 0;
+    const color = b.gp >= 0 ? 'var(--green)' : 'var(--red)';
+    const div = document.createElement('div');
+    div.className = 'bar-group';
+    div.title = `${b.name}: ${fmtFull(b.gp)} ج.م`;
+    div.innerHTML = `
+      <div class="bar-inner" style="height:${heightPct}%;background:${color};min-height:4px"></div>
+      <div class="bar-label">${b.name.substring(0, 6)}</div>`;
+    chart.appendChild(div);
+  });
+}
+
+// ── Branches tab
+function setBranchPeriod(val, btn) {
+  branchPeriod = val;
+  document.querySelectorAll('#section-branches .month-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBranches();
+}
+function filterBranches(type, btn) {
+  branchFilter = type;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBranches();
+}
+
+function renderBranches() {
+  const D = DASHBOARD_DATA;
+  const body = document.getElementById('branchBody');
+  body.innerHTML = '';
+
+  let rows = Object.entries(D.branches).map(([name, br]) => {
+    const agg = aggBranch(name, branchPeriod);
+    return { name, type: br.type, ...agg };
+  });
+
+  if (branchFilter === 'Branch') rows = rows.filter(r => r.type === 'Branch');
+  else if (branchFilter === 'POS')   rows = rows.filter(r => r.type === 'POS');
+  else if (branchFilter === 'profit') rows = rows.filter(r => r.net_profit > 0);
+  else if (branchFilter === 'loss')   rows = rows.filter(r => r.net_profit < 0);
+
+  rows.sort((a, b) => b.gross_sales - a.gross_sales);
+
+  rows.forEach((r, i) => {
+    const cogsP = pct(r.cogs, r.gross_sales);
+    const margin = pct(r.net_profit, r.gross_sales);
+    const typeBadge = r.type === 'Branch' ? 'badge-navy' : r.type === 'POS' ? 'badge-gold' : 'badge-green';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i + 1}</td>
+      <td><strong>${r.name}</strong></td>
+      <td><span class="badge ${typeBadge}">${r.type}</span></td>
+      <td>${fmt(r.gross_sales)}</td>
+      <td>${fmt(r.cogs)}</td>
+      <td>${cogsP}</td>
+      <td>${fmt(r.gross_profit)}</td>
+      <td>${fmt(r.expenses)}</td>
+      <td class="${r.net_profit >= 0 ? 'profit-pos' : 'profit-neg'}">${fmt(r.net_profit)}</td>
+      <td class="${r.net_profit >= 0 ? 'profit-pos' : 'profit-neg'}">${margin}</td>`;
+    body.appendChild(tr);
+  });
+}
+
+// ── Monthly tab
+function renderMonthly() {
+  const D = DASHBOARD_DATA;
+  const body = document.getElementById('monthlyBody');
+  body.innerHTML = '';
+
+  // Chart
+  const sales = D.sales_monthly;
+  const maxS = Math.max(...D.months_with_data.map(m => sales[m].gross_sales || 0));
+  const chart = document.getElementById('monthlyChart');
+  chart.innerHTML = '';
+  D.months_with_data.forEach(m => {
+    const s = sales[m];
+    const h = maxS > 0 ? ((s.gross_sales || 0) / maxS * 100) : 0;
+    const div = document.createElement('div');
+    div.className = 'bar-group';
+    div.title = `${D.months_ar[m]}: ${fmtFull(s.gross_sales)} ج.م`;
+    div.innerHTML = `
+      <div class="bar-inner" style="height:${h}%;background:var(--navy);min-height:4px"></div>
+      <div class="bar-label">${D.months_ar[m]}</div>`;
+    chart.appendChild(div);
+  });
+
+  // Table
+  D.months_with_data.forEach(m => {
+    const s = D.sales_monthly[m];
+    const su = D.summary_monthly[m] || {};
+    const gp = su.gross_profit || 0;
+    const exp = su.expenses || 0;
+    const np = su.net_profit || 0;
+    const grossM = s.gross_sales || 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${D.months_ar[m]}</strong></td>
+      <td>${fmt(grossM)}</td>
+      <td>${fmt(s.net_sales)}</td>
+      <td>${fmt(s.cogs)}</td>
+      <td>${fmt(gp)}</td>
+      <td>${pct(gp, s.net_sales)}</td>
+      <td>${fmt(exp)}</td>
+      <td class="${np >= 0 ? 'profit-pos' : 'profit-neg'}">${fmt(np)}</td>
+      <td class="${np >= 0 ? 'profit-pos' : 'profit-neg'}">${pct(np, s.net_sales)}</td>`;
+    body.appendChild(tr);
+  });
+}
+
+// ── Expenses tab
+function setExpPeriod(val, btn) {
+  expPeriod = val;
+  document.querySelectorAll('#section-expenses .month-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderExpenses();
+}
+
+function renderExpenses() {
+  const D = DASHBOARD_DATA;
+  const body = document.getElementById('expBody');
+  body.innerHTML = '';
+
+  const rows = Object.entries(D.branches).map(([name, br]) => {
+    const agg = aggBranch(name, expPeriod);
+    return { name, ...agg };
+  }).filter(r => r.gross_sales > 0).sort((a, b) => b.expenses - a.expenses);
+
+  rows.forEach(r => {
+    const expPct = pct(r.expenses, r.gross_sales);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${r.name}</strong></td>
+      <td>${fmt(r.expenses)}</td>
+      <td>${expPct}</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>`;
+    body.appendChild(tr);
+  });
+}
+</script>
+</body>
+</html>
