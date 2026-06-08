@@ -94,7 +94,8 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
 
 /* KPI */
 .kpi-wrap{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
-.kpi{background:var(--card-bg);border-radius:14px;padding:16px 18px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(15,23,42,0.04),0 1px 2px rgba(15,23,42,0.03);min-width:150px;flex:1;position:relative;overflow:hidden;cursor:default;transition:box-shadow 0.2s,transform 0.2s}
+.kpi{background:var(--card-bg);border-radius:14px;padding:16px 18px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(15,23,42,0.04),0 1px 2px rgba(15,23,42,0.03);min-width:150px;flex:1;position:relative;cursor:default;transition:box-shadow 0.2s,transform 0.2s}
+.kpi::before{border-radius:0 0 14px 14px}
 .kpi:hover{box-shadow:0 4px 12px rgba(15,23,42,0.08);transform:translateY(-1px)}
 .kpi::before{content:'';position:absolute;bottom:0;left:0;width:100%;height:3px}
 .kpi.kpi-blue::before{background:var(--navy)}
@@ -118,7 +119,7 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
 .kb-a{background:var(--warn-bg);color:var(--warn)}
 
 /* TOOLTIP */
-.kpi[data-full]:hover::after{content:attr(data-full);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:5px 10px;border-radius:6px;font-size:11px;white-space:nowrap;z-index:1000;pointer-events:none;font-weight:500}
+.kpi[data-full]:hover::after{content:attr(data-full);position:absolute;top:6px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:3px 9px;border-radius:6px;font-size:10.5px;white-space:nowrap;z-index:1000;pointer-events:none;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.18)}
 
 /* PAGE */
 .page{display:none}.page.active{display:block}
@@ -295,7 +296,7 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
           <div class="fgrp" id="bs-growth-grp" style="display:none"><div class="flbl" data-en="Growth" data-ar="النمو">Growth</div>
             <select class="fsel" id="bs-growth" onchange="renderBStatement()">
               <option value="mom" data-en="Month-over-Month" data-ar="شهر بشهر">Month-over-Month</option>
-              <option value="jan" data-en="vs January" data-ar="مقارنة بيناير">vs January</option>
+              <option value="avg" data-en="vs Previous Avg" data-ar="مقارنة بمتوسط الشهور السابقة">vs Previous Avg</option>
               <option value="none" data-en="No Growth" data-ar="بدون نمو">No Growth</option>
             </select>
           </div>
@@ -558,7 +559,29 @@ function getBranchDisc(branchKey,from,to){
   var total=0;
   for(var i=from;i<=to;i++){
     var key=Math.round(sales[i]||0);
-    if(key>0&&STATS.__discBySales[key])total+=STATS.__discBySales[key][i]||0;
+    if(key>0&&STATS.__discBySales[key])total+=STATS.__discBySales[key].disc[i]||0;
+  }
+  return total;
+}
+function getBranchGross(branchKey,from,to){
+  if(!STATS.__discBySales||!D[branchKey])return 0;
+  var sales=D[branchKey]['\u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a']||[];
+  var total=0;
+  for(var i=from;i<=to;i++){
+    var key=Math.round(sales[i]||0);
+    if(key>0&&STATS.__discBySales[key])total+=STATS.__discBySales[key].gross[i]||0;
+    else total+=sales[i]||0;
+  }
+  return total;
+}
+function getBranchNet(branchKey,from,to){
+  if(!STATS.__discBySales||!D[branchKey])return 0;
+  var sales=D[branchKey]['\u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a']||[];
+  var total=0;
+  for(var i=from;i<=to;i++){
+    var key=Math.round(sales[i]||0);
+    if(key>0&&STATS.__discBySales[key])total+=STATS.__discBySales[key].net[i]||0;
+    else total+=sales[i]||0;
   }
   return total;
 }
@@ -576,17 +599,17 @@ function renderKPIs(){
   const isAll=br==='ALL';
 
   // From correct sources
-  const grossSales = isAll?getStats('gross',fr,to):sumBranch('المبيعات',fr,to);
+  const grossSales = isAll?getStats('gross',fr,to):getBranchGross(br,fr,to);
   const salesDisc = isAll?getStats('disc',fr,to):getBranchDisc(br,fr,to);
-  const netSales = isAll?getStats('net',fr,to):(sumBranch('المبيعات',fr,to)-salesDisc);
+  const netSales = isAll?getStats('net',fr,to):getBranchNet(br,fr,to);
   const cogs = isAll?getStats('cogs',fr,to):sumBranch('تكلفة البضاعة المباعة',fr,to);
   const grossProfit = isAll?getConsolidated('gross_profit',fr,to):sumBranch('مجمل الربح',fr,to);
   const cashDisc = sumBranch('خصم نقدى',fr,to);
   const otherIncome = isAll?getConsolidated('other_income',fr,to):sumBranch('ايرادات اخرى',fr,to);
   const totalExp = isAll?getConsolidated('expenses',fr,to):sumBranch('إجمالي المصروفات',fr,to);
   const netProfit = isAll?getConsolidated('net_profit',fr,to):sumBranch('صافي الربح / الخسارة',fr,to);
-  const dep=Object.values(EG['Depreciation & Amortization']||[]).reduce((s,it)=>s+sumAll(it,fr,to),0);
-  const inter=Object.values(EG['Interest']||[]).reduce((s,it)=>s+sumAll(it,fr,to),0);
+  const dep=(EG['Depreciation & Amortization']||[]).reduce((s,it)=>s+(isAll?sumAll(it,fr,to):sumBranch(it,fr,to)),0);
+  const inter=(EG['Interest']||[]).reduce((s,it)=>s+(isAll?sumAll(it,fr,to):sumBranch(it,fr,to)),0);
   const ebitda=netProfit+dep+inter;
   const gm=grossSales?grossProfit/grossSales:0;
   const nm=grossSales?netProfit/grossSales:0;
@@ -612,7 +635,7 @@ function renderKPIs(){
   ];
 
   document.getElementById('kpi-wrap').innerHTML=kpis.filter(k=>k.show).map(k=>`
-    <div class="kpi ${k.cls}" data-full="${fmt(k.val,true)}" title="${fmt(k.val,true)}">
+    <div class="kpi ${k.cls}" data-full="${fmt(k.val,true)}">
       <div class="kpi-lbl">${k.lbl}</div>
       <div class="kpi-val">${fmt(k.val)}</div>
       <div class="kpi-sub">${k.sub}</div>
@@ -716,7 +739,7 @@ function renderMonthlyChart(){
   let ds=[];
   if(mode==='sales_gp'){
     ds=[
-      {label:T_gs,data:S(M_gross),backgroundColor:'rgba(30,58,138,0.55)',borderColor:'#1e3a8a',borderWidth:0,borderRadius:5},
+      {label:T_ns,data:S(M_net),backgroundColor:'rgba(30,58,138,0.55)',borderColor:'#1e3a8a',borderWidth:0,borderRadius:5},
       {label:T_gp,data:S(M_gp),backgroundColor:'rgba(0,166,36,0.5)',borderColor:NG,borderWidth:0,borderRadius:5}
     ];
   }else if(mode==='sales_cogs'){
@@ -726,7 +749,7 @@ function renderMonthlyChart(){
     ];
   }else if(mode==='sales_net'){
     ds=[
-      {label:T_gs,data:S(M_gross),backgroundColor:'rgba(30,58,138,0.55)',borderColor:'#1e3a8a',borderWidth:0,borderRadius:5},
+      {label:T_ns,data:S(M_net),backgroundColor:'rgba(30,58,138,0.55)',borderColor:'#1e3a8a',borderWidth:0,borderRadius:5},
       {type:'line',label:T_np,data:S(M_np),borderColor:NA,pointBackgroundColor:NA,fill:false,tension:0.3,yAxisID:'y2',pointRadius:4}
     ];
   }else if(mode==='sales_exp'){
@@ -821,9 +844,9 @@ function renderPnL(){
   var allLbl=(typeof LANG!=='undefined'&&LANG==='ar')?'كل الفروع':'All Branches';
   document.getElementById('pnl-lbl').textContent=(br!=='ALL'?BM[br]:type!=='ALL'?type:allLbl)+' · '+(fr===to?MNSloc[fr]:MNSloc[fr]+' → '+MNSloc[to]);
 
-  const grossSales=isAll?getStats('gross',fr,to):sumBranch('المبيعات',fr,to);
-  const disc=isAll?getStats('disc',fr,to):0;
-  const netSales=isAll?getStats('net',fr,to):grossSales;
+  const grossSales=isAll?getStats('gross',fr,to):getBranchGross(br,fr,to);
+  const disc=isAll?getStats('disc',fr,to):getBranchDisc(br,fr,to);
+  const netSales=isAll?getStats('net',fr,to):getBranchNet(br,fr,to);
   const cogs=isAll?getStats('cogs',fr,to):sumBranch('تكلفة البضاعة المباعة',fr,to);
   const gp=isAll?getConsolidated('gross_profit',fr,to):sumBranch('مجمل الربح',fr,to);
   const cashDisc=sumBranch('خصم نقدى',fr,to);
@@ -831,8 +854,8 @@ function renderPnL(){
   const invSurplus=sumBranch('فائض جرد',fr,to);
   const totalExp=isAll?getConsolidated('expenses',fr,to):sumBranch('إجمالي المصروفات',fr,to);
   const net=isAll?getConsolidated('net_profit',fr,to):sumBranch('صافي الربح / الخسارة',fr,to);
-  const dep=EG['Depreciation & Amortization'].reduce((s,it)=>s+sumBranch(it,fr,to),0);
-  const inter=EG['Interest'].reduce((s,it)=>s+sumBranch(it,fr,to),0);
+  const dep=(EG['Depreciation & Amortization']||[]).reduce((s,it)=>s+(isAll?sumAll(it,fr,to):sumBranch(it,fr,to)),0);
+  const inter=(EG['Interest']||[]).reduce((s,it)=>s+(isAll?sumAll(it,fr,to):sumBranch(it,fr,to)),0);
   const ebitda=net+dep+inter;
   const ebit=net+inter;
   const tax=(sumBranch('الضرائب العامة',fr,to)||0)+(sumBranch('الضرائب العقارية',fr,to)||0);
@@ -1392,7 +1415,12 @@ function renderBStatement(){
     if(growth==='none')return '';
     var g=null;
     if(growth==='mom'){var cur=vals[lastM]||0,prev=lastM>0?(vals[lastM-1]||0):0;if(prev!==0)g=(cur-prev)/Math.abs(prev);}
-    else if(growth==='jan'){var cur2=vals[lastM]||0,jan=vals[0]||0;if(jan!==0)g=(cur2-jan)/Math.abs(jan);}
+    else if(growth==='avg'){
+      // compare the last month to the average of all preceding months that have data
+      var cur2=vals[lastM]||0,sum=0,cnt=0;
+      for(var pi=0;pi<lastM;pi++){ if(vals[pi]!==0&&vals[pi]!==null&&vals[pi]!==undefined){ sum+=vals[pi]; cnt++; } }
+      if(cnt>0){ var avg=sum/cnt; if(avg!==0)g=(cur2-avg)/Math.abs(avg); }
+    }
     var gtxt='\u2014',gcol='color:var(--text2)';
     if(g!==null){gtxt=(g>=0?'\u25b2 ':'\u25bc ')+(Math.abs(g)*100).toFixed(0)+'%';gcol=g>=0?'color:var(--green)':'color:var(--danger)';}
     return '<td style="text-align:center;font-size:11px;'+gcol+'">'+gtxt+'</td>';
@@ -1408,9 +1436,9 @@ function renderBStatement(){
     var side=L?'right':'left';
     var r='<tr style="'+(opt.bold?'font-weight:700;':'')+'border-bottom:1px solid var(--border);">';
     r+='<td style="text-align:'+side+';color:'+labelCol+';position:sticky;'+side+':0;'+labelBg+pad+(opt.bold?'font-weight:700;':'')+'">'+label+'</td>';
-    for(var i=0;i<=lastM;i++){var v=vals[i]||0;var col=v<0?'color:var(--danger)':'color:var(--text)';r+='<td style="text-align:center;'+col+'">'+(v===0?'\u2014':fmt(v))+'</td>';}
+    for(var i=0;i<=lastM;i++){var v=vals[i]||0;var col=v<0?'color:var(--danger)':'color:var(--text)';r+='<td style="text-align:center;'+col+'" title="'+(v===0?'':fmt(v,true))+'">'+(v===0?'\u2014':fmt(v))+'</td>';}
     var tcol=rt<0?'color:var(--danger)':'color:var(--green)';
-    r+='<td style="text-align:center;font-weight:700;background:var(--green-bg);'+tcol+'">'+fmt(rt)+'</td>';
+    r+='<td style="text-align:center;font-weight:700;background:var(--green-bg);'+tcol+'" title="'+fmt(rt,true)+'">'+fmt(rt)+'</td>';
     r+=growthCell(vals);
     r+='</tr>';
     return r;
@@ -1421,9 +1449,9 @@ function renderBStatement(){
     var side=L?'right':'left';
     var r='<tr style="font-weight:700;background:var(--green-bg);cursor:pointer;border-bottom:1px solid var(--border);" onclick="bsToggleCat(\''+key.replace(/'/g,"\\'")+'\')">';
     r+='<td style="text-align:'+side+';color:var(--green);position:sticky;'+side+':0;background:var(--green-bg);font-weight:700">'+arrow+' '+label+'</td>';
-    for(var i=0;i<=lastM;i++){var v=vals[i]||0;var col=v<0?'color:var(--danger)':'color:var(--text)';r+='<td style="text-align:center;'+col+'">'+(v===0?'\u2014':fmt(v))+'</td>';}
+    for(var i=0;i<=lastM;i++){var v=vals[i]||0;var col=v<0?'color:var(--danger)':'color:var(--text)';r+='<td style="text-align:center;'+col+'" title="'+(v===0?'':fmt(v,true))+'">'+(v===0?'\u2014':fmt(v))+'</td>';}
     var tcol=rt<0?'color:var(--danger)':'color:var(--green)';
-    r+='<td style="text-align:center;font-weight:700;background:rgba(0,166,36,0.18);'+tcol+'">'+fmt(rt)+'</td>';
+    r+='<td style="text-align:center;font-weight:700;background:rgba(0,166,36,0.18);'+tcol+'" title="'+fmt(rt,true)+'">'+fmt(rt)+'</td>';
     r+=growthCell(vals);
     r+='</tr>';
     return r;
@@ -1610,8 +1638,8 @@ function parseStats(ws){
   const BAD=['\u0627\u0644\u0641\u0631\u0639','','total','\u0627\u0644\u0627\u062c\u0645\u0627\u0644\u0649','\u0627\u0644\u0625\u062c\u0645\u0627\u0644\u064a','\u0627\u062c\u0645\u0627\u0644\u0649','\u0627\u0644\u0645\u062c\u0645\u0648\u0639'];
   function isBad(n){return BAD.indexOf(n.toLowerCase())>=0||n.indexOf('\u0627\u062d\u0635\u0627\u0626\u064a\u0627\u062a')>=0||n.indexOf('\u062a\u0642\u0631\u064a\u0631')>=0;}
   const S={gross:Array(12).fill(0),net:Array(12).fill(0),disc:Array(12).fill(0),cogs:Array(12).fill(0),cash:Array(12).fill(0),delivery:Array(12).fill(0),credit:Array(12).fill(0)};
-  // per-branch discount, keyed by rounded sales total (matches D), for each month
-  var discBySales={}; // { roundedSales: [12 months disc] }
+  // per-branch stats, keyed by rounded sales total (matches D), for each month
+  var discBySales={}; // { roundedSales: {disc:[12], gross:[12], net:[12]} }
   let cur=-1;
   rows.forEach(function(r){
     const mi=M.indexOf(normAr(r[7]));if(mi>=0){cur=mi;return;}
@@ -1619,11 +1647,13 @@ function parseStats(ws){
     if(name&&!isBad(name)&&typeof r[5]==='number'){
       S.net[cur]+=(+r[10]||0);S.disc[cur]+=(+r[9]||0);S.cogs[cur]+=(+r[6]||0);
       S.cash[cur]+=(+r[2]||0);S.delivery[cur]+=(+r[3]||0);S.credit[cur]+=(+r[4]||0);
-      // record this branch's discount keyed by its sales value (col 5)
+      // record this branch's figures keyed by its net sales value (col 5 == col 10)
       var salesKey=Math.round(+r[5]);
       if(salesKey>0){
-        if(!discBySales[salesKey])discBySales[salesKey]=Array(12).fill(0);
-        discBySales[salesKey][cur]=(+r[9]||0);
+        if(!discBySales[salesKey])discBySales[salesKey]={disc:Array(12).fill(0),gross:Array(12).fill(0),net:Array(12).fill(0)};
+        discBySales[salesKey].disc[cur]=(+r[9]||0);
+        discBySales[salesKey].net[cur]=(+r[10]||0);
+        discBySales[salesKey].gross[cur]=(+r[8]||0)||((+r[10]||0)+(+r[9]||0)); // col8 = gross before discount; fallback net+disc
       }
     }
   });
