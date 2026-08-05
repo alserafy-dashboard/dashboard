@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0052)file:///C:/Users/Abdo-Mohamed/Downloads/index_6.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Al-Serafy Pharmacies — Financial Dashboard 2026</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="./index_files/xlsx.full.min.js.download"></script>
+<script src="./index_files/chart.umd.js.download"></script>
+<link href="./index_files/css2" rel="stylesheet">
 <style>
 :root{
   --navy:#020353;--navy2:#0a0d6b;--navy3:#1a1d8a;--navy-light:#e8e8ff;
@@ -119,6 +119,7 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
 .kb-a{background:var(--warn-bg);color:var(--warn)}
 
 /* TOOLTIP */
+#gtip{position:fixed;display:none;background:#0f172a;color:#fff;padding:7px 12px;border-radius:8px;font-size:12.5px;font-weight:700;white-space:nowrap;z-index:99999;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,0.28);letter-spacing:0.2px;font-family:Inter,system-ui,sans-serif}
 .kpi[data-full]:hover::after{content:attr(data-full);position:absolute;top:6px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:3px 9px;border-radius:6px;font-size:10.5px;white-space:nowrap;z-index:1000;pointer-events:none;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.18)}
 
 /* PAGE */
@@ -205,26 +206,86 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
 .fc-val{font-size:16px;font-weight:800}
 
 /* MOBILE */
-@media(max-width:768px){
-  .sb{display:none}
-  .main{margin-left:0!important}
-  .kpi{min-width:130px}
-  .g2,.g3{grid-template-columns:1fr}
-  .topbar{height:auto;padding:10px 14px;gap:8px}
-  .tb-right{gap:6px}
-  .fsel{min-width:90px;font-size:11px}
+/* ── MOBILE / TABLET ─────────────────────────────────────── */
+html,body{max-width:100%;overflow-x:hidden}
+*{box-sizing:border-box}
+#sb-backdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:99}
+#sb-toggle{display:none;background:none;border:none;font-size:22px;line-height:1;cursor:pointer;color:var(--navy);padding:4px 8px;border-radius:8px}
+@media(max-width:1100px){.g2,.g3{grid-template-columns:1fr}}
+@media(max-width:900px){
+  /* sidebar becomes a slide-in drawer */
+  .sb{width:250px;transform:translateX(-100%);transition:transform 0.25s ease}
+  .sb.open{transform:translateX(0)}
+  body[dir="rtl"] .sb{left:auto;right:0;transform:translateX(100%)}
+  body[dir="rtl"] .sb.open{transform:translateX(0)}
+  .sb.open+#sb-backdrop,#sb-backdrop.show{display:block}
+  .layout{display:block}
+  .main{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100vw!important;min-width:0!important;flex:none!important}
+  .content{max-width:100%;min-width:0;overflow-x:hidden}
+  #sb-toggle{display:block}
+
+  /* top bar wraps into rows instead of squeezing */
+  .topbar{height:auto;padding:10px 12px;gap:8px;align-items:flex-start}
+  .tb-left{width:100%}
+  .tb-right{width:100%;gap:8px;flex-wrap:wrap;justify-content:flex-start}
+  .tb-title{font-size:15px}
+  .tb-sub{font-size:10px}
+  .fgrp{flex:1 1 45%;min-width:0}
+  .fsel{width:100%;min-width:0;font-size:12px;padding:7px 8px}
+
+  /* content breathing room */
+  .content{padding:12px!important}
+  .card{border-radius:12px;margin-bottom:12px}
+  .card-hdr{padding:12px 14px;gap:8px}
+  .card-body{padding:12px 14px}
+  .card-title{font-size:12.5px}
+
+  /* KPI cards: 2 per row, readable */
+  .kpi-wrap,#kpi-wrap{display:grid!important;grid-template-columns:repeat(2,1fr);gap:10px}
+  .kpi{min-width:0!important;width:auto!important}
+  .fsel{min-width:0!important;max-width:100%}
+  .tb-left{min-width:0}
+  .tb-title,.tb-sub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .kpi{min-width:0;padding:13px 14px;border-radius:12px}
+  .kpi-val{font-size:19px}
+  .kpi-lbl{font-size:9.5px}
+  .kpi-sub{font-size:9.5px}
+
+  /* tables scroll sideways instead of breaking the layout */
+  /* tables live inside .tw — let them scroll sideways, never stretch the card */
+  .tw,.ch-box{max-width:100%}
+  .tw{overflow-x:auto!important;-webkit-overflow-scrolling:touch;width:100%}
+  .tw table{min-width:max-content}
+  .card,.card-hdr,.card-body{max-width:100%;min-width:0;overflow:hidden}
+  .card-body{overflow:visible}
+  /* two KPI cards per row */
+  .kpi-wrap,#kpi-wrap{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .tw{font-size:11.5px}
+  .tw th{padding:9px 10px;font-size:10px}
+  .tw td{padding:8px 10px}
+
+  /* charts get a sensible height on a phone */
+  .ch-box{height:260px!important}
+}
+@media(max-width:560px){
+  .kpi-wrap,#kpi-wrap{grid-template-columns:1fr}
+  .fgrp{flex:1 1 100%}
+  .content{padding:10px!important}
+  .kpi-val{font-size:20px}
+  .ch-box{height:230px!important}
+  .login-box{padding:26px 20px;margin:0 14px}
 }
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
-<div id="login-screen">
+<div id="login-screen" style="display: none;">
   <div class="login-box">
     <img class="login-logo" src="data:image/jpeg;base64,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" alt="Al-Serafy">
     <h1 class="login-title">Al-Serafy Pharmacies</h1>
     <p class="login-sub">Financial Dashboard 2026 — Authorized Access Only</p>
-    <input class="login-input" type="password" id="pw-input" placeholder="••••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <input class="login-input" type="password" id="pw-input" placeholder="••••••••••" onkeydown="if(event.key===&#39;Enter&#39;)doLogin()">
     <button class="login-btn" onclick="doLogin()">Login</button>
     <div class="login-error" id="login-err">Incorrect password. Please try again.</div>
     <input type="file" id="xlsx-input" accept=".xlsx,.xls" style="display:none" onchange="loadFile(event)">
@@ -232,7 +293,7 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
 </div>
 
 <!-- APP -->
-<div id="app">
+<div id="app" style="display: block;">
   <div class="layout">
     <!-- SIDEBAR -->
     <div class="sb" id="sb">
@@ -242,25 +303,27 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
         <button class="sb-tog" onclick="toggleSB()">◀</button>
       </div>
       <nav class="sb-nav">
-        <div class="sb-sec">P&amp;L ANALYTICS</div>
-        <div class="sb-item active" onclick="goPage('overview',this)"><span class="sb-icon">📊</span><span class="sb-lbl" data-en="Overview" data-ar="الرئيسية">Overview</span></div>
-        <div class="sb-item" onclick="goPage('pnl',this)"><span class="sb-icon">📋</span><span class="sb-lbl" data-en="P&amp;L Statement" data-ar="قائمة الدخل">P&amp;L Statement</span></div>
-        <div class="sb-item" onclick="goPage('expenses',this)"><span class="sb-icon">💸</span><span class="sb-lbl" data-en="Expense Analysis" data-ar="تحليل المصروفات">Expense Analysis</span></div>
+        <div class="sb-sec" data-en="P&amp;L ANALYTICS" data-ar="تحليل الأرباح">P&amp;L ANALYTICS</div>
+        <div class="sb-item active" onclick="goPage(&#39;overview&#39;,this)"><span class="sb-icon">📊</span><span class="sb-lbl" data-en="Overview" data-ar="الرئيسية">Overview</span></div>
+        <div class="sb-item" onclick="goPage(&#39;pnl&#39;,this)"><span class="sb-icon">📋</span><span class="sb-lbl" data-en="P&amp;L Statement" data-ar="قائمة الدخل">P&amp;L Statement</span></div>
+        <div class="sb-item" onclick="goPage(&#39;expenses&#39;,this)"><span class="sb-icon">💸</span><span class="sb-lbl" data-en="Expense Analysis" data-ar="تحليل المصروفات">Expense Analysis</span></div>
         <div class="sb-sec" data-en="BRANCHES" data-ar="الفروع">BRANCHES</div>
-        <div class="sb-item" onclick="goPage('branches',this)"><span class="sb-icon">🏪</span><span class="sb-lbl" data-en="Branch Performance" data-ar="أداء الفروع">Branch Performance</span><span class="sb-badge" id="loss-badge">0</span></div>
-        <div class="sb-item" onclick="goPage('bstatement',this)"><span class="sb-icon">📑</span><span class="sb-lbl" data-en="Branch Statement" data-ar="كشف حساب الفرع">Branch Statement</span></div>
-        <div class="sb-item" onclick="goPage('heatmap',this)"><span class="sb-icon">🌡️</span><span class="sb-lbl" data-en="Performance Map" data-ar="خريطة الأداء">Performance Map</span></div>
-        <div class="sb-item" onclick="goPage('compare',this)"><span class="sb-icon">⚖️</span><span class="sb-lbl" data-en="Compare Branches" data-ar="مقارنة الفروع">Compare Branches</span></div>
+        <div class="sb-item" onclick="goPage(&#39;branches&#39;,this)"><span class="sb-icon">🏪</span><span class="sb-lbl" data-en="Branch Performance" data-ar="أداء الفروع">Branch Performance</span><span class="sb-badge" id="loss-badge" style="display: none;">0</span></div>
+        <div class="sb-item" onclick="goPage(&#39;bstatement&#39;,this)"><span class="sb-icon">📑</span><span class="sb-lbl" data-en="Branch Statement" data-ar="كشف حساب الفرع">Branch Statement</span></div>
+        <div class="sb-item" onclick="goPage(&#39;heatmap&#39;,this)"><span class="sb-icon">🌡️</span><span class="sb-lbl" data-en="Performance Map" data-ar="خريطة الأداء">Performance Map</span></div>
+        <div class="sb-item" onclick="goPage(&#39;compare&#39;,this)"><span class="sb-icon">⚖️</span><span class="sb-lbl" data-en="Compare Branches" data-ar="مقارنة الفروع">Compare Branches</span></div>
         <div class="sb-sec" data-en="INSIGHTS" data-ar="رؤى وتنبيهات">INSIGHTS</div>
-        <div class="sb-item" onclick="goPage('alerts',this)"><span class="sb-icon">🔔</span><span class="sb-lbl" data-en="Alerts" data-ar="التنبيهات">Alerts</span></div>
-        <div class="sb-item" onclick="goPage('forecast',this)"><span class="sb-icon">📈</span><span class="sb-lbl" data-en="Forecast 2026" data-ar="توقعات 2026">Forecast 2026</span></div>
+        <div class="sb-item" onclick="goPage(&#39;alerts&#39;,this)"><span class="sb-icon">🔔</span><span class="sb-lbl" data-en="Alerts" data-ar="التنبيهات">Alerts</span></div>
+        <div class="sb-item" onclick="goPage(&#39;forecast&#39;,this)"><span class="sb-icon">📈</span><span class="sb-lbl" data-en="Forecast 2026" data-ar="توقعات 2026">Forecast 2026</span></div>
       </nav>
     </div>
 
     <!-- MAIN -->
+    <div id="sb-backdrop" onclick="toggleSidebar()"></div>
     <div class="main" id="main">
       <div class="topbar">
         <div class="tb-left">
+          <button id="sb-toggle" onclick="toggleSidebar()" aria-label="Menu">☰</button>
           <div><div class="tb-title" id="pg-title">Overview</div><div class="tb-sub" id="file-lbl">P_L_2026.xlsx · 31 Branches</div></div>
         </div>
         <div class="tb-right">
@@ -273,12 +336,12 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
             </select>
           </div>
           <div class="fgrp"><div class="flbl" data-en="Branch" data-ar="الفرع">Branch</div>
-            <select class="fsel" id="f-branch" onchange="onFilter()"><option value="ALL" data-en="All Branches" data-ar="كل الفروع">All Branches</option></select>
+            <select class="fsel" id="f-branch" onchange="onFilter()"><option value="ALL" data-en="All Branches" data-ar="كل الفروع">All Branches</option><option value="HQ">HQ (Admin)</option><option value="Aguza">AGOUZA</option><option value="October">OCTOBER</option><option value="Batal">BATAL</option><option value="Nasr City">NASR CITY</option><option value="Sweedy">SWEDY</option><option value="NTRA">ntra</option><option value="Etisalat">ETISALAT</option><option value="Hazzem Hassan">7azim 7assan</option><option value="Sena3ia">SENA3IA</option><option value="Khargia">KHARGIA</option><option value="Tagmou3">TAGAMO3</option><option value="Maadi">Maadi</option><option value="Sand Beach">SAND BEACH</option><option value="Zaid">ZAID</option><option value="Alamya">AL ALAMYA</option><option value="Online">ON-LINE</option><option value="Orange">ORANGE</option><option value="Vod.Smart">VODAFONE SMART</option><option value="Vod.Zahraa">VODAFONE ZAHRAA</option><option value="Mo7awelat">MO7WLAT</option><option value="Electric">ELECTRIC</option><option value="FINE">FINE</option><option value="Egyplast">EgyPlast</option><option value="Etisalat.Katamya">etisalat katamya</option><option value="CFC">cairo festival</option><option value="North.Coast">North Coast</option><option value="Rehab">REHAB</option><option value="HSBC MAADI">Bank Maadi hsbc</option><option value="HSBC SMART">hsbc smart</option><option value="Vois">Vois</option></select>
           </div>
           <div class="fsep"></div>
           <div class="fgrp"><div class="flbl" data-en="From" data-ar="من">From</div>
             <select class="fsel" id="f-from" onchange="onFilter()">
-              <option value="0" selected data-en="January" data-ar="يناير">January</option><option value="1" data-en="February" data-ar="فبراير">February</option><option value="2" data-en="March" data-ar="مارس">March</option><option value="3" data-en="April" data-ar="ابريل">April</option>
+              <option value="0" selected="" data-en="January" data-ar="يناير">January</option><option value="1" data-en="February" data-ar="فبراير">February</option><option value="2" data-en="March" data-ar="مارس">March</option><option value="3" data-en="April" data-ar="ابريل">April</option>
               <option value="4" data-en="May" data-ar="مايو">May</option><option value="5" data-en="June" data-ar="يونيو">June</option><option value="6" data-en="July" data-ar="يوليو">July</option><option value="7" data-en="August" data-ar="اغسطس">August</option>
               <option value="8" data-en="September" data-ar="سبتمبر">September</option><option value="9" data-en="October" data-ar="اكتوبر">October</option><option value="10" data-en="November" data-ar="نوفمبر">November</option><option value="11" data-en="December" data-ar="ديسمبر">December</option>
             </select>
@@ -286,7 +349,7 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
           <div class="fgrp"><div class="flbl" data-en="To" data-ar="إلى">To</div>
             <select class="fsel" id="f-to" onchange="onFilter()">
               <option value="0" data-en="January" data-ar="يناير">January</option><option value="1" data-en="February" data-ar="فبراير">February</option><option value="2" data-en="March" data-ar="مارس">March</option><option value="3" data-en="April" data-ar="ابريل">April</option>
-              <option value="4" selected data-en="May" data-ar="مايو">May</option><option value="5" data-en="June" data-ar="يونيو">June</option><option value="6" data-en="July" data-ar="يوليو">July</option><option value="7" data-en="August" data-ar="اغسطس">August</option>
+              <option value="4" selected="" data-en="May" data-ar="مايو">May</option><option value="5" data-en="June" data-ar="يونيو">June</option><option value="6" data-en="July" data-ar="يوليو">July</option><option value="7" data-en="August" data-ar="اغسطس">August</option>
               <option value="8" data-en="September" data-ar="سبتمبر">September</option><option value="9" data-en="October" data-ar="اكتوبر">October</option><option value="10" data-en="November" data-ar="نوفمبر">November</option><option value="11" data-en="December" data-ar="ديسمبر">December</option>
             </select>
           </div>
@@ -307,7 +370,57 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
 
       <div class="content">
         <!-- KPIs always visible -->
-        <div class="kpi-wrap" id="kpi-wrap"></div>
+        <div class="kpi-wrap" id="kpi-wrap">
+    <div class="kpi kpi-blue" data-full="0 EGP">
+      <div class="kpi-lbl">Gross Sales</div>
+      <div class="kpi-val">0</div>
+      <div class="kpi-sub">EGP</div>
+    </div>
+    <div class="kpi kpi-warn" data-full="0 EGP">
+      <div class="kpi-lbl">Sales Discount</div>
+      <div class="kpi-val">0</div>
+      <div class="kpi-sub">EGP</div>
+    </div>
+    <div class="kpi kpi-teal" data-full="0 EGP">
+      <div class="kpi-lbl">Net Sales</div>
+      <div class="kpi-val">0</div>
+      <div class="kpi-sub">EGP</div>
+    </div>
+    <div class="kpi kpi-warn" data-full="0 EGP">
+      <div class="kpi-lbl">COGS</div>
+      <div class="kpi-val">0</div>
+      <div class="kpi-sub">📊 — of Net Sales</div>
+    </div>
+    <div class="kpi kpi-green" data-full="0 EGP">
+      <div class="kpi-lbl">Gross Profit</div>
+      <div class="kpi-val">0</div>
+      <div class="kpi-sub">Margin —</div>
+    </div>
+    <div class="kpi kpi-teal" data-full="0 EGP">
+      <div class="kpi-lbl">Earned discount on the purchase</div>
+      <div class="kpi-val">0</div>
+      <div class="kpi-sub">EGP</div>
+    </div>
+    <div class="kpi kpi-teal" data-full="0 EGP">
+      <div class="kpi-lbl">Other Income</div>
+      <div class="kpi-val">0</div>
+      <div class="kpi-sub">EGP</div>
+    </div>
+    <div class="kpi kpi-warn" data-full="0 EGP">
+      <div class="kpi-lbl">Total Expenses</div>
+      <div class="kpi-val">0</div>
+      <div class="kpi-sub">📊 — of Net Sales</div>
+    </div>
+    <div class="kpi kpi-green" data-full="0 EGP">
+      <div class="kpi-lbl">EBITDA</div>
+      <div class="kpi-val">0</div>
+      <div class="kpi-sub">EGP</div>
+    </div>
+    <div class="kpi kpi-green" data-full="0 EGP">
+      <div class="kpi-lbl">Net Profit / Loss</div>
+      <div class="kpi-val">0</div>
+      <div class="kpi-sub">Margin —</div>
+    </div></div>
 
         <!-- OVERVIEW -->
         <div id="page-overview" class="page active">
@@ -325,7 +438,7 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
                   </select>
                 </div>
               </div>
-              <div class="tw" style="max-height:340px;overflow-y:auto"><table id="br-rank-tbl"></table></div>
+              <div class="tw" style="max-height:340px;overflow-y:auto"><table id="br-rank-tbl"><thead><tr><th>#</th><th>Branch</th><th>Net Sales</th><th>COGS%</th><th>Gross Profit</th><th>Net Profit</th><th>Margin</th></tr></thead><tbody></tbody></table></div>
             </div>
             <div class="card">
               <div class="card-hdr">
@@ -340,17 +453,17 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
                   <option value="cogs_margin" data-en="COGS% vs Gross Margin%" data-ar="نسبة التكلفة % مقابل هامش الربح %">COGS% vs Gross Margin%</option>
                 </select>
               </div>
-              <div class="card-body"><div class="ch-box" style="height:300px"><canvas id="ch-monthly"></canvas></div></div>
+              <div class="card-body"><div class="ch-box" style="height:300px"><canvas id="ch-monthly" width="773" height="300" style="display: block; box-sizing: border-box; height: 300px; width: 773px;"></canvas></div></div>
             </div>
           </div>
           <div class="g2">
             <div class="card">
               <div class="card-hdr"><div class="card-title" data-en="Sales Mix" data-ar="توزيع المبيعات">Sales Mix</div><select id="mix-shape" onchange="renderMixChart()" class="fsel" style="min-width:120px"><option value="doughnut" data-en="Doughnut" data-ar="دائري مفرّغ">Doughnut</option><option value="pie" data-en="Pie" data-ar="دائري كامل">Pie</option><option value="bar" data-en="Bars" data-ar="أعمدة">Bars</option><option value="hbar" data-en="Horizontal" data-ar="أعمدة أفقية">Horizontal</option></select></div>
-              <div class="card-body"><div class="ch-box" style="height:260px"><canvas id="ch-mix"></canvas></div></div>
+              <div class="card-body"><div class="ch-box" style="height:260px"><canvas id="ch-mix" width="773" height="260" style="display: block; box-sizing: border-box; height: 260px; width: 773px;"></canvas></div></div>
             </div>
             <div class="card">
               <div class="card-hdr"><div class="card-title" data-en="Expense Breakdown" data-ar="توزيع المصروفات">Expense Breakdown</div><select id="exp-shape" onchange="renderExpChart()" class="fsel" style="min-width:120px"><option value="doughnut" data-en="Doughnut" data-ar="دائري مفرّغ">Doughnut</option><option value="pie" data-en="Pie" data-ar="دائري كامل">Pie</option><option value="bar" data-en="Bars" data-ar="أعمدة">Bars</option><option value="hbar" data-en="Horizontal" data-ar="أعمدة أفقية">Horizontal</option></select></div>
-              <div class="card-body"><div class="ch-box" style="height:260px"><canvas id="ch-exp"></canvas></div></div>
+              <div class="card-body"><div class="ch-box" style="height:260px"><canvas id="ch-exp" width="773" height="260" style="display: block; box-sizing: border-box; height: 260px; width: 773px;"></canvas></div></div>
             </div>
           </div>
         </div>
@@ -358,8 +471,28 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
         <!-- P&L -->
         <div id="page-pnl" class="page">
           <div class="card">
-            <div class="card-hdr"><div class="card-title" data-en="P&amp;L Statement" data-ar="قائمة الدخل">P&amp;L Statement</div><div class="card-title" id="pnl-lbl" style="font-weight:400;color:var(--text2)"></div></div>
-            <div class="tw" style="max-height:calc(100vh - 200px);overflow:auto"><table id="pnl-tbl"></table></div>
+            <div class="card-hdr"><div class="card-title" data-en="P&amp;L Statement" data-ar="قائمة الدخل">P&amp;L Statement</div><div class="card-title" id="pnl-lbl" style="font-weight:400;color:var(--text2)">All Branches · January → May</div></div>
+            <div class="tw" style="max-height:calc(100vh - 200px);overflow:auto"><table id="pnl-tbl"><thead><tr><th style="min-width:220px">Item</th><th>Amount (EGP)</th><th>% of Gross Sales</th></tr></thead><tbody><tr class="sec-row"><td colspan="3">REVENUE</td></tr><tr>
+      <td style="padding-left:14px;font-weight:700" title="0 EGP">Gross Sales Revenue</td>
+      <td class="" title="0 EGP">0</td>
+      <td><span class="pp pp-g" title="0.00%">—</span></td>
+    </tr><tr>
+      <td style="padding-left:28px;font-weight:400" title="0 EGP">  Cash Sales</td>
+      <td class="" title="0 EGP">0</td>
+      <td><span class="pp pp-g" title="0.00%">—</span></td>
+    </tr><tr>
+      <td style="padding-left:28px;font-weight:400" title="0 EGP">  Delivery Sales</td>
+      <td class="" title="0 EGP">0</td>
+      <td><span class="pp pp-g" title="0.00%">—</span></td>
+    </tr><tr>
+      <td style="padding-left:28px;font-weight:400" title="0 EGP">  Credit Sales</td>
+      <td class="" title="0 EGP">0</td>
+      <td><span class="pp pp-g" title="0.00%">—</span></td>
+    </tr><tr>
+      <td style="padding-left:14px;font-weight:400" title="0 EGP">(-) Cost of Goods Sold (COGS)</td>
+      <td class="" title="0 EGP">0</td>
+      <td><span class="pp pp-g" title="0.00%">—</span></td>
+    </tr><tr class="sub-row"><td style="font-weight:700">Gross Profit</td><td class="pos" title="0 EGP">0</td><td><span class="pp pp-g">—</span></td></tr><tr class="sec-row"><td colspan="3">OPERATING EXPENSES</td></tr><tr class="tot-row"><td>Total Operating Cost</td><td title="0 EGP">0</td><td>—</td></tr><tr class="ebitda-row"><td>EBITDA</td><td title="0 EGP">0</td><td>—</td></tr><tr class="ebitda-row" style="background:#0e7490!important"><td>EBIT</td><td title="0 EGP">0</td><td>—</td></tr><tr class="net-row"><td>Net Profit / Loss</td><td title="0 EGP">0</td><td>—</td></tr></tbody></table></div>
           </div>
         </div>
 
@@ -377,12 +510,21 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
         <!-- EXPENSES -->
         <div id="page-expenses" class="page">
           <div class="g2">
-            <div class="card"><div class="card-hdr"><div class="card-title" data-en="Top Expense Items" data-ar="أعلى بنود المصروفات">Top Expense Items</div></div><div class="card-body"><div class="ch-box" style="height:320px"><canvas id="ch-exp-bar"></canvas></div></div></div>
-            <div class="card"><div class="card-hdr"><div class="card-title" data-en="App Discount Analysis ⚠️" data-ar="تحليل خصم الأبليكيشن ⚠️">App Discount Analysis ⚠️</div></div><div class="card-body" id="app-box"></div></div>
+            <div class="card"><div class="card-hdr"><div class="card-title" data-en="Top Expense Items" data-ar="أعلى بنود المصروفات">Top Expense Items</div></div><div class="card-body"><div class="ch-box" style="height:320px"><canvas id="ch-exp-bar" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas></div></div></div>
+            <div class="card"><div class="card-hdr"><div class="card-title" data-en="App Discount Analysis ⚠️" data-ar="تحليل خصم الأبليكيشن ⚠️">App Discount Analysis ⚠️</div></div><div class="card-body" id="app-box"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+    <div style="background:var(--system-bg);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px;text-transform:uppercase">Total App Discount</div>
+      <div style="font-size:18px;font-weight:800;color:var(--warn)" title="0 EGP">0</div>
+    </div>
+    <div style="background:var(--system-bg);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px;text-transform:uppercase">% of Expenses</div>
+      <div style="font-size:18px;font-weight:800;color:var(--warn)">—</div>
+    </div>
+  </div></div></div>
           </div>
           <div class="card">
             <div class="card-hdr"><div class="card-title" data-en="Expense Detail by Sub-Category" data-ar="تفاصيل المصروفات حسب الفئة">Expense Detail by Sub-Category</div></div>
-            <div class="tw" style="max-height:500px;overflow:auto"><table id="exp-tbl"></table></div>
+            <div class="tw" style="max-height:500px;overflow:auto"><table id="exp-tbl"><thead><tr><th>Sub-Category / Item</th><th>Amount</th><th>% of Net Sales</th><th>% of Expenses</th></tr></thead><tbody></tbody></table></div>
           </div>
         </div>
 
@@ -400,8 +542,8 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
                 </select>
               </div>
             </div>
-            <div id="br-summary"></div>
-            <div class="tw" style="max-height:calc(100vh - 220px);overflow:auto"><table id="br-tbl"></table></div>
+            <div id="br-summary"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:16px"><div style="background:var(--green-bg);border:1px solid #bbf7d0;border-radius:10px;padding:13px"><div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;margin-bottom:8px">🏆 Top Branches by Net Profit</div></div><div style="background:var(--danger-bg);border:1px solid #fecaca;border-radius:10px;padding:13px"><div style="font-size:11px;font-weight:700;color:var(--danger);text-transform:uppercase;margin-bottom:8px">⚠️ Lowest Net Profit</div></div><div style="background:var(--warn-bg);border:1px solid #fde68a;border-radius:10px;padding:13px"><div style="font-size:11px;font-weight:700;color:var(--warn);text-transform:uppercase;margin-bottom:8px">🔔 Alerts (Jan – May)</div><div style="font-size:12px;color:var(--text2);line-height:1.9"><div>Losing branches: <b style="color:var(--danger)">0</b></div><div>Very low margin (&lt;2%): <b style="color:var(--warn)">0</b></div><div>High expense ratio (&gt;25%): <b style="color:var(--warn)">0</b></div></div></div></div></div>
+            <div class="tw" style="max-height:calc(100vh - 220px);overflow:auto"><table id="br-tbl"><thead><tr><th>#</th><th>Branch</th><th>Type</th><th>Net Sales</th><th>COGS</th><th>COGS%</th><th>Gross Profit</th><th>Margin%</th><th>Net Profit</th><th>Net Margin%</th><th>Expense Ratio</th><th>App Discount</th></tr></thead><tbody></tbody></table></div>
           </div>
         </div>
 
@@ -416,7 +558,7 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
                 <span><span style="width:10px;height:10px;background:#fee2e2;display:inline-block;border-radius:2px;margin-right:3px"></span>Loss</span>
               </div>
             </div>
-            <div class="tw"><table id="hm-tbl" style="border-collapse:collapse;font-size:12px;width:100%"></table></div>
+            <div class="tw"><table id="hm-tbl" style="border-collapse:collapse;font-size:12px;width:100%"><thead><tr><th style="position:sticky;left:0;background:var(--system-bg);z-index:11;min-width:140px;padding:8px 12px">Branch</th><th style="padding:7px;text-align:center">Jan</th><th style="padding:7px;text-align:center">Feb</th><th style="padding:7px;text-align:center">Mar</th><th style="padding:7px;text-align:center">Apr</th><th style="padding:7px;text-align:center">May</th><th style="padding:7px;text-align:center">Jun</th><th style="padding:7px;text-align:center">Jul</th><th style="padding:7px;text-align:center">Aug</th><th style="padding:7px;text-align:center">Sep</th><th style="padding:7px;text-align:center">Oct</th><th style="padding:7px;text-align:center">Nov</th><th style="padding:7px;text-align:center">Dec</th><th style="padding:7px;text-align:center">Total</th></tr></thead><tbody></tbody></table></div>
           </div>
         </div>
 
@@ -427,21 +569,61 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
               <div class="cmp-title" data-en="🔵 Side A" data-ar="🔵 الطرف أ">🔵 Side A</div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
                 <select id="ca-type" onchange="renderCompare()" class="fsel" style="min-width:110px"><option value="ALL" data-en="All Types" data-ar="كل الأنواع">All Types</option><option value="Branch" data-en="Branch" data-ar="فرع">Branch</option><option value="POS - Corporate" data-en="POS - Corporate" data-ar="نقطة بيع - شركات">POS - Corporate</option><option value="HQ" data-en="HQ" data-ar="الإدارة">HQ</option></select>
-                <select id="ca-br" onchange="renderCompare()" class="fsel" style="min-width:120px"></select>
-                <select id="ca-from" onchange="renderCompare()" class="fsel" style="min-width:85px"><option value="0" data-en="Jan" data-ar="يناير">Jan</option><option value="1" data-en="Feb" data-ar="فبراير">Feb</option><option value="2" data-en="Mar" data-ar="مارس">Mar</option><option value="3" selected data-en="Apr" data-ar="ابريل">Apr</option><option value="4" data-en="May" data-ar="مايو">May</option><option value="5" data-en="Jun" data-ar="يونيو">Jun</option><option value="6" data-en="Jul" data-ar="يوليو">Jul</option><option value="7" data-en="Aug" data-ar="اغسطس">Aug</option><option value="8" data-en="Sep" data-ar="سبتمبر">Sep</option><option value="9" data-en="Oct" data-ar="اكتوبر">Oct</option><option value="10" data-en="Nov" data-ar="نوفمبر">Nov</option><option value="11" data-en="Dec" data-ar="ديسمبر">Dec</option></select>
-                <select id="ca-to" onchange="renderCompare()" class="fsel" style="min-width:85px"><option value="0" data-en="Jan" data-ar="يناير">Jan</option><option value="1" data-en="Feb" data-ar="فبراير">Feb</option><option value="2" data-en="Mar" data-ar="مارس">Mar</option><option value="3" selected data-en="Apr" data-ar="ابريل">Apr</option><option value="4" data-en="May" data-ar="مايو">May</option><option value="5" data-en="Jun" data-ar="يونيو">Jun</option><option value="6" data-en="Jul" data-ar="يوليو">Jul</option><option value="7" data-en="Aug" data-ar="اغسطس">Aug</option><option value="8" data-en="Sep" data-ar="سبتمبر">Sep</option><option value="9" data-en="Oct" data-ar="اكتوبر">Oct</option><option value="10" data-en="Nov" data-ar="نوفمبر">Nov</option><option value="11" data-en="Dec" data-ar="ديسمبر">Dec</option></select>
+                <select id="ca-br" onchange="renderCompare()" class="fsel" style="min-width:120px"><option value="ALL" data-en="All Branches" data-ar="كل الفروع">All Branches</option><option value="HQ">HQ (Admin)</option><option value="Aguza">AGOUZA</option><option value="October">OCTOBER</option><option value="Batal">BATAL</option><option value="Nasr City">NASR CITY</option><option value="Sweedy">SWEDY</option><option value="NTRA">ntra</option><option value="Etisalat">ETISALAT</option><option value="Hazzem Hassan">7azim 7assan</option><option value="Sena3ia">SENA3IA</option><option value="Khargia">KHARGIA</option><option value="Tagmou3">TAGAMO3</option><option value="Maadi">Maadi</option><option value="Sand Beach">SAND BEACH</option><option value="Zaid">ZAID</option><option value="Alamya">AL ALAMYA</option><option value="Online">ON-LINE</option><option value="Orange">ORANGE</option><option value="Vod.Smart">VODAFONE SMART</option><option value="Vod.Zahraa">VODAFONE ZAHRAA</option><option value="Mo7awelat">MO7WLAT</option><option value="Electric">ELECTRIC</option><option value="FINE">FINE</option><option value="Egyplast">EgyPlast</option><option value="Etisalat.Katamya">etisalat katamya</option><option value="CFC">cairo festival</option><option value="North.Coast">North Coast</option><option value="Rehab">REHAB</option><option value="HSBC MAADI">Bank Maadi hsbc</option><option value="HSBC SMART">hsbc smart</option><option value="Vois">Vois</option></select>
+                <select id="ca-from" onchange="renderCompare()" class="fsel" style="min-width:85px"><option value="0" data-en="Jan" data-ar="يناير">Jan</option><option value="1" data-en="Feb" data-ar="فبراير">Feb</option><option value="2" data-en="Mar" data-ar="مارس">Mar</option><option value="3" selected="" data-en="Apr" data-ar="ابريل">Apr</option><option value="4" data-en="May" data-ar="مايو">May</option><option value="5" data-en="Jun" data-ar="يونيو">Jun</option><option value="6" data-en="Jul" data-ar="يوليو">Jul</option><option value="7" data-en="Aug" data-ar="اغسطس">Aug</option><option value="8" data-en="Sep" data-ar="سبتمبر">Sep</option><option value="9" data-en="Oct" data-ar="اكتوبر">Oct</option><option value="10" data-en="Nov" data-ar="نوفمبر">Nov</option><option value="11" data-en="Dec" data-ar="ديسمبر">Dec</option></select>
+                <select id="ca-to" onchange="renderCompare()" class="fsel" style="min-width:85px"><option value="0" data-en="Jan" data-ar="يناير">Jan</option><option value="1" data-en="Feb" data-ar="فبراير">Feb</option><option value="2" data-en="Mar" data-ar="مارس">Mar</option><option value="3" selected="" data-en="Apr" data-ar="ابريل">Apr</option><option value="4" data-en="May" data-ar="مايو">May</option><option value="5" data-en="Jun" data-ar="يونيو">Jun</option><option value="6" data-en="Jul" data-ar="يوليو">Jul</option><option value="7" data-en="Aug" data-ar="اغسطس">Aug</option><option value="8" data-en="Sep" data-ar="سبتمبر">Sep</option><option value="9" data-en="Oct" data-ar="اكتوبر">Oct</option><option value="10" data-en="Nov" data-ar="نوفمبر">Nov</option><option value="11" data-en="Dec" data-ar="ديسمبر">Dec</option></select>
               </div>
-              <div id="ca-panel"></div>
+              <div id="ca-panel">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        
+          <div style="background:var(--system-bg);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;margin-bottom:3px">Gross Sales</div>
+            <div style="font-size:15px;font-weight:800;color:var(--navy)" title="0 EGP">0</div>
+          </div>
+          <div style="background:var(--system-bg);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;margin-bottom:3px">Gross Profit</div>
+            <div style="font-size:15px;font-weight:800;color:var(--green)" title="0 EGP">0</div>
+          </div>
+          <div style="background:var(--system-bg);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;margin-bottom:3px">Expenses</div>
+            <div style="font-size:15px;font-weight:800;color:var(--warn)" title="0 EGP">0</div>
+          </div>
+          <div style="background:var(--system-bg);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;margin-bottom:3px">Net Profit</div>
+            <div style="font-size:15px;font-weight:800;color:var(--green)" title="0 EGP">0</div>
+          </div>
+      </div>
+      <div style="margin-top:6px;font-size:11px;color:var(--text2);text-align:center">All · January</div></div>
             </div>
             <div class="cmp-panel">
               <div class="cmp-title" data-en="🟠 Side B" data-ar="🟠 الطرف ب">🟠 Side B</div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
                 <select id="cb-type" onchange="renderCompare()" class="fsel" style="min-width:110px"><option value="ALL" data-en="All Types" data-ar="كل الأنواع">All Types</option><option value="Branch" data-en="Branch" data-ar="فرع">Branch</option><option value="POS - Corporate" data-en="POS - Corporate" data-ar="نقطة بيع - شركات">POS - Corporate</option><option value="HQ" data-en="HQ" data-ar="الإدارة">HQ</option></select>
-                <select id="cb-br" onchange="renderCompare()" class="fsel" style="min-width:120px"></select>
-                <select id="cb-from" onchange="renderCompare()" class="fsel" style="min-width:85px"><option value="0" data-en="Jan" data-ar="يناير">Jan</option><option value="1" data-en="Feb" data-ar="فبراير">Feb</option><option value="2" data-en="Mar" data-ar="مارس">Mar</option><option value="3" selected data-en="Apr" data-ar="ابريل">Apr</option><option value="4" data-en="May" data-ar="مايو">May</option><option value="5" data-en="Jun" data-ar="يونيو">Jun</option><option value="6" data-en="Jul" data-ar="يوليو">Jul</option><option value="7" data-en="Aug" data-ar="اغسطس">Aug</option><option value="8" data-en="Sep" data-ar="سبتمبر">Sep</option><option value="9" data-en="Oct" data-ar="اكتوبر">Oct</option><option value="10" data-en="Nov" data-ar="نوفمبر">Nov</option><option value="11" data-en="Dec" data-ar="ديسمبر">Dec</option></select>
-                <select id="cb-to" onchange="renderCompare()" class="fsel" style="min-width:85px"><option value="0" data-en="Jan" data-ar="يناير">Jan</option><option value="1" data-en="Feb" data-ar="فبراير">Feb</option><option value="2" data-en="Mar" data-ar="مارس">Mar</option><option value="3" selected data-en="Apr" data-ar="ابريل">Apr</option><option value="4" data-en="May" data-ar="مايو">May</option><option value="5" data-en="Jun" data-ar="يونيو">Jun</option><option value="6" data-en="Jul" data-ar="يوليو">Jul</option><option value="7" data-en="Aug" data-ar="اغسطس">Aug</option><option value="8" data-en="Sep" data-ar="سبتمبر">Sep</option><option value="9" data-en="Oct" data-ar="اكتوبر">Oct</option><option value="10" data-en="Nov" data-ar="نوفمبر">Nov</option><option value="11" data-en="Dec" data-ar="ديسمبر">Dec</option></select>
+                <select id="cb-br" onchange="renderCompare()" class="fsel" style="min-width:120px"><option value="ALL" data-en="All Branches" data-ar="كل الفروع">All Branches</option><option value="HQ">HQ (Admin)</option><option value="Aguza">AGOUZA</option><option value="October">OCTOBER</option><option value="Batal">BATAL</option><option value="Nasr City">NASR CITY</option><option value="Sweedy">SWEDY</option><option value="NTRA">ntra</option><option value="Etisalat">ETISALAT</option><option value="Hazzem Hassan">7azim 7assan</option><option value="Sena3ia">SENA3IA</option><option value="Khargia">KHARGIA</option><option value="Tagmou3">TAGAMO3</option><option value="Maadi">Maadi</option><option value="Sand Beach">SAND BEACH</option><option value="Zaid">ZAID</option><option value="Alamya">AL ALAMYA</option><option value="Online">ON-LINE</option><option value="Orange">ORANGE</option><option value="Vod.Smart">VODAFONE SMART</option><option value="Vod.Zahraa">VODAFONE ZAHRAA</option><option value="Mo7awelat">MO7WLAT</option><option value="Electric">ELECTRIC</option><option value="FINE">FINE</option><option value="Egyplast">EgyPlast</option><option value="Etisalat.Katamya">etisalat katamya</option><option value="CFC">cairo festival</option><option value="North.Coast">North Coast</option><option value="Rehab">REHAB</option><option value="HSBC MAADI">Bank Maadi hsbc</option><option value="HSBC SMART">hsbc smart</option><option value="Vois">Vois</option></select>
+                <select id="cb-from" onchange="renderCompare()" class="fsel" style="min-width:85px"><option value="0" data-en="Jan" data-ar="يناير">Jan</option><option value="1" data-en="Feb" data-ar="فبراير">Feb</option><option value="2" data-en="Mar" data-ar="مارس">Mar</option><option value="3" selected="" data-en="Apr" data-ar="ابريل">Apr</option><option value="4" data-en="May" data-ar="مايو">May</option><option value="5" data-en="Jun" data-ar="يونيو">Jun</option><option value="6" data-en="Jul" data-ar="يوليو">Jul</option><option value="7" data-en="Aug" data-ar="اغسطس">Aug</option><option value="8" data-en="Sep" data-ar="سبتمبر">Sep</option><option value="9" data-en="Oct" data-ar="اكتوبر">Oct</option><option value="10" data-en="Nov" data-ar="نوفمبر">Nov</option><option value="11" data-en="Dec" data-ar="ديسمبر">Dec</option></select>
+                <select id="cb-to" onchange="renderCompare()" class="fsel" style="min-width:85px"><option value="0" data-en="Jan" data-ar="يناير">Jan</option><option value="1" data-en="Feb" data-ar="فبراير">Feb</option><option value="2" data-en="Mar" data-ar="مارس">Mar</option><option value="3" selected="" data-en="Apr" data-ar="ابريل">Apr</option><option value="4" data-en="May" data-ar="مايو">May</option><option value="5" data-en="Jun" data-ar="يونيو">Jun</option><option value="6" data-en="Jul" data-ar="يوليو">Jul</option><option value="7" data-en="Aug" data-ar="اغسطس">Aug</option><option value="8" data-en="Sep" data-ar="سبتمبر">Sep</option><option value="9" data-en="Oct" data-ar="اكتوبر">Oct</option><option value="10" data-en="Nov" data-ar="نوفمبر">Nov</option><option value="11" data-en="Dec" data-ar="ديسمبر">Dec</option></select>
               </div>
-              <div id="cb-panel"></div>
+              <div id="cb-panel">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        
+          <div style="background:var(--system-bg);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;margin-bottom:3px">Gross Sales</div>
+            <div style="font-size:15px;font-weight:800;color:var(--navy)" title="0 EGP">0</div>
+          </div>
+          <div style="background:var(--system-bg);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;margin-bottom:3px">Gross Profit</div>
+            <div style="font-size:15px;font-weight:800;color:var(--green)" title="0 EGP">0</div>
+          </div>
+          <div style="background:var(--system-bg);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;margin-bottom:3px">Expenses</div>
+            <div style="font-size:15px;font-weight:800;color:var(--warn)" title="0 EGP">0</div>
+          </div>
+          <div style="background:var(--system-bg);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;margin-bottom:3px">Net Profit</div>
+            <div style="font-size:15px;font-weight:800;color:var(--green)" title="0 EGP">0</div>
+          </div>
+      </div>
+      <div style="margin-top:6px;font-size:11px;color:var(--text2);text-align:center">All · January</div></div>
             </div>
           </div>
           <div class="card">
@@ -451,19 +633,48 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
                 <input type="checkbox" id="sig-only" onchange="renderCompare()" style="cursor:pointer"> <span data-en="Significant differences only" data-ar="الفروق الجوهرية فقط">Significant differences only</span>
               </label>
             </div>
-            <div class="tw" style="max-height:500px;overflow:auto"><table id="cmp-tbl"></table></div>
+            <div class="tw" style="max-height:500px;overflow:auto"><table id="cmp-tbl"><thead><tr><th>Metric</th><th>🔵 All</th><th>🟠 All</th><th>Difference</th><th>Variance %</th></tr></thead><tbody><tr style="font-weight:700;background:rgba(2,3,83,0.07)"><td colspan="5">Expenses</td></tr><tr style="font-weight:700;background:rgba(2,3,83,0.04)"><td style="font-weight:700;">Total Expenses</td><td title="0 EGP"><div style="font-weight:600">0</div><div style="font-size:10px;color:var(--text3)">—</div></td><td title="0 EGP"><div style="font-weight:600">0</div><div style="font-size:10px;color:var(--text3)">—</div></td><td class="mut" style="font-weight:700">—</td><td class="mut">—</td></tr><tr style="font-weight:700;background:rgba(2,3,83,0.04)"><td style="font-weight:700;">Net Profit / Loss</td><td title="0 EGP"><div style="font-weight:600">0</div><div style="font-size:10px;color:var(--text3)">—</div></td><td title="0 EGP"><div style="font-weight:600">0</div><div style="font-size:10px;color:var(--text3)">—</div></td><td class="mut" style="font-weight:700">—</td><td class="mut">—</td></tr></tbody></table></div>
           </div>
         </div>
 
         <!-- ALERTS -->
-        <div id="page-alerts" class="page"><div id="al-wrap"></div></div>
+        <div id="page-alerts" class="page"><div id="al-wrap"><div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <div style="background:var(--danger-bg);border:1px solid #fecaca;border-radius:8px;padding:9px 14px;font-size:12px;color:var(--danger);font-weight:700">⚠️ Critical: 0</div>
+      <div style="background:var(--warn-bg);border:1px solid #fde68a;border-radius:8px;padding:9px 14px;font-size:12px;color:var(--warn);font-weight:700">! Warning: 0</div>
+      <div style="background:var(--green-bg);border:1px solid #bbf7d0;border-radius:8px;padding:9px 14px;font-size:12px;color:var(--green);font-weight:700">✓ Strong: 0</div>
+    </div>
+    <div class="al-grid"></div></div></div>
 
         <!-- FORECAST -->
         <div id="page-forecast" class="page">
-          <div class="g3" style="margin-bottom:14px" id="fc-kpis"></div>
+          <div class="g3" style="margin-bottom:14px" id="fc-kpis"><div class="kpi kpi-blue"><div class="kpi-lbl">Forecast Sales 2026</div><div class="kpi-val" title="—">—</div><div class="kpi-sub">EGP</div></div><div class="kpi kpi-green"><div class="kpi-lbl">Forecast Net Profit 2026</div><div class="kpi-val" title="—">—</div><div class="kpi-sub">EGP</div></div><div class="kpi kpi-green"><div class="kpi-lbl">Avg Monthly Net Profit</div><div class="kpi-val" title="0 EGP">0</div><div class="kpi-sub">EGP</div></div></div>
           <div class="g2">
-            <div class="card"><div class="card-hdr"><div class="card-title" data-en="Forecast — Net Profit Monthly" data-ar="التوقعات — صافي الربح الشهري">Forecast — Net Profit Monthly</div></div><div class="card-body"><div class="ch-box" style="height:280px"><canvas id="ch-fc"></canvas></div></div></div>
-            <div class="card"><div class="card-hdr"><div class="card-title" data-en="What-If Scenarios" data-ar="سيناريوهات افتراضية">What-If Scenarios</div></div><div class="card-body" id="whatif-box"></div></div>
+            <div class="card"><div class="card-hdr"><div class="card-title" data-en="Forecast — Net Profit Monthly" data-ar="التوقعات — صافي الربح الشهري">Forecast — Net Profit Monthly</div></div><div class="card-body"><div class="ch-box" style="height:280px"><canvas id="ch-fc" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas></div></div></div>
+            <div class="card"><div class="card-hdr"><div class="card-title" data-en="What-If Scenarios" data-ar="سيناريوهات افتراضية">What-If Scenarios</div></div><div class="card-body" id="whatif-box">
+    <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Based on Jan-Jan 2026 actuals:</div>
+    <div style="display:grid;gap:8px">
+      
+        <div style="background:var(--system-bg);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12px">If App Discount reduced by 10%</span>
+          <span style="font-size:13px;font-weight:700;color:var(--green)">+0</span>
+        </div>
+        <div style="background:var(--system-bg);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12px">If Sales grow by 10%</span>
+          <span style="font-size:13px;font-weight:700;color:var(--green)">+0</span>
+        </div>
+        <div style="background:var(--system-bg);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12px">If COGS reduced by 2%</span>
+          <span style="font-size:13px;font-weight:700;color:var(--green)">+0</span>
+        </div>
+        <div style="background:var(--system-bg);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12px">If losing branches closed</span>
+          <span style="font-size:13px;font-weight:700;color:var(--green)">+0</span>
+        </div>
+        <div style="background:var(--system-bg);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12px">If salaries increase by 5%</span>
+          <span style="font-size:13px;font-weight:700;color:var(--danger)">-0</span>
+        </div>
+    </div></div></div>
           </div>
         </div>
       </div>
@@ -478,6 +689,7 @@ var STATS={gross:[],net:[],disc:[],cogs:[],cash:[],delivery:[],credit:[]};
 var CON={cogs:[],gross_profit:[],expenses:[],admin_exp:[],other_income:[],net_profit:[],net_sales:[]};
 const MNS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const MNS_S=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MNS_AR=['يناير','فبراير','مارس','ابريل','مايو','يونيو','يوليو','اغسطس','سبتمبر','اكتوبر','نوفمبر','ديسمبر'];
 
 const BM={'HQ':'HQ (Admin)','Aguza':'AGOUZA','October':'OCTOBER','Batal':'BATAL','Nasr City':'NASR CITY','Sweedy':'SWEDY','NTRA':'ntra','Etisalat':'ETISALAT','Hazzem Hassan':'7azim 7assan','Sena3ia':'SENA3IA','Khargia':'KHARGIA','Tagmou3':'TAGAMO3','Maadi':'Maadi','Sand Beach':'SAND BEACH','Zaid':'ZAID','Alamya':'AL ALAMYA','Online':'ON-LINE','Orange':'ORANGE','Vod.Smart':'VODAFONE SMART','Vod.Zahraa':'VODAFONE ZAHRAA','Mo7awelat':'MO7WLAT','Electric':'ELECTRIC','FINE':'FINE','Egyplast':'EgyPlast','Etisalat.Katamya':'etisalat katamya','CFC':'cairo festival','North.Coast':'North Coast','Rehab':'REHAB','HSBC MAADI':'Bank Maadi hsbc','HSBC SMART':'hsbc smart','Vois':'Vois'};
 const EXPENSE_CAT={"مرتبات الادارة":"Salaries & Benefits","مرتبات الفروع":"Salaries & Benefits","الكهرباء":"Utilities expenses","المياه":"Utilities expenses","التليفون الارضي":"Utilities expenses","الايجار - الصيدلية":"Rent","الايجار - الادارة":"Rent","ايجارات متنوعه":"Rent","ادوات مكتبية":"Consumables","فواتير الموبايل":"Other overhead expenses","مكافات مبيعات الادوية":"Incentives and rewards employees","مكافات مبيعات التجميل":"Incentives and rewards employees","بوفية وضيافة":"Other overhead expenses","رسوم وتراخيص وعمولات":"Other overhead expenses","ورق طباعة":"Consumables","بكر طباعة ريسيت":"Consumables","بكر طباعة باركود":"Consumables","اعلان ودعاية وتسويق":"Advertisement & Marketing","اكراميات":"Other overhead expenses","زكاة وتبرعات":"Other overhead expenses","مصروفات نثرية":"Other overhead expenses","تامينات اجتماعية":"Other overhead expenses","مستلزمات نظافة":"Consumables","رسوم نظافة":"Consumables","تامين على الصيدلية":"Other overhead expenses","اصلاح وصيانة التكييفات":"Repairs and Maintenance","اصلاح وصيانة الكهرباء":"Repairs and Maintenance","اصلاح وصيانة السباكة":"Repairs and Maintenance","اصلاح وصيانة اثاث وديكور":"Repairs and Maintenance","اصلاح وصيانة اخرى":"Repairs and Maintenance","مكافات":"Incentives and rewards employees","هدايا ومزايا عينية":"Other overhead expenses","تارجت الفروع":"Other overhead expenses","مزايا عاملين":"Incentives and rewards employees","مستهلكات صيدلية":"Consumables","اتعاب استشارات محاسبية":"Other overhead expenses","اتعاب محاماه":"Other overhead expenses","مصروفات بنكية":"Other overhead expenses","شنط صيدلية":"Consumables","خصومات اضافية للعملاء":"Advertisement & Marketing","اشتراك الخط الساخن":"Advertisement & Marketing","ملابس عاملين":"Advertisement & Marketing","وجبات عاملين":"Other overhead expenses","انتقالات عمومية":"Other overhead expenses","وقود السيارات":"Other overhead expenses","زيت السيارات":"Other overhead expenses","صيانة السيارات - التوكيل":"Repairs and Maintenance","اصلاح وجراج السيارات":"Repairs and Maintenance","تجديد رخص السيارت":"Repairs and Maintenance","اجور ومرتبات - ايام دعاية":"Advertisement & Marketing","كهرباء - ايام دعاية":"Advertisement & Marketing","بنزين وزيت - ايام دعاية":"Advertisement & Marketing","عمولات - ايام دعاية":"Advertisement & Marketing","ايجارات - ايام دعاية":"Advertisement & Marketing","نقل البضاعة - ايام دعاية":"Advertisement & Marketing","اعلان ودعاية - ايام دعاية":"Advertisement & Marketing","اكراميات - ايام دعاية":"Advertisement & Marketing","وجبات وانتقال - ايام دعاية":"Advertisement & Marketing","مكافات لجنة الجرد":"Other overhead expenses","انتقالات لجنة الجرد":"Other overhead expenses","وجبات لجنة الجرد":"Other overhead expenses","مسروقات":"Other overhead expenses","غرامات":"Other overhead expenses","مستلزمات كمبيوتر":"Support - IT department expenses","صيانة اجهزة كمبيوتر":"Support - IT department expenses","مطبوعات ورقية":"Consumables","شحن بضاعة":"Other overhead expenses","عيديات ومناسبات":"Other overhead expenses","بدلات متنوعه":"Other overhead expenses","اجهزة ومستلزمات متنوعه":"Support - IT department expenses","احبار طابعات":"Support - IT department expenses","الانترنت":"Support - IT department expenses","الدعم الفني - سوفتك":"Support - IT department expenses","مصروف اهلاك مباني وانشاءات":"Depreciation & Amortization","مصروف اهلاك سيارات":"Depreciation & Amortization","مصروف اهلاك اثاث ومكاتب":"Depreciation & Amortization","مصروف اهلاك اجهزة تكييف":"Depreciation & Amortization","مصروف اهلاك اجهزة كمبيوتر ومستلزماتها":"Depreciation & Amortization","مصروف اهلاك برامج كمبيوتر":"Depreciation & Amortization","مصروف اهلاك اجهزة كهربائية":"Depreciation & Amortization","مصروف اهلاك تجهيزات وديكور":"Depreciation & Amortization","الضرائب العامة":"taxes","الضرائب العقارية":"taxes","خصم نقاط العملاء":"Other overhead expenses","عقود صيانة وتوصيل مرافق":"Repairs and Maintenance","مصروفات تاسيس":"Repairs and Maintenance","هوالك وتوالف":"Other overhead expenses","عجز جرد":"Other overhead expenses","تامين على السيارات":"Other overhead expenses","مصروفات عملاء تعاقدات":"Other overhead expenses","ارباح دائنون متنوعون":"Other overhead expenses","مصروفات متنوعه - ايام دعاية":"Advertisement & Marketing","تغليف وشحن بضاعة":"Advertisement & Marketing","ديون معدومة":"Other overhead expenses","دمغات":"Other overhead expenses","خسائر استبعاد اصول":"Other overhead expenses","عروض مبيعات التجميل":"Sales Discount","فوائد القروض - ابوظبى الاولFAB":"interest","فوائد القروض بنك ADIB":"interest","فوائد القروض بنك كريدي اجريكول":"interest","فوائد القروض - العربى الافريقىAAIB":"interest","فوائد المصرية للتمويل العقارى":"interest","فوائد القروض البنك الاهلى المصرى":"interest","فوائد القروض بنك الاهلى الكويتى ABK":"interest","فوائد القروض بنك الاهلى المتحد AUB":"interest","فوائد القروض البنك التجارى الدولى CIB":"interest","تامينات اجتماعية - حصة الشركة":"Other overhead expenses","فوائد القروض - التجارى وفا بنك AWB":"interest","فوائد القروض - بنك القاهرة BDC":"interest","خصم ابليكيشن":"Application commision","عروض مبيعات ابليكشن":"Application commision","مفقودات ومسروقات":"Other overhead expenses","عمولات ادارية":"Other overhead expenses"};
@@ -502,7 +714,7 @@ const ITEM_EN={"مرتبات الادارة":"HQ Salaries","مرتبات الف�
 
 const BT={'HQ':'HQ','Aguza':'Branch','October':'Branch','Batal':'Branch','Nasr City':'Branch','Sweedy':'POS - Corporate','NTRA':'POS - Corporate','Etisalat':'POS - Corporate','Hazzem Hassan':'POS - Corporate','Sena3ia':'Branch','Khargia':'POS - Corporate','Tagmou3':'Branch','Maadi':'Branch','Sand Beach':'Branch','Zaid':'Branch','Alamya':'Branch','Online':'Branch','Orange':'POS - Corporate','Vod.Smart':'POS - Corporate','Vod.Zahraa':'POS - Corporate','Mo7awelat':'POS - Corporate','Electric':'POS - Corporate','FINE':'POS - Corporate','Egyplast':'POS - Corporate','Etisalat.Katamya':'POS - Corporate','CFC':'POS - Corporate','North.Coast':'POS - Corporate','Rehab':'POS - Corporate','HSBC MAADI':'POS - Corporate','HSBC SMART':'POS - Corporate','Vois':'POS - Corporate'};
 
-const EG={'Salaries & Benefits':['مرتبات الادارة','مرتبات الفروع'],'Utilities expenses':['الكهرباء','المياه','التليفون الارضي'],'Rent':['الايجار - الصيدلية','الايجار - الادارة','ايجارات متنوعه'],'Consumables':['ادوات مكتبية','مستلزمات نظافة','رسوم نظافة','مستهلكات صيدلية','شنط صيدلية'],'Other overhead expenses':['فواتير الموبايل','بوفية وضيافة','رسوم وتراخيص وعمولات','اكراميات','زكاة وتبرعات','مصروفات نثرية','تامين على الصيدلية','هوالك وتوالف','عجز جرد','تأمينات اجتماعية - حصة الشركة','مصروفات بنكية','وجبات عاملين','وقود السيارات','زيت السيارات','اصلاح وجراج السيارات','مكافات لجنة الجرد','ديون معدومة','دمغات','عمولات ادارية','بدلات متنوعه','خصم نقاط العملاء'],'Incentives & Rewards':['مكافات مبيعات الادوية','مكافات مبيعات التجميل','مكافات','مزايا عاملين'],'Advertisement & Marketing':['اعلان ودعاية وتسويق','خصومات اضافية للعملاء','عروض مبيعات التجميل','تغليف وشحن بضاعة'],'Repairs & Maintenance':['اصلاح وصيانة التكييفات','اصلاح وصيانة الكهرباء','اصلاح وصيانة السباكة','اصلاح وصيانة اخرى','اصلاح وجراج السيارات'],'Support - IT':['مستلزمات كمبيوتر','اجهزة ومستلزمات متنوعه','احبار طابعات','الانترنت','الدعم الفني - سوفتك'],'Depreciation & Amortization':['مصروف اهلاك مباني وانشاءات','مصروف اهلاك سيارات','مصروف اهلاك اثاث ومكاتب','مصروف اهلاك اجهزة تكييف','مصروف اهلاك اجهزة كمبيوتر ومستلزماتها','مصروف اهلاك برامج كمبيوتر','مصروف اهلاك اجهزة كهربائية','مصروف اهلاك تجهيزات وديكور'],'Taxes':['الضرائب العامة','الضرائب العقارية'],'Interest':['فوائد القروض - ابوظبى الاولFAB','فوائد القروض بنك ADIB','فوائد القروض بنك كريدي أجريكول','فوائد القروض - العربى الافريقىAAIB','فوائد المصرية للتمويل العقارى','فوائد القروض البنك الاهلى المصرى','فوائد القروض بنك الاهلى الكويتى ABK','فوائد القروض بنك الاهلى المتحد AUB','فوائد القروض البنك التجارى الدولى CIB','فوائد القروض - التجارى وفا بنك AWB','فوائد القروض - بنك القاهرة BDC'],'Application Commission':['خصم أبليكيشن','عروض مبيعات ابليكشن']};
+const EG={'Salaries & Benefits':['مرتبات الادارة','مرتبات الفروع'],'Utilities expenses':['الكهرباء','المياه','التليفون الارضي'],'Rent':['الايجار - الصيدلية','الايجار - الادارة','ايجارات متنوعه'],'Consumables':['ادوات مكتبية','مستلزمات نظافة','رسوم نظافة','مستهلكات صيدلية','شنط صيدلية'],'Other overhead expenses':['فواتير الموبايل','بوفية وضيافة','رسوم وتراخيص وعمولات','اكراميات','زكاة وتبرعات','مصروفات نثرية','تامين على الصيدلية','هوالك وتوالف','عجز جرد','تأمينات اجتماعية - حصة الشركة','مصروفات بنكية','وجبات عاملين','وقود السيارات','زيت السيارات','مكافات لجنة الجرد','ديون معدومة','دمغات','عمولات ادارية','بدلات متنوعه','خصم نقاط العملاء'],'Incentives & Rewards':['مكافات مبيعات الادوية','مكافات مبيعات التجميل','مكافات','مزايا عاملين'],'Advertisement & Marketing':['اعلان ودعاية وتسويق','خصومات اضافية للعملاء','عروض مبيعات التجميل','تغليف وشحن بضاعة'],'Repairs & Maintenance':['اصلاح وصيانة التكييفات','اصلاح وصيانة الكهرباء','اصلاح وصيانة السباكة','اصلاح وصيانة اخرى','اصلاح وجراج السيارات'],'Support - IT':['مستلزمات كمبيوتر','اجهزة ومستلزمات متنوعه','احبار طابعات','الانترنت','الدعم الفني - سوفتك'],'Depreciation & Amortization':['مصروف اهلاك مباني وانشاءات','مصروف اهلاك سيارات','مصروف اهلاك اثاث ومكاتب','مصروف اهلاك اجهزة تكييف','مصروف اهلاك اجهزة كمبيوتر ومستلزماتها','مصروف اهلاك برامج كمبيوتر','مصروف اهلاك اجهزة كهربائية','مصروف اهلاك تجهيزات وديكور'],'Taxes':['الضرائب العامة','الضرائب العقارية'],'Interest':['فوائد القروض - ابوظبى الاولFAB','فوائد القروض بنك ADIB','فوائد القروض بنك كريدي أجريكول','فوائد القروض - العربى الافريقىAAIB','فوائد المصرية للتمويل العقارى','فوائد القروض البنك الاهلى المصرى','فوائد القروض بنك الاهلى الكويتى ABK','فوائد القروض بنك الاهلى المتحد AUB','فوائد القروض البنك التجارى الدولى CIB','فوائد القروض - التجارى وفا بنك AWB','فوائد القروض - بنك القاهرة BDC'],'Application Commission':['خصم أبليكيشن','عروض مبيعات ابليكشن']};
 const EE={'مرتبات الادارة':'HQ Salaries','مرتبات الفروع':'Branch Salaries','الكهرباء':'Electricity','المياه':'Water','التليفون الارضي':'Landline','الايجار - الصيدلية':'Rent - Pharmacy','الايجار - الادارة':'Rent - HQ','ايجارات متنوعه':'Other Rent','ادوات مكتبية':'Office Supplies','فواتير الموبايل':'Mobile Bills','مكافات مبيعات الادوية':'Medicine Sales Incentives','مكافات مبيعات التجميل':'Cosmetics Sales Incentives','بوفية وضيافة':'Buffet & Hospitality','رسوم وتراخيص وعمولات':'Government Fees','اعلان ودعاية وتسويق':'Advertisement','اكراميات':'Tips & Donations','زكاة وتبرعات':'Zakat & Donations','مصروفات نثرية':'Petty Cash','تأمينات اجتماعية':'Social Insurance','مستلزمات نظافة':'Cleaning Supplies','رسوم نظافة':'Cleaning Fees','تامين على الصيدلية':'Pharmacy Insurance','اصلاح وصيانة التكييفات':'AC Maintenance','اصلاح وصيانة الكهرباء':'Electrical Maintenance','اصلاح وصيانة السباكة':'Plumbing Maintenance','اصلاح وصيانة اخرى':'Other Maintenance','مكافات':'Employee Incentives','مزايا عاملين':'Employee Benefits','مستهلكات صيدلية':'Pharmacy Supplies','اتعاب استشارات محاسبية':'Accounting Fees','اتعاب محاماه':"Lawyers Fees",'مصروفات بنكية':'Bank Charges','شنط صيدلية':'Pharmacy Bags','خصومات اضافية للعملاء':'Customer Discounts','وجبات عاملين':'Staff Meals','وقود السيارات':'Car Fuel','زيت السيارات':'Car Oil','اصلاح وجراج السيارات':'Car Repairs','مكافات لجنة الجرد':'Inventory Committee','مستلزمات كمبيوتر':'Computer Supplies','اجهزة ومستلزمات متنوعه':'Device Supplies','احبار طابعات':'Printer Toners','الانترنت':'Internet','الدعم الفني - سوفتك':'Softek Support','مصروف اهلاك مباني وانشاءات':'Dep - Buildings','مصروف اهلاك سيارات':'Dep - Vehicles','مصروف اهلاك اثاث ومكاتب':'Dep - Furniture','مصروف اهلاك اجهزة تكييف':'Dep - AC','مصروف اهلاك اجهزة كمبيوتر ومستلزماتها':'Dep - Computers','مصروف اهلاك برامج كمبيوتر':'Dep - Software','مصروف اهلاك اجهزة كهربائية':'Dep - Electrical','مصروف اهلاك تجهيزات وديكور':'Dep - Equipment','الضرائب العامة':'General Tax','الضرائب العقارية':'Property Tax','خصم نقاط العملاء':'Customer Points Discount','هوالك وتوالف':'Damage & Waste','عجز جرد':'Inventory Deficit','تأمينات اجتماعية - حصة الشركة':'Social Insurance - Co. Share','ديون معدومة':'Bad Debts','دمغات':'Stamps','خسائر إستبعاد أصول':'Asset Disposal Loss','عروض مبيعات التجميل':'Cosmetics Offers','فوائد القروض - ابوظبى الاولFAB':'Interest - FAB','فوائد القروض بنك ADIB':'Interest - ADIB','فوائد القروض بنك كريدي أجريكول':'Interest - Credit Agricole','فوائد القروض - العربى الافريقىAAIB':'Interest - AAIB','فوائد المصرية للتمويل العقارى':'Interest - EHFC','فوائد القروض البنك الاهلى المصرى':'Interest - NBE','فوائد القروض بنك الاهلى الكويتى ABK':'Interest - ABK','فوائد القروض بنك الاهلى المتحد AUB':'Interest - AUB','فوائد القروض البنك التجارى الدولى CIB':'Interest - CIB','تأمينات اجتماعية - حصة الشركة':'Social Insurance','فوائد القروض - التجارى وفا بنك AWB':'Interest - AWB','فوائد القروض - بنك القاهرة BDC':'Interest - BDC','خصم أبليكيشن':'App Commission','عروض مبيعات ابليكشن':'App Sales Offers','بدلات متنوعه':'Allowances','عمولات ادارية':'Admin Commissions','تغليف وشحن بضاعة':'Packaging & Shipping'};
 const HQ_ITEMS=['فوائد القروض - ابوظبى الاولFAB','فوائد القروض بنك ADIB','فوائد القروض بنك كريدي أجريكول','فوائد القروض - العربى الافريقىAAIB','فوائد المصرية للتمويل العقارى','فوائد القروض البنك الاهلى المصرى','فوائد القروض بنك الاهلى الكويتى ABK','فوائد القروض بنك الاهلى المتحد AUB','فوائد القروض البنك التجارى الدولى CIB','فوائد القروض - التجارى وفا بنك AWB','فوائد القروض - بنك القاهرة BDC','مرتبات الادارة','الايجار - الادارة','اتعاب استشارات محاسبية','اتعاب محاماه'];
 function en(ar){return EE[ar]||ar;}
@@ -521,6 +733,8 @@ function fmt(n,full){
   return n<0?'('+s+')':s;
 }
 function fp(n){if(!n||isNaN(n))return'—';return(n*100).toFixed(1)+'%';}
+// Precise percentage used for hover tooltips (more decimals than the displayed value)
+function fpf(n){if(n===null||n===undefined||isNaN(n))return'';return(n*100).toFixed(2)+'%';}
 function pc(p){if(Math.abs(p)>0.2)return'pp-r';if(Math.abs(p)>0.08)return'pp-a';return'pp-g';}
 function isMobile(){return window.innerWidth<768;}
 
@@ -553,6 +767,16 @@ function getStats(field,from,to){
   let s=0;for(let i=from;i<=to;i++)s+=STATS[field][i]||0;return s;
 }
 // Sales Discount for one branch: match the branch's monthly sales to the stats sheet discount
+// Core gross profit for the active branch selection: Net Sales − COGS.
+// Branch sheets record "مجمل الربح" twice: once as (sales − COGS) and once
+// with other income folded in. The consolidated sheet uses the first
+// definition, so we compute it directly to keep both sides identical.
+function branchGP(from,to){
+  return sumBranch('المبيعات',from,to)-sumBranch('تكلفة البضاعة المباعة',from,to);
+}
+function gvGP(sh,from,to){
+  return gv(sh,'المبيعات',from,to)-gv(sh,'تكلفة البضاعة المباعة',from,to);
+}
 function getBranchDisc(branchKey,from,to){
   if(!STATS.__discBySales||!D[branchKey])return 0;
   var sales=D[branchKey]['\u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a']||[];
@@ -603,7 +827,7 @@ function renderKPIs(){
   const salesDisc = isAll?getStats('disc',fr,to):getBranchDisc(br,fr,to);
   const netSales = isAll?getStats('net',fr,to):getBranchNet(br,fr,to);
   const cogs = isAll?getStats('cogs',fr,to):sumBranch('تكلفة البضاعة المباعة',fr,to);
-  const grossProfit = isAll?getConsolidated('gross_profit',fr,to):sumBranch('مجمل الربح',fr,to);
+  const grossProfit = isAll?getConsolidated('gross_profit',fr,to):branchGP(fr,to);
   const cashDisc = sumBranch('خصم نقدى',fr,to);
   const otherIncome = isAll?getConsolidated('other_income',fr,to):sumBranch('ايرادات اخرى',fr,to);
   const totalExp = isAll?getConsolidated('expenses',fr,to):sumBranch('إجمالي المصروفات',fr,to);
@@ -611,8 +835,8 @@ function renderKPIs(){
   const dep=(EG['Depreciation & Amortization']||[]).reduce((s,it)=>s+(isAll?sumAll(it,fr,to):sumBranch(it,fr,to)),0);
   const inter=(EG['Interest']||[]).reduce((s,it)=>s+(isAll?sumAll(it,fr,to):sumBranch(it,fr,to)),0);
   const ebitda=netProfit+dep+inter;
-  const gm=grossSales?grossProfit/grossSales:0;
-  const nm=grossSales?netProfit/grossSales:0;
+  const gm=netSales?grossProfit/netSales:0;
+  const nm=netSales?netProfit/netSales:0;
   const cogsP=netSales?cogs/netSales:0;
   const expP=netSales?totalExp/netSales:0;
 
@@ -660,7 +884,7 @@ function renderBranchRank(){
     const gs=getStats('gross',fr,to)||gv(sh,'المبيعات',fr,to);
     const ns=getStats('net',fr,to)||gv(sh,'المبيعات',fr,to);
     const c=gv(sh,'تكلفة البضاعة المباعة',fr,to);
-    const g=gv(sh,'مجمل الربح',fr,to);
+    const g=gvGP(sh,fr,to);
     const n=gv(sh,'صافي الربح / الخسارة',fr,to);
     const s=gv(sh,'المبيعات',fr,to);
     const cogsP=s?c/s:0;
@@ -689,10 +913,10 @@ function renderBranchRank(){
       <td class="mut">${medal||i+1}</td>
       <td title="${fmt(b.s,true)}">${b.dn}</td>
       <td title="${fmt(b.s,true)}">${fmt(b.s)}</td>
-      <td><span class="pp ${b.cogsP>0.85?'pp-r':b.cogsP>0.75?'pp-a':'pp-g'}">${fp(b.cogsP)}</span></td>
+      <td><span class="pp ${b.cogsP>0.85?'pp-r':b.cogsP>0.75?'pp-a':'pp-g'}" title="${fpf(b.cogsP)}">${fp(b.cogsP)}</span></td>
       <td class="pos" title="${fmt(b.g,true)}">${fmt(b.g)}</td>
       <td title="${fmt(b.n,true)}"><div style="display:flex;align-items:center"><div class="mbar ${b.n<0?'mb-r':'mb-g'}" style="width:${bw}px"></div><span class="${b.n<0?'neg':'pos'}">${fmt(b.n)}</span></div></td>
-      <td><span class="pp ${b.margin>0.1?'pp-g':b.margin>0?'pp-a':'pp-r'}">${fp(b.margin)}</span></td>
+      <td><span class="pp ${b.margin>0.1?'pp-g':b.margin>0?'pp-a':'pp-r'}" title="${fpf(b.margin)}">${fp(b.margin)}</span></td>
     </tr>`;
   });
   document.getElementById('br-rank-tbl').innerHTML=h+'</tbody>';
@@ -709,7 +933,7 @@ function monthlySeries(metric){
     if(metric==='gross')      out[i]=isAll?(STATS.gross[i]||0):sumBranch('المبيعات',i,i);
     else if(metric==='net')   out[i]=isAll?(STATS.net[i]||0):(sumBranch('المبيعات',i,i)-getBranchDisc(getBranch(),i,i));
     else if(metric==='cogs')  out[i]=isAll?(STATS.cogs[i]||0):sumBranch('تكلفة البضاعة المباعة',i,i);
-    else if(metric==='gross_profit') out[i]=isAll?(CON.gross_profit[i]||0):sumBranch('مجمل الربح',i,i);
+    else if(metric==='gross_profit') out[i]=isAll?(CON.gross_profit[i]||0):branchGP(i,i);
     else if(metric==='net_profit')   out[i]=isAll?(CON.net_profit[i]||0):sumBranch('صافي الربح / الخسارة',i,i);
     else if(metric==='expenses')     out[i]=isAll?(CON.expenses[i]||0):sumBranch('إجمالي المصروفات',i,i);
   }
@@ -725,7 +949,7 @@ function renderMonthlyChart(){
   var toM=Math.min((typeof getTo==='function')?getTo():lastData, lastData);
   if(toM<fr)toM=fr;
   var IDX=[]; for(var _m=fr;_m<=toM;_m++)IDX.push(_m);
-  var LBL=IDX.map(function(i){return MNS_S[i];});
+  var LBL=IDX.map(function(i){return (typeof LANG!=='undefined'&&LANG==='ar')?MNS_AR[i]:MNS_S[i];});
   // metric arrays respect the selected branch
   var M_gross=monthlySeries('gross'), M_net=monthlySeries('net'), M_cogs=monthlySeries('cogs'),
       M_gp=monthlySeries('gross_profit'), M_np=monthlySeries('net_profit'), M_exp=monthlySeries('expenses');
@@ -848,7 +1072,7 @@ function renderPnL(){
   const disc=isAll?getStats('disc',fr,to):getBranchDisc(br,fr,to);
   const netSales=isAll?getStats('net',fr,to):getBranchNet(br,fr,to);
   const cogs=isAll?getStats('cogs',fr,to):sumBranch('تكلفة البضاعة المباعة',fr,to);
-  const gp=isAll?getConsolidated('gross_profit',fr,to):sumBranch('مجمل الربح',fr,to);
+  const gp=isAll?getConsolidated('gross_profit',fr,to):branchGP(fr,to);
   const cashDisc=sumBranch('خصم نقدى',fr,to);
   const oi=isAll?getConsolidated('other_income',fr,to):sumBranch('ايرادات اخرى',fr,to);
   const invSurplus=sumBranch('فائض جرد',fr,to);
@@ -868,7 +1092,7 @@ function renderPnL(){
     return `<tr${cls?' class="'+cls+'"':''}>
       <td style="padding-left:${14+indent}px;font-weight:${isTotal?700:400}" title="${tooltip||fmt(val,true)}">${label}</td>
       <td class="${nc}" title="${fmt(val,true)}">${fmt(val)}</td>
-      <td><span class="pp ${pc(Math.abs(pct))}">${fp(pct)}</span></td>
+      <td><span class="pp ${pc(Math.abs(pct))}" title="${fpf(pct)}">${fp(pct)}</span></td>
     </tr>`;
   };
 
@@ -877,9 +1101,9 @@ function renderPnL(){
 
   h+='<tr class="sec-row"><td colspan="3">'+(Lp?'الإيرادات':'REVENUE')+'</td></tr>';
   h+=row(Lp?'إجمالي إيراد المبيعات':'Gross Sales Revenue',grossSales,'',0,true);
-  h+=row(Lp?'  مبيعات نقدية':'  Cash Sales',getStats('cash',fr,to)||sumBranch('نقدى',fr,to),'',14);
-  h+=row(Lp?'  مبيعات دليفري':'  Delivery Sales',getStats('delivery',fr,to)||sumBranch('دليفرى',fr,to),'',14);
-  h+=row(Lp?'  مبيعات آجلة':'  Credit Sales',getStats('credit',fr,to)||sumBranch('اجل',fr,to),'',14);
+  h+=row(Lp?'  مبيعات نقدية':'  Cash Sales',isAll?getStats('cash',fr,to):sumBranch('نقدى',fr,to),'',14);
+  h+=row(Lp?'  مبيعات دليفري':'  Delivery Sales',isAll?getStats('delivery',fr,to):sumBranch('دليفرى',fr,to),'',14);
+  h+=row(Lp?'  مبيعات آجلة':'  Credit Sales',isAll?getStats('credit',fr,to):sumBranch('اجل',fr,to),'',14);
   if(disc!==0)h+=row(Lp?'(-) خصم المبيعات':'(-) Sales Discount',disc,'',0);
   if(disc!==0)h+=row(Lp?'صافي المبيعات':'Net Sales',netSales,'sub-row',0,true);
   h+=row(Lp?'(-) تكلفة البضاعة المباعة':'(-) Cost of Goods Sold (COGS)',cogs,'',0);
@@ -896,12 +1120,12 @@ function renderPnL(){
     if(gt===0)continue;
     totalOp+=gt;
     const gid='grp_'+grp.replace(/\W/g,'_');
-    h+=`<tr class="acc-grp" onclick="toggleAcc('${gid}')"><td colspan="2"><span class="acc-arr" id="arr_${gid}">▶</span> ${Lp?(grpAr(grp)):grp}</td><td class="neg">${fmt(gt)}</td></tr>`;
+    h+=`<tr class="acc-grp" onclick="toggleAcc('${gid}')"><td colspan="2"><span class="acc-arr" id="arr_${gid}">▶</span> ${Lp?(grpAr(grp)):grp}</td><td class="neg" title="${fmt(gt,true)}">${fmt(gt)}</td></tr>`;
     for(const it of items){
       const v=sumBranch(it,fr,to);
       if(v===0)continue;
       if(!isHQ&&HQ_ITEMS.includes(it))continue;
-      h+=`<tr class="acc-child hidden" data-grp="${gid}"><td style="padding-left:28px;color:var(--text2)">${Lp?it:en(it)}</td><td class="neg" title="${fmt(v,true)}">${fmt(v)}</td><td><span class="pp ${pc(v/sRef)}">${fp(v/sRef)}</span></td></tr>`;
+      h+=`<tr class="acc-child hidden" data-grp="${gid}"><td style="padding-left:28px;color:var(--text2)">${Lp?it:en(it)}</td><td class="neg" title="${fmt(v,true)}">${fmt(v)}</td><td><span class="pp ${pc(v/sRef)}" title="${fpf(v/sRef)}">${fp(v/sRef)}</span></td></tr>`;
     }
   }
   h+=`<tr class="tot-row"><td>${Lp?'إجمالي التكلفة التشغيلية':'Total Operating Cost'}</td><td title="${fmt(totalOp,true)}">${fmt(totalOp)}</td><td>${fp(totalOp/sRef)}</td></tr>`;
@@ -911,7 +1135,7 @@ function renderPnL(){
 
   // Depreciation
   if(dep!==0){
-    h+=`<tr class="acc-grp" onclick="toggleAcc('grp_dep')"><td colspan="2"><span class="acc-arr" id="arr_grp_dep">▶</span> ${Lp?'الإهلاك والاستهلاك':'Depreciation & Amortization'}</td><td class="neg">${fmt(dep)}</td></tr>`;
+    h+=`<tr class="acc-grp" onclick="toggleAcc('grp_dep')"><td colspan="2"><span class="acc-arr" id="arr_grp_dep">▶</span> ${Lp?'الإهلاك والاستهلاك':'Depreciation & Amortization'}</td><td class="neg" title="${fmt(dep,true)}">${fmt(dep)}</td></tr>`;
     for(const it of EG['Depreciation & Amortization']){
       const v=sumBranch(it,fr,to);if(v===0)continue;
       h+=`<tr class="acc-child hidden" data-grp="grp_dep"><td style="padding-left:28px;color:var(--text2)">${Lp?it:en(it)}</td><td class="neg" title="${fmt(v,true)}">${fmt(v)}</td><td></td></tr>`;
@@ -921,7 +1145,7 @@ function renderPnL(){
   h+='<tr class="ebitda-row" style="background:#0e7490!important"><td>'+(Lp?'الأرباح قبل الفوائد والضرائب (EBIT)':'EBIT')+'</td><td title="'+fmt(ebit,true)+'">'+fmt(ebit)+'</td><td>'+fp(ebit/sRef)+'</td></tr>';
 
   if(inter!==0&&isHQ){
-    h+=`<tr class="acc-grp" onclick="toggleAcc('grp_int')"><td colspan="2"><span class="acc-arr" id="arr_grp_int">▶</span> ${Lp?'فوائد القروض':'Interest on Loans'}</td><td class="neg">${fmt(inter)}</td></tr>`;
+    h+=`<tr class="acc-grp" onclick="toggleAcc('grp_int')"><td colspan="2"><span class="acc-arr" id="arr_grp_int">▶</span> ${Lp?'فوائد القروض':'Interest on Loans'}</td><td class="neg" title="${fmt(inter,true)}">${fmt(inter)}</td></tr>`;
     for(const it of EG['Interest']){
       const v=sumBranch(it,fr,to);if(v===0)continue;
       h+=`<tr class="acc-child hidden" data-grp="grp_int"><td style="padding-left:28px;color:var(--text2)">${Lp?it:en(it)}</td><td class="neg" title="${fmt(v,true)}">${fmt(v)}</td><td></td></tr>`;
@@ -951,7 +1175,7 @@ function renderBranches(){
   const sort=document.getElementById('br-sort').value;
   const filt=document.getElementById('br-filt').value;
   let list=Object.entries(BM).map(([sh,dn])=>{
-    const s=gv(sh,'المبيعات',fr,to),c=gv(sh,'تكلفة البضاعة المباعة',fr,to),g=gv(sh,'مجمل الربح',fr,to),n=gv(sh,'صافي الربح / الخسارة',fr,to),a=gv(sh,'خصم أبليكيشن',fr,to),e=gv(sh,'إجمالي المصروفات',fr,to);
+    const s=gv(sh,'المبيعات',fr,to),c=gv(sh,'تكلفة البضاعة المباعة',fr,to),g=gvGP(sh,fr,to),n=gv(sh,'صافي الربح / الخسارة',fr,to),a=gv(sh,'خصم أبليكيشن',fr,to),e=gv(sh,'إجمالي المصروفات',fr,to);
     const cogsP=s?c/s:0,margin=s?g/s:0,nm=s?n/s:0,expR=s?e/s:0;
     return{sh,dn,s,c,g,n,a,e,cogsP,margin,nm,expR,type:BT[sh]};
   }).filter(b=>{
@@ -971,8 +1195,8 @@ function renderBranches(){
   const btBadge=t=>t==='HQ'?'kb-a':t==='Branch'?'kb-g':'pp-b';
   var Lb=(typeof LANG!=='undefined'&&LANG==='ar');
   let h=Lb
-    ?`<thead><tr><th>#</th><th>الفرع</th><th>النوع</th><th>إجمالي المبيعات</th><th>التكلفة</th><th>تكلفة%</th><th>مجمل الربح</th><th>الهامش%</th><th>صافي الربح</th><th>هامش صافي%</th><th>نسبة المصروفات</th><th>خصم الأبليكيشن</th></tr></thead><tbody>`
-    :`<thead><tr><th>#</th><th>Branch</th><th>Type</th><th>Gross Sales</th><th>COGS</th><th>COGS%</th><th>Gross Profit</th><th>Margin%</th><th>Net Profit</th><th>Net Margin%</th><th>Expense Ratio</th><th>App Discount</th></tr></thead><tbody>`;
+    ?`<thead><tr><th>#</th><th>الفرع</th><th>النوع</th><th>صافي المبيعات</th><th>التكلفة</th><th>تكلفة%</th><th>مجمل الربح</th><th>الهامش%</th><th>صافي الربح</th><th>هامش صافي%</th><th>نسبة المصروفات</th><th>خصم الأبليكيشن</th></tr></thead><tbody>`
+    :`<thead><tr><th>#</th><th>Branch</th><th>Type</th><th>Net Sales</th><th>COGS</th><th>COGS%</th><th>Gross Profit</th><th>Margin%</th><th>Net Profit</th><th>Net Margin%</th><th>Expense Ratio</th><th>App Discount</th></tr></thead><tbody>`;
   list.forEach((b,i)=>{
     const bw=Math.max(4,Math.round(Math.abs(b.n)/mx*60));
     h+=`<tr class="${b.n<-50000?'':''}">
@@ -981,12 +1205,12 @@ function renderBranches(){
       <td><span class="kpi-badge ${btBadge(b.type)}" style="font-size:10px">${Lb?({'Branch':'فرع','POS - Corporate':'نقطة بيع','HQ':'الإدارة'}[b.type]||b.type):b.type}</span></td>
       <td title="${fmt(b.s,true)}">${fmt(b.s)}</td>
       <td class="neg" title="${fmt(b.c,true)}">${fmt(b.c)}</td>
-      <td><span class="pp ${b.cogsP>0.85?'pp-r':b.cogsP>0.75?'pp-a':'pp-g'}">${fp(b.cogsP)}</span></td>
+      <td><span class="pp ${b.cogsP>0.85?'pp-r':b.cogsP>0.75?'pp-a':'pp-g'}" title="${fpf(b.cogsP)}">${fp(b.cogsP)}</span></td>
       <td class="pos" title="${fmt(b.g,true)}">${fmt(b.g)}</td>
-      <td><span class="pp ${b.margin>0.1?'pp-g':b.margin>0?'pp-a':'pp-r'}">${fp(b.margin)}</span></td>
+      <td><span class="pp ${b.margin>0.1?'pp-g':b.margin>0?'pp-a':'pp-r'}" title="${fpf(b.margin)}">${fp(b.margin)}</span></td>
       <td title="${fmt(b.n,true)}"><div style="display:flex;align-items:center"><div class="mbar ${b.n<0?'mb-r':'mb-g'}" style="width:${bw}px"></div><span class="${b.n<0?'neg':'pos'}">${fmt(b.n)}</span></div></td>
-      <td>${b.s?`<span class="pp ${b.nm>0.1?'pp-g':b.nm>0?'pp-a':'pp-r'}">${fp(b.nm)}</span>`:'<span class="mut">—</span>'}</td>
-      <td>${b.s?`<span class="pp ${b.expR>0.25?'pp-r':b.expR>0.15?'pp-a':'pp-g'}">${fp(b.expR)}</span>`:'<span class="mut">—</span>'}</td>
+      <td>${b.s?`<span class="pp ${b.nm>0.1?'pp-g':b.nm>0?'pp-a':'pp-r'}" title="${fpf(b.nm)}">${fp(b.nm)}</span>`:'<span class="mut">—</span>'}</td>
+      <td>${b.s?`<span class="pp ${b.expR>0.25?'pp-r':b.expR>0.15?'pp-a':'pp-g'}" title="${fpf(b.expR)}">${fp(b.expR)}</span>`:'<span class="mut">—</span>'}</td>
       <td class="${b.a>0?'warn-t':''}" title="${fmt(b.a,true)}">${fmt(b.a)}</td>
     </tr>`;
   });
@@ -1083,8 +1307,8 @@ function renderExpenses(){
     :`<thead><tr><th>Sub-Category / Item</th><th>Amount</th><th>% of Net Sales</th><th>% of Expenses</th></tr></thead><tbody>`;
   for(const[grp,its]of Object.entries(EG)){
     const gt=its.reduce((s,it)=>s+sumBranch(it,fr,to),0);if(gt===0)continue;
-    etbl+=`<tr class="grp-row"><td>▸ ${Lx?grpAr(grp):grp}</td><td class="neg" title="${fmt(gt,true)}">${fmt(gt)}</td><td><span class="pp pp-a">${fp(gt/tS)}</span></td><td class="mut">${fp(tE?gt/tE:0)}</td></tr>`;
-    for(const it of its){const v=sumBranch(it,fr,to);if(v===0)continue;etbl+=`<tr><td style="padding-left:24px;color:var(--text2)">${Lx?it:en(it)}</td><td class="neg" title="${fmt(v,true)}">${fmt(v)}</td><td>${fp(v/tS)}</td><td class="mut">${fp(tE?v/tE:0)}</td></tr>`;}
+    etbl+=`<tr class="grp-row"><td>▸ ${Lx?grpAr(grp):grp}</td><td class="neg" title="${fmt(gt,true)}">${fmt(gt)}</td><td><span class="pp pp-a" title="${fpf(gt/tS)}">${fp(gt/tS)}</span></td><td class="mut" title="${fpf(tE?gt/tE:0)}">${fp(tE?gt/tE:0)}</td></tr>`;
+    for(const it of its){const v=sumBranch(it,fr,to);if(v===0)continue;etbl+=`<tr><td style="padding-left:24px;color:var(--text2)">${Lx?it:en(it)}</td><td class="neg" title="${fmt(v,true)}">${fmt(v)}</td><td title="${fpf(v/tS)}">${fp(v/tS)}</td><td class="mut" title="${fpf(tE?v/tE:0)}">${fp(tE?v/tE:0)}</td></tr>`;}
   }
   document.getElementById('exp-tbl').innerHTML=etbl+'</tbody>';
 }
@@ -1096,7 +1320,9 @@ function renderHeatmap(){
     if(type!=='ALL'&&BT[sh]!==type)return false;
     return MNS.some((_,mi)=>gv(sh,'المبيعات',mi,mi)!==0);
   });
-  let h=`<thead><tr><th style="position:sticky;left:0;background:var(--system-bg);z-index:11;min-width:140px;padding:8px 12px">Branch</th>${MNS_S.map(m=>`<th style="padding:7px;text-align:center">${m}</th>`).join('')}<th style="padding:7px;text-align:center">Total</th></tr></thead><tbody>`;
+  var Lh=(typeof LANG!=='undefined'&&LANG==='ar');
+  var MNH=Lh?MNS_AR:MNS_S;
+  let h=`<thead><tr><th style="position:sticky;left:0;background:var(--system-bg);z-index:11;min-width:140px;padding:8px 12px">${Lh?'الفرع':'Branch'}</th>${MNH.map(m=>`<th style="padding:7px;text-align:center">${m}</th>`).join('')}<th style="padding:7px;text-align:center">${Lh?'الإجمالي':'Total'}</th></tr></thead><tbody>`;
   for(const[sh,dn]of active){
     const tot=MNS.reduce((s,_,mi)=>s+gv(sh,'صافي الربح / الخسارة',mi,mi),0);
     h+=`<tr><td style="font-weight:600;white-space:nowrap;position:sticky;left:0;background:#fff;z-index:5;padding:6px 12px">${dn}</td>`;
@@ -1234,24 +1460,25 @@ function renderCompare(){
 // ── ALERTS ──
 function renderAlerts(){
   const fr=getFrom(),to=getTo(),type=getType();
+  var Lz=(typeof LANG!=='undefined'&&LANG==='ar');
   const als=[];
   for(const[sh,dn]of Object.entries(BM)){
     if(type!=='ALL'&&BT[sh]!==type)continue;
     const n=gv(sh,'صافي الربح / الخسارة',fr,to),s=gv(sh,'المبيعات',fr,to),a=gv(sh,'خصم أبليكيشن',fr,to);
     const mg=s?n/s:0;
     if(s===0)continue;
-    if(n<-100000)als.push({t:'cr',i:'⚠️',tt:dn,d:`Loss of ${fmt(n,true)} — Requires immediate review`});
-    else if(n<0)als.push({t:'cr',i:'⚠️',tt:dn,d:`Loss: ${fmt(n)}`});
-    else if(mg<0.01&&n!==0)als.push({t:'wa',i:'📉',tt:dn,d:`Margin ${fp(mg)} — Very low. Sales: ${fmt(s)}, Net: ${fmt(n)}`});
-    if(a>0&&s>0&&a/s>0.15)als.push({t:'wa',i:'💸',tt:dn+' — App Discount',d:`${fmt(a,true)} = ${fp(a/s)} of sales — Unusually high`});
-    if(n>0&&mg>0.15)als.push({t:'go',i:'✓',tt:dn,d:`Excellent margin ${fp(mg)} — Net: ${fmt(n,true)}`});
+    if(n<-100000)als.push({t:'cr',i:'⚠️',tt:dn,d:Lz?`خسارة ${fmt(n,true)} — تحتاج مراجعة فورية`:`Loss of ${fmt(n,true)} — Requires immediate review`});
+    else if(n<0)als.push({t:'cr',i:'⚠️',tt:dn,d:Lz?`خسارة: ${fmt(n)}`:`Loss: ${fmt(n)}`});
+    else if(mg<0.01&&n!==0)als.push({t:'wa',i:'📉',tt:dn,d:Lz?`الهامش ${fp(mg)} — منخفض جداً. المبيعات: ${fmt(s)}، الصافي: ${fmt(n)}`:`Margin ${fp(mg)} — Very low. Sales: ${fmt(s)}, Net: ${fmt(n)}`});
+    if(a>0&&s>0&&a/s>0.15)als.push({t:'wa',i:'💸',tt:dn+(Lz?' — خصم الأبليكيشن':' — App Discount'),d:Lz?`${fmt(a,true)} = ${fp(a/s)} من المبيعات — مرتفع بشكل غير معتاد`:`${fmt(a,true)} = ${fp(a/s)} of sales — Unusually high`});
+    if(n>0&&mg>0.15)als.push({t:'go',i:'✓',tt:dn,d:Lz?`هامش ممتاز ${fp(mg)} — الصافي: ${fmt(n,true)}`:`Excellent margin ${fp(mg)} — Net: ${fmt(n,true)}`});
   }
   als.sort((a,b)=>({cr:0,wa:1,go:2}[a.t]-{cr:0,wa:1,go:2}[b.t]));
   document.getElementById('al-wrap').innerHTML=
     `<div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
-      <div style="background:var(--danger-bg);border:1px solid #fecaca;border-radius:8px;padding:9px 14px;font-size:12px;color:var(--danger);font-weight:700">⚠️ Critical: ${als.filter(a=>a.t==='cr').length}</div>
-      <div style="background:var(--warn-bg);border:1px solid #fde68a;border-radius:8px;padding:9px 14px;font-size:12px;color:var(--warn);font-weight:700">! Warning: ${als.filter(a=>a.t==='wa').length}</div>
-      <div style="background:var(--green-bg);border:1px solid #bbf7d0;border-radius:8px;padding:9px 14px;font-size:12px;color:var(--green);font-weight:700">✓ Strong: ${als.filter(a=>a.t==='go').length}</div>
+      <div style="background:var(--danger-bg);border:1px solid #fecaca;border-radius:8px;padding:9px 14px;font-size:12px;color:var(--danger);font-weight:700">⚠️ ${Lz?'حرج':'Critical'}: ${als.filter(a=>a.t==='cr').length}</div>
+      <div style="background:var(--warn-bg);border:1px solid #fde68a;border-radius:8px;padding:9px 14px;font-size:12px;color:var(--warn);font-weight:700">! ${Lz?'تحذير':'Warning'}: ${als.filter(a=>a.t==='wa').length}</div>
+      <div style="background:var(--green-bg);border:1px solid #bbf7d0;border-radius:8px;padding:9px 14px;font-size:12px;color:var(--green);font-weight:700">✓ ${Lz?'قوي':'Strong'}: ${als.filter(a=>a.t==='go').length}</div>
     </div>
     <div class="al-grid">${als.map(a=>`<div class="al-item ${a.t}"><span class="al-icon">${a.i}</span><div><div class="al-title">${a.tt}</div><div class="al-desc">${a.desc||a.d}</div></div></div>`).join('')}</div>`;
 }
@@ -1268,8 +1495,8 @@ function renderForecast(){
 
   var Lf=(typeof LANG!=='undefined'&&LANG==='ar');
   document.getElementById('fc-kpis').innerHTML=[
-    {lbl:Lf?'توقع المبيعات 2026':'Forecast Sales 2026',val:fcSales.reduce((a,c)=>a+c,0),cls:'kpi-blue'},
-    {lbl:Lf?'توقع صافي الربح 2026':'Forecast Net Profit 2026',val:fcNet.reduce((a,c)=>a+c,0),cls:'kpi-green'},
+    {lbl:Lf?('توقع المبيعات '+YEAR):('Forecast Sales '+YEAR),val:fcSales.reduce((a,c)=>a+c,0),cls:'kpi-blue'},
+    {lbl:Lf?('توقع صافي الربح '+YEAR):('Forecast Net Profit '+YEAR),val:fcNet.reduce((a,c)=>a+c,0),cls:'kpi-green'},
     {lbl:Lf?'متوسط صافي الربح الشهري':'Avg Monthly Net Profit',val:avgNet,cls:avgNet>=0?'kpi-green':'kpi-danger'},
   ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val" title="${fmt(k.val,true)}">${fmt(k.val)}</div><div class="kpi-sub">${Lf?'ج.م':'EGP'}</div></div>`).join('');
 
@@ -1286,7 +1513,7 @@ function renderForecast(){
   var tNet=CON.net_profit.slice(0,nActual).reduce((a,c)=>a+c,0);
   var tSales=STATS.gross.slice(0,nActual).reduce((a,c)=>a+c,0);
   var tExp=CON.expenses.slice(0,nActual).reduce((a,c)=>a+c,0);
-  var mLbl=Lf?('يناير-'+['يناير','فبراير','مارس','ابريل','مايو','يونيو','يوليو','اغسطس','سبتمبر','اكتوبر','نوفمبر','ديسمبر'][lastM]+' 2026 (فعلي)'):('Jan-'+MNS_S[lastM]+' 2026 actuals');
+  var mLbl=Lf?('يناير-'+['يناير','فبراير','مارس','ابريل','مايو','يونيو','يوليو','اغسطس','سبتمبر','اكتوبر','نوفمبر','ديسمبر'][lastM]+' '+YEAR+' (فعلي)'):('Jan-'+MNS_S[lastM]+' '+YEAR+' actuals');
   document.getElementById('whatif-box').innerHTML=`
     <div style="font-size:12px;color:var(--text2);margin-bottom:12px">${Lf?'بناءً على':'Based on'} ${mLbl}:</div>
     <div style="display:grid;gap:8px">
@@ -1358,21 +1585,35 @@ function initDashboard(){
   onFilter();
 }
 
+// Maps each page to the render functions it needs, so a filter/language change
+// can repaint what the user is looking at immediately and defer the rest.
+var PAGE_RENDERERS={
+  overview:['renderKPIs','renderBranchRank','renderMonthlyChart','renderMixChart','renderExpChart'],
+  pnl:['renderKPIs','renderPnL'],
+  expenses:['renderKPIs','renderExpenses'],
+  branches:['renderKPIs','renderBranches'],
+  bstatement:['renderKPIs','renderBStatement'],
+  heatmap:['renderKPIs','renderHeatmap'],
+  compare:['renderKPIs','renderCompare'],
+  alerts:['renderKPIs','renderAlerts'],
+  forecast:['renderKPIs','renderForecast']
+};
+var ALL_RENDERERS=['renderKPIs','renderBranchRank','renderMonthlyChart','renderMixChart','renderExpChart','renderPnL','renderBranches','renderExpenses','renderHeatmap','renderCompare','renderAlerts','renderForecast'];
+var __deferTimer=null;
+function runRenderers(list){
+  list.forEach(function(fn){ try{ if(typeof window[fn]==='function')window[fn](); }catch(e){} });
+}
 function onFilter(){
   const fr=getFrom(),to=getTo();
   if(fr>to)document.getElementById('f-to').value=fr;
-  renderKPIs();
-  renderBranchRank();
-  renderMonthlyChart();
-  renderMixChart();
-  renderExpChart();
-  renderPnL();
-  renderBranches();
-  renderExpenses();
-  renderHeatmap();
-  renderCompare();
-  renderAlerts();
-  renderForecast();
+  // 1) paint what's on screen right now — fast
+  var visible=PAGE_RENDERERS[CUR_PAGE]||ALL_RENDERERS;
+  runRenderers(visible);
+  // 2) paint everything else just after, so switching pages is instant
+  if(__deferTimer)clearTimeout(__deferTimer);
+  __deferTimer=setTimeout(function(){
+    runRenderers(ALL_RENDERERS.filter(function(f){return visible.indexOf(f)<0;}));
+  },60);
 }
 
 var BS_OPEN={}; // which expense categories are expanded
@@ -1462,7 +1703,7 @@ function renderBStatement(){
   var lbl=function(item){ return L?item:enOf(item); }; // Arabic uses original item name; English uses enOf
   var hItem=L?'البند':'Item', hTotal=L?'الإجمالي':'Total', hGrowth=L?'النمو':'Growth', hExpenses=L?'المصروفات':'Expenses';
   var h='<thead><tr><th style="text-align:'+(L?'right':'left')+';color:#fff;position:sticky;'+(L?'right':'left')+':0;background:var(--navy);min-width:230px;z-index:2">'+hItem+'</th>';
-  for(var i=0;i<=lastM;i++)h+='<th style="text-align:center;min-width:80px">'+MNS_S[i]+'</th>';
+  for(var i=0;i<=lastM;i++)h+='<th style="text-align:center;min-width:80px">'+(L?MNS_AR[i]:MNS_S[i])+'</th>';
   h+='<th style="text-align:center;min-width:90px;background:rgba(0,166,36,0.15)">'+hTotal+'</th>';
   if(growth!=='none')h+='<th style="text-align:center;min-width:70px">'+hGrowth+'</th>';
   h+='</tr></thead>';
@@ -1543,29 +1784,55 @@ function renderBStatement(){
 // ===== Language toggle (Arabic ⇄ English). English stays the default; nothing English is removed. =====
 var LANG='en';
 var PAGE_TITLES={
-  en:{overview:'Overview',pnl:'P&L Statement',expenses:'Expense Analysis',branches:'Branch Performance',bstatement:'Branch Statement',heatmap:'Performance Map',compare:'Compare Branches',alerts:'Alerts & Insights',forecast:'Forecast 2026'},
-  ar:{overview:'الرئيسية',pnl:'قائمة الدخل',expenses:'تحليل المصروفات',branches:'أداء الفروع',bstatement:'كشف حساب الفرع',heatmap:'خريطة الأداء',compare:'مقارنة الفروع',alerts:'التنبيهات والرؤى',forecast:'توقعات 2026'}
+  en:{overview:'Overview',pnl:'P&L Statement',expenses:'Expense Analysis',branches:'Branch Performance',bstatement:'Branch Statement',heatmap:'Performance Map',compare:'Compare Branches',alerts:'Alerts & Insights',forecast:'Forecast '+YEAR},
+  ar:{overview:'الرئيسية',pnl:'قائمة الدخل',expenses:'تحليل المصروفات',branches:'أداء الفروع',bstatement:'كشف حساب الفرع',heatmap:'خريطة الأداء',compare:'مقارنة الفروع',alerts:'التنبيهات والرؤى',forecast:'توقعات '+YEAR}
 };
 var CUR_PAGE='overview';
+function lastUpdText(m){
+  if(typeof LANG!=='undefined'&&LANG==='ar')return 'آخر تحديث: '+MNS_AR[m]+' '+YEAR;
+  return 'Last Updated: '+MNS[m]+' '+YEAR;
+}
 function applyLang(){
-  // swap every element that has data-ar / data-en
+  // 1) swap all static labels — cheap, happens instantly
   document.querySelectorAll('[data-ar]').forEach(function(el){
     var en=el.getAttribute('data-en'); if(en===null){en=el.textContent;el.setAttribute('data-en',en);}
     el.textContent = (LANG==='ar') ? el.getAttribute('data-ar') : en;
   });
-  // force <select> elements to repaint the selected option's new text
   document.querySelectorAll('select').forEach(function(sel){ var v=sel.value; sel.value=v; });
-  // page title
   var pt=document.getElementById('pg-title'); if(pt)pt.textContent=(PAGE_TITLES[LANG][CUR_PAGE]||PAGE_TITLES.en[CUR_PAGE]||CUR_PAGE);
-  // toggle button label
   var lb=document.getElementById('lang-btn'); if(lb)lb.textContent=(LANG==='ar')?'EN':'ع';
-  // direction
+  var lu2=document.getElementById('last-upd');
+  if(lu2&&typeof window.__lastM==='number')lu2.textContent=lastUpdText(window.__lastM);
+  var fl2=document.getElementById('file-lbl');
+  if(fl2&&window.__srcLabel)fl2.textContent=window.__srcLabel+' \u00b7 '+window.__brCount+((LANG==='ar')?' فرع':' Branches');
   document.body.setAttribute('dir', LANG==='ar'?'rtl':'ltr');
-  // re-render dynamic content (cards/tables carry their own labels)
-  if(window.__dataReady && typeof onFilter==='function'){ try{onFilter();}catch(e){} }
+  // 2) repaint dynamic content — visible page first, the rest deferred
+  if(window.__dataReady && typeof onFilter==='function'){
+    requestAnimationFrame(function(){ try{onFilter();}catch(e){} });
+  }
+}
+function toggleLang(){
+  LANG=(LANG==='ar')?'en':'ar';
+  var lb=document.getElementById('lang-btn');
+  if(lb)lb.textContent=(LANG==='ar')?'EN':'ع';   // button flips immediately
+  applyLang();
 }
 function toggleLang(){ LANG = (LANG==='ar')?'en':'ar'; applyLang(); }
 
+// Mobile drawer: slide the sidebar in/out and dim the page behind it.
+function toggleSidebar(){
+  var sb=document.getElementById('sb'),bd=document.getElementById('sb-backdrop');
+  if(!sb)return;
+  var open=sb.classList.toggle('open');
+  if(bd)bd.style.display=open?'block':'none';
+}
+function closeSidebarOnMobile(){
+  if(window.innerWidth<=900){
+    var sb=document.getElementById('sb'),bd=document.getElementById('sb-backdrop');
+    if(sb)sb.classList.remove('open');
+    if(bd)bd.style.display='none';
+  }
+}
 function goPage(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.sb-item').forEach(n=>n.classList.remove('active'));
@@ -1579,7 +1846,10 @@ function goPage(id,el){
     var showBs=(id==='bstatement')?'flex':'none';
     bsGrpB.style.display=showBs;bsGrpG.style.display=showBs;
   }
+  // repaint the page we're opening so it always shows current filter/language
+  if(window.__dataReady&&PAGE_RENDERERS[id])runRenderers(PAGE_RENDERERS[id]);
   if(id==='bstatement')renderBStatement();
+  closeSidebarOnMobile();
 }
 
 function toggleSB(){
@@ -1690,13 +1960,16 @@ function applyWorkbookData(res,sourceLabel,reveal){
   if(!res||!res.CON||!res.STATS) return false;
   D=res.D;CON=res.CON;STATS=res.STATS;
   var branchesCount=Object.keys(D).filter(function(k){return Object.keys(D[k]).length;}).length;
+  if(typeof setYearFrom==='function')setYearFrom(sourceLabel);
   var fl=document.getElementById('file-lbl');
-  if(fl)fl.textContent=(sourceLabel||'P_L_2026.xlsx')+' \u00b7 '+branchesCount+' Branches';
+  window.__srcLabel=sourceLabel||('P_L_'+YEAR+'.xlsx'); window.__brCount=branchesCount;
+  if(fl)fl.textContent=window.__srcLabel+' \u00b7 '+branchesCount+((typeof LANG!=='undefined'&&LANG==='ar')?' فرع':' Branches');
   var lastM=detectLastMonth();
   var ft=document.getElementById('f-to'); if(ft)ft.value=String(lastM);
   var ff=document.getElementById('f-from'); if(ff)ff.value='0';
   var lu=document.getElementById('last-upd');
-  if(lu)lu.textContent='Last Updated: '+MNS[lastM]+' 2026';
+  window.__lastM=lastM;
+  if(lu)lu.textContent=lastUpdText(lastM);
   // Only reveal the dashboard if explicitly asked (i.e. after password) AND already logged in
   if(reveal && document.getElementById('app').style.display==='block'){
     if(typeof initDashboard==='function')initDashboard();
@@ -1710,7 +1983,30 @@ function applyWorkbookData(res,sourceLabel,reveal){
 // SECURITY: we only fetch & keep the RAW workbook before login.
 // Parsing into D/CON/STATS happens ONLY after the correct password (in doLogin),
 // so nothing sensitive sits in memory or the DOM before authentication.
-var AUTO_FILES=['P_L_2026.xlsx','P&L 2026.xlsx','data.xlsx','PL_2026.xlsx'];
+// Year shown across the dashboard. Detected from the loaded Excel file name when it
+// contains a 4-digit year; otherwise falls back to the current calendar year.
+var YEAR=String(new Date().getFullYear());
+function setYearFrom(name){
+  var m=String(name||'').match(/(20\d{2})/);
+  YEAR = m ? m[1] : String(new Date().getFullYear());
+  applyYearLabels();
+}
+function applyYearLabels(){
+  try{
+    document.title='Al-Serafy Pharmacies — Financial Dashboard '+YEAR;
+    var ls=document.querySelector('.login-sub'); if(ls)ls.textContent='Financial Dashboard '+YEAR+' — Authorized Access Only';
+    var fcL=document.querySelector('[onclick*="forecast"] .sb-lbl');
+    if(fcL){fcL.setAttribute('data-en','Forecast '+YEAR);fcL.setAttribute('data-ar','توقعات '+YEAR);fcL.textContent=(typeof LANG!=='undefined'&&LANG==='ar')?('توقعات '+YEAR):('Forecast '+YEAR);}
+    if(typeof PAGE_TITLES!=='undefined'){PAGE_TITLES.en.forecast='Forecast '+YEAR;PAGE_TITLES.ar.forecast='توقعات '+YEAR;}
+  }catch(e){}
+}
+// Files tried automatically. Current year first, then previous/next, then generic names.
+var AUTO_FILES=(function(){
+  var y=new Date().getFullYear(),list=[];
+  [y,y+1,y-1].forEach(function(yy){list.push('P_L_'+yy+'.xlsx','P&L '+yy+'.xlsx','PL_'+yy+'.xlsx');});
+  list.push('data.xlsx');
+  return list;
+})();
 var __rawWB=null, __rawName='';
 function autoLoadFromGitHub(cb){
   var idx=0;
@@ -1757,6 +2053,45 @@ window.addEventListener('DOMContentLoaded',function(){
 document.addEventListener('keydown',function(e){
   if(e.key==='Enter'&&document.getElementById('login-screen').style.display!=='none'){doLogin();}
 });
+
+// ── INSTANT TOOLTIP ──────────────────────────────────────────────
+// Replaces the slow native browser tooltip. Any element carrying a
+// title="" (numbers, percentages, table cells) shows its full value
+// immediately in a clear, readable bubble that follows the cursor.
+(function(){
+  var tip=null;
+  function ensure(){
+    if(!tip){tip=document.createElement('div');tip.id='gtip';document.body.appendChild(tip);}
+    return tip;
+  }
+  function place(g,e){
+    var x=e.clientX+15,y=e.clientY+20;
+    var w=g.offsetWidth,h=g.offsetHeight;
+    if(x+w>window.innerWidth-10)x=window.innerWidth-w-10;
+    if(x<8)x=8;
+    if(y+h>window.innerHeight-10)y=e.clientY-h-12;
+    if(y<8)y=8;
+    g.style.left=x+'px';g.style.top=y+'px';
+  }
+  document.addEventListener('mouseover',function(e){
+    var el=e.target&&e.target.closest?e.target.closest('[title],[data-tip]'):null;
+    if(!el){if(tip)tip.style.display='none';return;}
+    var t=el.getAttribute('title');
+    if(t!==null){ if(t!==''){el.setAttribute('data-tip',t);} el.removeAttribute('title'); }
+    var txt=el.getAttribute('data-tip');
+    if(!txt){if(tip)tip.style.display='none';return;}
+    var g=ensure();g.textContent=txt;g.style.display='block';place(g,e);
+  },true);
+  document.addEventListener('mousemove',function(e){
+    if(tip&&tip.style.display==='block')place(tip,e);
+  },true);
+  document.addEventListener('mouseout',function(e){
+    var to=e.relatedTarget;
+    if(to&&to.closest&&to.closest('[data-tip]'))return;
+    if(tip)tip.style.display='none';
+  },true);
+})();
+
 </script>
-</body>
-</html>
+
+</body></html>
