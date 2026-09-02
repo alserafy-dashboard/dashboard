@@ -352,6 +352,7 @@ html,body{max-width:100%;overflow-x:hidden}
         <div class="sb-item" onclick="goPage('bstatement',this)"><span class="sb-icon">📑</span><span class="sb-lbl" data-en="Branch Statement" data-ar="كشف حساب الفرع">Branch Statement</span></div>
         <div class="sb-item" onclick="goPage('heatmap',this)"><span class="sb-icon">🌡️</span><span class="sb-lbl" data-en="Performance Map" data-ar="خريطة الأداء">Performance Map</span></div>
         <div class="sb-item" onclick="goPage('compare',this)"><span class="sb-icon">⚖️</span><span class="sb-lbl" data-en="Compare Branches" data-ar="مقارنة الفروع">Compare Branches</span></div>
+        <div class="sb-item" id="sb-yoy" onclick="goPage('yoy',this)"><span class="sb-icon">📅</span><span class="sb-lbl" data-en="Year vs Year" data-ar="مقارنة السنوات">Year vs Year</span></div>
         <div class="sb-sec" data-en="INSIGHTS" data-ar="رؤى وتنبيهات">INSIGHTS</div>
         <div class="sb-item" onclick="goPage('alerts',this)"><span class="sb-icon">🔔</span><span class="sb-lbl" data-en="Alerts" data-ar="التنبيهات">Alerts</span></div>
         <div class="sb-item" onclick="goPage('forecast',this)"><span class="sb-icon">📈</span><span class="sb-lbl" data-en="Forecast 2026" data-ar="توقعات 2026">Forecast 2026</span></div>
@@ -367,6 +368,9 @@ html,body{max-width:100%;overflow-x:hidden}
           <div><div class="tb-title" id="pg-title">Overview</div><div class="tb-sub" id="file-lbl">P_L_2026.xlsx · 31 Branches</div></div>
         </div>
         <div class="tb-right">
+          <div class="fgrp" id="f-year-grp" style="display:none"><div class="flbl" data-en="Year" data-ar="السنة">Year</div>
+            <select class="fsel" id="f-year" onchange="onYearChange()"></select>
+          </div>
           <div class="fgrp"><div class="flbl" data-en="Type" data-ar="النوع">Type</div>
             <select class="fsel" id="f-type" onchange="onFilter()">
               <option value="ALL" data-en="All Types" data-ar="كل الأنواع">All Types</option>
@@ -558,6 +562,123 @@ html,body{max-width:100%;overflow-x:hidden}
           </div>
         </div>
 
+
+        <!-- YEAR vs YEAR -->
+        <div id="page-yoy" class="page">
+
+          <!-- controls -->
+          <div class="card">
+            <div class="card-hdr">
+              <div class="card-title" data-en="Comparison Period" data-ar="فترة المقارنة">Comparison Period</div>
+              <div id="yoy-basis" style="font-size:11px;color:var(--text3)"></div>
+            </div>
+            <div style="padding:12px 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+              <div class="fgrp"><div class="flbl" data-en="Base year" data-ar="سنة الأساس">Base year</div>
+                <select class="fsel" id="yoy-base" onchange="renderYoY()"></select></div>
+              <div class="fgrp"><div class="flbl" data-en="Compare with" data-ar="مقارنة بـ">Compare with</div>
+                <select class="fsel" id="yoy-vs" onchange="renderYoY()"></select></div>
+              <div class="fsep"></div>
+              <div class="fgrp"><div class="flbl" data-en="Period" data-ar="الفترة">Period</div>
+                <select class="fsel" id="yoy-preset" onchange="yoyPreset()">
+                  <option value="auto" selected data-en="Auto — completed months" data-ar="تلقائي — الشهور المكتملة">Auto — completed months</option>
+                  <option value="q1" data-en="Q1 (Jan-Mar)" data-ar="الربع الأول (يناير-مارس)">Q1 (Jan-Mar)</option>
+                  <option value="q2" data-en="Q2 (Apr-Jun)" data-ar="الربع الثاني (ابريل-يونيو)">Q2 (Apr-Jun)</option>
+                  <option value="q3" data-en="Q3 (Jul-Sep)" data-ar="الربع الثالث (يوليو-سبتمبر)">Q3 (Jul-Sep)</option>
+                  <option value="q4" data-en="Q4 (Oct-Dec)" data-ar="الربع الرابع (اكتوبر-ديسمبر)">Q4 (Oct-Dec)</option>
+                  <option value="h1" data-en="H1 (Jan-Jun)" data-ar="النص الأول (يناير-يونيو)">H1 (Jan-Jun)</option>
+                  <option value="h2" data-en="H2 (Jul-Dec)" data-ar="النص التاني (يوليو-ديسمبر)">H2 (Jul-Dec)</option>
+                  <option value="full" data-en="Full year (each on its own)" data-ar="السنة كاملة (كل واحدة لوحدها)">Full year (each on its own)</option>
+                  <option value="custom" data-en="Custom range" data-ar="فترة مخصصة">Custom range</option>
+                </select></div>
+              <div class="fgrp"><div class="flbl" data-en="From" data-ar="من">From</div>
+                <select class="fsel" id="yoy-from" onchange="yoyCustom()"><option value="0" selected data-en="Jan" data-ar="يناير">Jan</option><option value="1" data-en="Feb" data-ar="فبراير">Feb</option><option value="2" data-en="Mar" data-ar="مارس">Mar</option><option value="3" data-en="Apr" data-ar="ابريل">Apr</option><option value="4" data-en="May" data-ar="مايو">May</option><option value="5" data-en="Jun" data-ar="يونيو">Jun</option><option value="6" data-en="Jul" data-ar="يوليو">Jul</option><option value="7" data-en="Aug" data-ar="اغسطس">Aug</option><option value="8" data-en="Sep" data-ar="سبتمبر">Sep</option><option value="9" data-en="Oct" data-ar="اكتوبر">Oct</option><option value="10" data-en="Nov" data-ar="نوفمبر">Nov</option><option value="11" data-en="Dec" data-ar="ديسمبر">Dec</option></select></div>
+              <div class="fgrp"><div class="flbl" data-en="To" data-ar="إلى">To</div>
+                <select class="fsel" id="yoy-to" onchange="yoyCustom()"><option value="0" selected data-en="Jan" data-ar="يناير">Jan</option><option value="1" data-en="Feb" data-ar="فبراير">Feb</option><option value="2" data-en="Mar" data-ar="مارس">Mar</option><option value="3" data-en="Apr" data-ar="ابريل">Apr</option><option value="4" data-en="May" data-ar="مايو">May</option><option value="5" data-en="Jun" data-ar="يونيو">Jun</option><option value="6" data-en="Jul" data-ar="يوليو">Jul</option><option value="7" data-en="Aug" data-ar="اغسطس">Aug</option><option value="8" data-en="Sep" data-ar="سبتمبر">Sep</option><option value="9" data-en="Oct" data-ar="اكتوبر">Oct</option><option value="10" data-en="Nov" data-ar="نوفمبر">Nov</option><option value="11" data-en="Dec" data-ar="ديسمبر">Dec</option></select></div>
+              <div class="fsep"></div>
+              <div class="fgrp"><div class="flbl" data-en="Branch" data-ar="الفرع">Branch</div>
+                <select class="fsel" id="yoy-branch" onchange="renderYoY()" style="min-width:150px"></select></div>
+              <div class="fgrp"><div class="flbl" data-en="Scope" data-ar="النطاق">Scope</div>
+                <select class="fsel" id="yoy-scope" onchange="renderYoY()">
+                  <option value="ALL" data-en="All branches" data-ar="كل الفروع">All branches</option>
+                  <option value="COMP" data-en="Comparable only (like-for-like)" data-ar="المشتركة فقط (like-for-like)">Comparable only</option>
+                  <option value="Branch" data-en="Branches only" data-ar="الفروع فقط">Branches only</option>
+                  <option value="POS - Corporate" data-en="POS - Corporate" data-ar="نقطة بيع - شركات">POS - Corporate</option>
+                  <option value="HQ" data-en="HQ only" data-ar="الإدارة فقط">HQ only</option>
+                </select></div>
+            </div>
+          </div>
+
+          <div id="yoy-warn"></div>
+          <div class="kpi-wrap" id="yoy-kpis"></div>
+          <div id="yoy-samestore"></div>
+
+          <div class="card">
+            <div class="card-hdr">
+              <div class="card-title" data-en="Profitability ladder — Sales down to Net Profit" data-ar="سلّم الربحية — من المبيعات لصافي الربح">Profitability ladder</div>
+              <div style="font-size:11px;color:var(--text3)" data-en="Where every pound goes, and what EBITDA says that Net Profit hides" data-ar="كل جنيه راح فين — و EBITDA بيقول إيه اللي صافي الربح بيخبّيه">Where every pound goes</div>
+            </div>
+            <div class="tw"><table id="yoy-ladder-tbl"></table></div>
+          </div>
+
+          <div class="card">
+            <div class="card-hdr">
+              <div class="card-title" data-en="Month by Month" data-ar="شهر بشهر">Month by Month</div>
+              <select class="fsel" id="yoy-metric" onchange="renderYoY()" style="min-width:150px">
+                <option value="net" data-en="Net Sales" data-ar="صافي المبيعات">Net Sales</option>
+                <option value="gross" data-en="Gross Sales" data-ar="إجمالي المبيعات">Gross Sales</option>
+                <option value="cash" data-en="Cash" data-ar="نقدي">Cash</option>
+                <option value="delivery" data-en="Delivery" data-ar="دليفري">Delivery</option>
+                <option value="credit" data-en="Credit" data-ar="آجل">Credit</option>
+                <option value="disc" data-en="Sales Discount" data-ar="خصم المبيعات">Sales Discount</option>
+                <option value="cogs" data-en="COGS" data-ar="تكلفة البضاعة">COGS</option>
+                <option value="gp" data-en="Gross Profit" data-ar="مجمل الربح">Gross Profit</option>
+                <option value="exp" data-en="Total Expenses" data-ar="إجمالي المصروفات">Total Expenses</option>
+                <option value="opex" data-en="Cash Opex (excl. dep &amp; interest)" data-ar="مصروفات نقدية (بدون إهلاك وفوايد)">Cash Opex</option>
+                <option value="dep" data-en="Depreciation" data-ar="الإهلاك">Depreciation</option>
+                <option value="int" data-en="Loan Interest" data-ar="فوايد القروض">Loan Interest</option>
+                <option value="tax" data-en="Taxes" data-ar="الضرائب">Taxes</option>
+                <option value="ebitda" data-en="EBITDA" data-ar="EBITDA">EBITDA</option>
+                <option value="ebit" data-en="EBIT" data-ar="EBIT">EBIT</option>
+                <option value="np" data-en="Net Profit" data-ar="صافي الربح">Net Profit</option>
+              </select>
+            </div>
+            <div style="padding:14px;height:280px"><canvas id="ch-yoy"></canvas></div>
+            <div class="tw" style="max-height:460px"><table id="yoy-month-tbl"></table></div>
+          </div>
+
+          <div class="card">
+            <div class="card-hdr">
+              <div class="card-title" data-en="Branch by Branch" data-ar="فرع بفرع">Branch by Branch</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <select class="fsel" id="yoy-br-sort" onchange="renderYoY()" style="min-width:150px">
+                  <option value="growth" data-en="Fastest growth" data-ar="الأسرع نمواً">Fastest growth</option>
+                  <option value="decline" data-en="Biggest decline" data-ar="الأكبر تراجعاً">Biggest decline</option>
+                  <option value="contrib" data-en="Contribution to growth" data-ar="المساهمة في النمو">Contribution to growth</option>
+                  <option value="base" data-en="Size (base year)" data-ar="الحجم (سنة الأساس)">Size (base year)</option>
+                  <option value="name" data-en="Name" data-ar="الاسم">Name</option>
+                </select>
+              </div>
+            </div>
+            <div class="tw" style="max-height:620px"><table id="yoy-branch-tbl"></table></div>
+          </div>
+
+          <div class="card">
+            <div class="card-hdr">
+              <div class="card-title" data-en="Detailed P&amp;L — line by line" data-ar="قائمة الدخل التفصيلية — بند بند">Detailed P&amp;L — line by line</div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <button onclick="yoyExpandAll(true)" style="padding:4px 10px;border:1px solid var(--border);background:var(--card-bg);border-radius:7px;cursor:pointer;font-size:11px;font-weight:600;color:var(--navy)" data-en="Expand all" data-ar="افتح الكل">Expand all</button>
+                <button onclick="yoyExpandAll(false)" style="padding:4px 10px;border:1px solid var(--border);background:var(--card-bg);border-radius:7px;cursor:pointer;font-size:11px;font-weight:600;color:var(--navy)" data-en="Collapse all" data-ar="اقفل الكل">Collapse all</button>
+                <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+                  <input type="checkbox" id="yoy-material" onchange="renderYoY()" style="cursor:pointer">
+                  <span data-en="Material changes only (&gt;10% and &gt;50K)" data-ar="التغيرات الجوهرية فقط (أكبر من 10% و 50 ألف)">Material changes only</span>
+                </label>
+              </div>
+            </div>
+            <div class="tw" style="max-height:640px"><table id="yoy-pnl-tbl"></table></div>
+          </div>
+
+        </div>
+
         <!-- ALERTS -->
         <div id="page-alerts" class="page"><div id="al-wrap"></div></div>
 
@@ -583,7 +704,7 @@ const MNS=['January','February','March','April','May','June','July','August','Se
 const MNS_S=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MNS_AR=['يناير','فبراير','مارس','ابريل','مايو','يونيو','يوليو','اغسطس','سبتمبر','اكتوبر','نوفمبر','ديسمبر'];
 
-const BM={'HQ':'HQ (Admin)','Aguza':'AGOUZA','October':'OCTOBER','Batal':'BATAL','Nasr City':'NASR CITY','Sweedy':'SWEDY','NTRA':'ntra','Etisalat':'ETISALAT','Hazzem Hassan':'7azim 7assan','Sena3ia':'SENA3IA','Khargia':'KHARGIA','Tagmou3':'TAGAMO3','Maadi':'Maadi','Sand Beach':'SAND BEACH','Zaid':'ZAID','Alamya':'AL ALAMYA','Online':'ON-LINE','Orange':'ORANGE','Vod.Smart':'VODAFONE SMART','Vod.Zahraa':'VODAFONE ZAHRAA','Mo7awelat':'MO7WLAT','Electric':'ELECTRIC','FINE':'FINE','Egyplast':'EgyPlast','Etisalat.Katamya':'etisalat katamya','CFC':'cairo festival','North.Coast':'North Coast','Rehab':'REHAB','HSBC MAADI':'Bank Maadi hsbc','HSBC SMART':'hsbc smart','Vois':'Vois'};
+var BM={'HQ':'HQ (Admin)','Aguza':'AGOUZA','October':'OCTOBER','Batal':'BATAL','Nasr City':'NASR CITY','Sweedy':'SWEDY','NTRA':'ntra','Etisalat':'ETISALAT','Hazzem Hassan':'7azim 7assan','Sena3ia':'SENA3IA','Khargia':'KHARGIA','Tagmou3':'TAGAMO3','Maadi':'Maadi','Sand Beach':'SAND BEACH','Zaid':'ZAID','Alamya':'AL ALAMYA','Online':'ON-LINE','Orange':'ORANGE','Vod.Smart':'VODAFONE SMART','Vod.Zahraa':'VODAFONE ZAHRAA','Mo7awelat':'MO7WLAT','Electric':'ELECTRIC','FINE':'FINE','Egyplast':'EgyPlast','Etisalat.Katamya':'etisalat katamya','CFC':'cairo festival','North.Coast':'North Coast','Rehab':'REHAB','HSBC MAADI':'Bank Maadi hsbc','HSBC SMART':'hsbc smart','Vois':'Vois'};
 const EXPENSE_CAT={"مرتبات الادارة":"Salaries & Benefits","مرتبات الفروع":"Salaries & Benefits","الكهرباء":"Utilities expenses","المياه":"Utilities expenses","التليفون الارضي":"Utilities expenses","الايجار - الصيدلية":"Rent","الايجار - الادارة":"Rent","ايجارات متنوعه":"Rent","ادوات مكتبية":"Consumables","فواتير الموبايل":"Other overhead expenses","مكافات مبيعات الادوية":"Incentives and rewards employees","مكافات مبيعات التجميل":"Incentives and rewards employees","بوفية وضيافة":"Other overhead expenses","رسوم وتراخيص وعمولات":"Other overhead expenses","ورق طباعة":"Consumables","بكر طباعة ريسيت":"Consumables","بكر طباعة باركود":"Consumables","اعلان ودعاية وتسويق":"Advertisement & Marketing","اكراميات":"Other overhead expenses","زكاة وتبرعات":"Other overhead expenses","مصروفات نثرية":"Other overhead expenses","تامينات اجتماعية":"Other overhead expenses","مستلزمات نظافة":"Consumables","رسوم نظافة":"Consumables","تامين على الصيدلية":"Other overhead expenses","اصلاح وصيانة التكييفات":"Repairs and Maintenance","اصلاح وصيانة الكهرباء":"Repairs and Maintenance","اصلاح وصيانة السباكة":"Repairs and Maintenance","اصلاح وصيانة اثاث وديكور":"Repairs and Maintenance","اصلاح وصيانة اخرى":"Repairs and Maintenance","مكافات":"Incentives and rewards employees","هدايا ومزايا عينية":"Other overhead expenses","تارجت الفروع":"Other overhead expenses","مزايا عاملين":"Incentives and rewards employees","مستهلكات صيدلية":"Consumables","اتعاب استشارات محاسبية":"Other overhead expenses","اتعاب محاماه":"Other overhead expenses","مصروفات بنكية":"Other overhead expenses","شنط صيدلية":"Consumables","خصومات اضافية للعملاء":"Advertisement & Marketing","اشتراك الخط الساخن":"Advertisement & Marketing","ملابس عاملين":"Advertisement & Marketing","وجبات عاملين":"Other overhead expenses","انتقالات عمومية":"Other overhead expenses","وقود السيارات":"Other overhead expenses","زيت السيارات":"Other overhead expenses","صيانة السيارات - التوكيل":"Repairs and Maintenance","اصلاح وجراج السيارات":"Repairs and Maintenance","تجديد رخص السيارت":"Repairs and Maintenance","اجور ومرتبات - ايام دعاية":"Advertisement & Marketing","كهرباء - ايام دعاية":"Advertisement & Marketing","بنزين وزيت - ايام دعاية":"Advertisement & Marketing","عمولات - ايام دعاية":"Advertisement & Marketing","ايجارات - ايام دعاية":"Advertisement & Marketing","نقل البضاعة - ايام دعاية":"Advertisement & Marketing","اعلان ودعاية - ايام دعاية":"Advertisement & Marketing","اكراميات - ايام دعاية":"Advertisement & Marketing","وجبات وانتقال - ايام دعاية":"Advertisement & Marketing","مكافات لجنة الجرد":"Other overhead expenses","انتقالات لجنة الجرد":"Other overhead expenses","وجبات لجنة الجرد":"Other overhead expenses","مسروقات":"Other overhead expenses","غرامات":"Other overhead expenses","مستلزمات كمبيوتر":"Support - IT department expenses","صيانة اجهزة كمبيوتر":"Support - IT department expenses","مطبوعات ورقية":"Consumables","شحن بضاعة":"Other overhead expenses","عيديات ومناسبات":"Other overhead expenses","بدلات متنوعه":"Other overhead expenses","اجهزة ومستلزمات متنوعه":"Support - IT department expenses","احبار طابعات":"Support - IT department expenses","الانترنت":"Support - IT department expenses","الدعم الفني - سوفتك":"Support - IT department expenses","مصروف اهلاك مباني وانشاءات":"Depreciation & Amortization","مصروف اهلاك سيارات":"Depreciation & Amortization","مصروف اهلاك اثاث ومكاتب":"Depreciation & Amortization","مصروف اهلاك اجهزة تكييف":"Depreciation & Amortization","مصروف اهلاك اجهزة كمبيوتر ومستلزماتها":"Depreciation & Amortization","مصروف اهلاك برامج كمبيوتر":"Depreciation & Amortization","مصروف اهلاك اجهزة كهربائية":"Depreciation & Amortization","مصروف اهلاك تجهيزات وديكور":"Depreciation & Amortization","الضرائب العامة":"taxes","الضرائب العقارية":"taxes","خصم نقاط العملاء":"Other overhead expenses","عقود صيانة وتوصيل مرافق":"Repairs and Maintenance","مصروفات تاسيس":"Repairs and Maintenance","هوالك وتوالف":"Other overhead expenses","عجز جرد":"Other overhead expenses","تامين على السيارات":"Other overhead expenses","مصروفات عملاء تعاقدات":"Other overhead expenses","ارباح دائنون متنوعون":"Other overhead expenses","مصروفات متنوعه - ايام دعاية":"Advertisement & Marketing","تغليف وشحن بضاعة":"Advertisement & Marketing","ديون معدومة":"Other overhead expenses","دمغات":"Other overhead expenses","خسائر استبعاد اصول":"Other overhead expenses","عروض مبيعات التجميل":"Sales Discount","فوائد القروض - ابوظبى الاولFAB":"interest","فوائد القروض بنك ADIB":"interest","فوائد القروض بنك كريدي اجريكول":"interest","فوائد القروض - العربى الافريقىAAIB":"interest","فوائد المصرية للتمويل العقارى":"interest","فوائد القروض البنك الاهلى المصرى":"interest","فوائد القروض بنك الاهلى الكويتى ABK":"interest","فوائد القروض بنك الاهلى المتحد AUB":"interest","فوائد القروض البنك التجارى الدولى CIB":"interest","تامينات اجتماعية - حصة الشركة":"Other overhead expenses","فوائد القروض - التجارى وفا بنك AWB":"interest","فوائد القروض - بنك القاهرة BDC":"interest","خصم ابليكيشن":"Application commision","عروض مبيعات ابليكشن":"Application commision","مفقودات ومسروقات":"Other overhead expenses","عمولات ادارية":"Other overhead expenses"};
 const EXPENSE_CAT_ORDER=[
 ['Salaries & Benefits','Salaries & Benefits'],
@@ -604,12 +725,42 @@ const EXPENSE_CAT_ORDER=[
 const ITEM_EN={"مرتبات الادارة":"HQ Salaries","مرتبات الفروع":"Branches Salareis","الكهرباء":"Electricity Bills","المياه":"Water Bills","التليفون الارضي":"landline telephone bills","الايجار - الصيدلية":"Rent - Pharmacy","الايجار - الادارة":"Rent - HQ","ايجارات متنوعه":"Other Rent","ادوات مكتبية":"Office Supplies","فواتير الموبايل":"Mobile Phone Bills","مكافات مبيعات الادوية":"Medicine sales Incentives","مكافات مبيعات التجميل":"Cosmetics sales Incentives","بوفية وضيافة":"Buffet and hospitality.","رسوم وتراخيص وعمولات":"government fees","ورق طباعة":"printing paper","بكر طباعة ريسيت":"Receipt paper Roll","بكر طباعة باركود":"Parcode paper Roll","اعلان ودعاية وتسويق":"Advertisement & Marketing","اكراميات":"Gifts and Donations","زكاة وتبرعات":"Zakat and donations","مصروفات نثرية":"petty cash","تامينات اجتماعية":"Social Insurance","مستلزمات نظافة":"Cleaning supplies","رسوم نظافة":"Cleaning Fees","تامين على الصيدلية":"Insurance Pharmaceutical","اصلاح وصيانة التكييفات":"Maintenance Air conditioning","اصلاح وصيانة الكهرباء":"Maintenance electricity","اصلاح وصيانة السباكة":"Maintenanceplumbing","اصلاح وصيانة اثاث وديكور":"Maintenancefurniture and decor.","اصلاح وصيانة اخرى":"Other Repairs and Maintenance","مكافات":"Incentives and rewards employees","هدايا ومزايا عينية":"Gifts and Rewards Given","تارجت الفروع":"Target Sales","مزايا عاملين":"rewards employees","مستهلكات صيدلية":"Pharmac supplies","اتعاب استشارات محاسبية":"Accounting consultants fees","اتعاب محاماه":"lawyers' fees","مصروفات بنكية":"Banks & Visa Charges","شنط صيدلية":"Bags Pharmacy","خصومات اضافية للعملاء":"customers Discount","اشتراك الخط الساخن":"Hotline Fees","ملابس عاملين":"Uniforms","وجبات عاملين":"Meals and Entertainment","انتقالات عمومية":"transportation expenses","وقود السيارات":"car's fuel","زيت السيارات":"car's oile","صيانة السيارات - التوكيل":"Rebair Cars - dealership","اصلاح وجراج السيارات":"Rebair Cars","تجديد رخص السيارت":"Cars license","اجور ومرتبات - ايام دعاية":"Salaries - Events","كهرباء - ايام دعاية":"Electricity - Events","بنزين وزيت - ايام دعاية":"fuel - Events","عمولات - ايام دعاية":"commision - Events","ايجارات - ايام دعاية":"rent - events","نقل البضاعة - ايام دعاية":"transportation - events","اعلان ودعاية - ايام دعاية":"Advertisement - events","اكراميات - ايام دعاية":"Tips - events","وجبات وانتقال - ايام دعاية":"meals- events","مكافات لجنة الجرد":"inventory committee expenses","انتقالات لجنة الجرد":"inventory committee expenses","وجبات لجنة الجرد":"inventory committee","مسروقات":"Stolen goods","غرامات":"fines","مستلزمات كمبيوتر":"computer accessories","صيانة اجهزة كمبيوتر":"computer maintenance.","مطبوعات ورقية":"brochure","شحن بضاعة":"Shipping fees","عيديات ومناسبات":"holidays.","بدلات متنوعه":"allowances","اجهزة ومستلزمات متنوعه":"Devices supplies","احبار طابعات":"toners","الانترنت":"Internet Fees","الدعم الفني - سوفتك":"Support - softech","مصروف اهلاك مباني وانشاءات":"Depreciation - Building","مصروف اهلاك سيارات":"Depreciation - Vehicles","مصروف اهلاك اثاث ومكاتب":"Depreciation - Furniture, Fixture, & Office Equipment","مصروف اهلاك اجهزة تكييف":"Depreciation - Airconditioning Systems","مصروف اهلاك اجهزة كمبيوتر ومستلزماتها":"Depreciation -Computers & Electronic Appliances","مصروف اهلاك برامج كمبيوتر":"Depreciation - software","مصروف اهلاك اجهزة كهربائية":"Depreciation - electrical equipment.","مصروف اهلاك تجهيزات وديكور":"Depreciation - equipment&decoration","الضرائب العامة":"General Tax","الضرائب العقارية":"Property Taxes","خصم نقاط العملاء":"Customer points","عقود صيانة وتوصيل مرافق":"Maintenance contracts","مصروفات تاسيس":"Establishment  expenses","هوالك وتوالف":"Damage Items","عجز جرد":"Inventory deficit","تامين على السيارات":"Cars Insurance","مصروفات عملاء تعاقدات":"credit customers fees","ارباح دائنون متنوعون":"creditors profit","مصروفات متنوعه - ايام دعاية":"other expenses - Events","تغليف وشحن بضاعة":"Shipping fees","ديون معدومة":"bad debts","دمغات":"Stamp","خسائر استبعاد اصول":"Loss of fixed assets","عروض مبيعات التجميل":"Offers cosmetics sales","فوائد القروض - ابوظبى الاولFAB":"interest on loans - FAB Bank","فوائد القروض بنك ADIB":"interest on loans - ADIB Bank","فوائد القروض بنك كريدي اجريكول":"interest on loans -credit agricole Bank","فوائد القروض - العربى الافريقىAAIB":"interest on loans -AAIB Bank","فوائد المصرية للتمويل العقارى":"interest on loans - EHFC Bank","فوائد القروض البنك الاهلى المصرى":"interest on loans -NBE Bank","فوائد القروض بنك الاهلى الكويتى ABK":"interest on loans -ABK Bank","فوائد القروض بنك الاهلى المتحد AUB":"interest on loans -AUB Bank","فوائد القروض البنك التجارى الدولى CIB":"interest on loans - CIB Bank","تامينات اجتماعية - حصة الشركة":"Social Insurance Company's share","فوائد القروض - التجارى وفا بنك AWB":"interest on loans - AWB Bank","فوائد القروض - بنك القاهرة BDC":"interest on loans - BDC Bank","خصم ابليكيشن":"Application commision & Discounts","عروض مبيعات ابليكشن":"Application commision & Discounts","مفقودات ومسروقات":"Stolen goods","عمولات ادارية":"Administrative commissions","المبيعات":"Sales","نقدى":"Cash","دليفرى":"Delivery","اجل":"Credit","تكلفة البضاعة المباعة":"COGS","مجمل الربح":"Gross Profit","خصم نقدى":"Cash Discount","ارباح صرف اصناف بيع اصول":"Asset Sale Gains","فائض جرد":"Inventory Surplus","ايرادات اخرى":"Other Income","اجمالي الايرادات اخرى":"Total Other Income","اجمالي المصروفات":"Total Expenses","صافي الربح / الخسارة":"Net Profit / Loss","اتعاب محاماة":"lawyers' fees","اصلاح السيارات":"Car Repair"};
 
 
-const BT={'HQ':'HQ','Aguza':'Branch','October':'Branch','Batal':'Branch','Nasr City':'Branch','Sweedy':'POS - Corporate','NTRA':'POS - Corporate','Etisalat':'POS - Corporate','Hazzem Hassan':'POS - Corporate','Sena3ia':'Branch','Khargia':'POS - Corporate','Tagmou3':'Branch','Maadi':'Branch','Sand Beach':'Branch','Zaid':'Branch','Alamya':'Branch','Online':'Branch','Orange':'POS - Corporate','Vod.Smart':'POS - Corporate','Vod.Zahraa':'POS - Corporate','Mo7awelat':'POS - Corporate','Electric':'POS - Corporate','FINE':'POS - Corporate','Egyplast':'POS - Corporate','Etisalat.Katamya':'POS - Corporate','CFC':'POS - Corporate','North.Coast':'POS - Corporate','Rehab':'POS - Corporate','HSBC MAADI':'POS - Corporate','HSBC SMART':'POS - Corporate','Vois':'POS - Corporate'};
+var BT={'HQ':'HQ','Aguza':'Branch','October':'Branch','Batal':'Branch','Nasr City':'Branch','Sweedy':'POS - Corporate','NTRA':'POS - Corporate','Etisalat':'POS - Corporate','Hazzem Hassan':'POS - Corporate','Sena3ia':'Branch','Khargia':'POS - Corporate','Tagmou3':'Branch','Maadi':'Branch','Sand Beach':'Branch','Zaid':'Branch','Alamya':'Branch','Online':'Branch','Orange':'POS - Corporate','Vod.Smart':'POS - Corporate','Vod.Zahraa':'POS - Corporate','Mo7awelat':'POS - Corporate','Electric':'POS - Corporate','FINE':'POS - Corporate','Egyplast':'POS - Corporate','Etisalat.Katamya':'POS - Corporate','CFC':'POS - Corporate','North.Coast':'POS - Corporate','Rehab':'POS - Corporate','HSBC MAADI':'POS - Corporate','HSBC SMART':'POS - Corporate','Vois':'POS - Corporate'};
+// Master name/type maps. BM/BT are rebuilt per-year from the sheets that actually
+// exist in that year's workbook, so branches that open or close are handled
+// automatically instead of silently vanishing.
+var BM_ALL=BM, BT_ALL=BT;
 
 const EG={'Salaries & Benefits':['مرتبات الادارة','مرتبات الفروع'],'Utilities expenses':['الكهرباء','المياه','التليفون الارضي'],'Rent':['الايجار - الصيدلية','الايجار - الادارة','ايجارات متنوعه'],'Consumables':['ادوات مكتبية','مستلزمات نظافة','رسوم نظافة','مستهلكات صيدلية','شنط صيدلية'],'Other overhead expenses':['فواتير الموبايل','بوفية وضيافة','رسوم وتراخيص وعمولات','اكراميات','زكاة وتبرعات','مصروفات نثرية','تامين على الصيدلية','هوالك وتوالف','عجز جرد','تأمينات اجتماعية - حصة الشركة','مصروفات بنكية','وجبات عاملين','وقود السيارات','زيت السيارات','مكافات لجنة الجرد','ديون معدومة','دمغات','عمولات ادارية','بدلات متنوعه','خصم نقاط العملاء'],'Incentives & Rewards':['مكافات مبيعات الادوية','مكافات مبيعات التجميل','مكافات','مزايا عاملين'],'Advertisement & Marketing':['اعلان ودعاية وتسويق','خصومات اضافية للعملاء','عروض مبيعات التجميل','تغليف وشحن بضاعة'],'Repairs & Maintenance':['اصلاح وصيانة التكييفات','اصلاح وصيانة الكهرباء','اصلاح وصيانة السباكة','اصلاح وصيانة اخرى','اصلاح وجراج السيارات'],'Support - IT':['مستلزمات كمبيوتر','اجهزة ومستلزمات متنوعه','احبار طابعات','الانترنت','الدعم الفني - سوفتك'],'Depreciation & Amortization':['مصروف اهلاك مباني وانشاءات','مصروف اهلاك سيارات','مصروف اهلاك اثاث ومكاتب','مصروف اهلاك اجهزة تكييف','مصروف اهلاك اجهزة كمبيوتر ومستلزماتها','مصروف اهلاك برامج كمبيوتر','مصروف اهلاك اجهزة كهربائية','مصروف اهلاك تجهيزات وديكور'],'Taxes':['الضرائب العامة','الضرائب العقارية'],'Interest':['فوائد القروض - ابوظبى الاولFAB','فوائد القروض بنك ADIB','فوائد القروض بنك كريدي أجريكول','فوائد القروض - العربى الافريقىAAIB','فوائد المصرية للتمويل العقارى','فوائد القروض البنك الاهلى المصرى','فوائد القروض بنك الاهلى الكويتى ABK','فوائد القروض بنك الاهلى المتحد AUB','فوائد القروض البنك التجارى الدولى CIB','فوائد القروض - التجارى وفا بنك AWB','فوائد القروض - بنك القاهرة BDC'],'Application Commission':['خصم أبليكيشن','عروض مبيعات ابليكشن']};
 const EE={'مرتبات الادارة':'HQ Salaries','مرتبات الفروع':'Branch Salaries','الكهرباء':'Electricity','المياه':'Water','التليفون الارضي':'Landline','الايجار - الصيدلية':'Rent - Pharmacy','الايجار - الادارة':'Rent - HQ','ايجارات متنوعه':'Other Rent','ادوات مكتبية':'Office Supplies','فواتير الموبايل':'Mobile Bills','مكافات مبيعات الادوية':'Medicine Sales Incentives','مكافات مبيعات التجميل':'Cosmetics Sales Incentives','بوفية وضيافة':'Buffet & Hospitality','رسوم وتراخيص وعمولات':'Government Fees','اعلان ودعاية وتسويق':'Advertisement','اكراميات':'Tips & Donations','زكاة وتبرعات':'Zakat & Donations','مصروفات نثرية':'Petty Cash','تأمينات اجتماعية':'Social Insurance','مستلزمات نظافة':'Cleaning Supplies','رسوم نظافة':'Cleaning Fees','تامين على الصيدلية':'Pharmacy Insurance','اصلاح وصيانة التكييفات':'AC Maintenance','اصلاح وصيانة الكهرباء':'Electrical Maintenance','اصلاح وصيانة السباكة':'Plumbing Maintenance','اصلاح وصيانة اخرى':'Other Maintenance','مكافات':'Employee Incentives','مزايا عاملين':'Employee Benefits','مستهلكات صيدلية':'Pharmacy Supplies','اتعاب استشارات محاسبية':'Accounting Fees','اتعاب محاماه':"Lawyers Fees",'مصروفات بنكية':'Bank Charges','شنط صيدلية':'Pharmacy Bags','خصومات اضافية للعملاء':'Customer Discounts','وجبات عاملين':'Staff Meals','وقود السيارات':'Car Fuel','زيت السيارات':'Car Oil','اصلاح وجراج السيارات':'Car Repairs','مكافات لجنة الجرد':'Inventory Committee','مستلزمات كمبيوتر':'Computer Supplies','اجهزة ومستلزمات متنوعه':'Device Supplies','احبار طابعات':'Printer Toners','الانترنت':'Internet','الدعم الفني - سوفتك':'Softek Support','مصروف اهلاك مباني وانشاءات':'Dep - Buildings','مصروف اهلاك سيارات':'Dep - Vehicles','مصروف اهلاك اثاث ومكاتب':'Dep - Furniture','مصروف اهلاك اجهزة تكييف':'Dep - AC','مصروف اهلاك اجهزة كمبيوتر ومستلزماتها':'Dep - Computers','مصروف اهلاك برامج كمبيوتر':'Dep - Software','مصروف اهلاك اجهزة كهربائية':'Dep - Electrical','مصروف اهلاك تجهيزات وديكور':'Dep - Equipment','الضرائب العامة':'General Tax','الضرائب العقارية':'Property Tax','خصم نقاط العملاء':'Customer Points Discount','هوالك وتوالف':'Damage & Waste','عجز جرد':'Inventory Deficit','تأمينات اجتماعية - حصة الشركة':'Social Insurance - Co. Share','ديون معدومة':'Bad Debts','دمغات':'Stamps','خسائر إستبعاد أصول':'Asset Disposal Loss','عروض مبيعات التجميل':'Cosmetics Offers','فوائد القروض - ابوظبى الاولFAB':'Interest - FAB','فوائد القروض بنك ADIB':'Interest - ADIB','فوائد القروض بنك كريدي أجريكول':'Interest - Credit Agricole','فوائد القروض - العربى الافريقىAAIB':'Interest - AAIB','فوائد المصرية للتمويل العقارى':'Interest - EHFC','فوائد القروض البنك الاهلى المصرى':'Interest - NBE','فوائد القروض بنك الاهلى الكويتى ABK':'Interest - ABK','فوائد القروض بنك الاهلى المتحد AUB':'Interest - AUB','فوائد القروض البنك التجارى الدولى CIB':'Interest - CIB','تأمينات اجتماعية - حصة الشركة':'Social Insurance','فوائد القروض - التجارى وفا بنك AWB':'Interest - AWB','فوائد القروض - بنك القاهرة BDC':'Interest - BDC','خصم أبليكيشن':'App Commission','عروض مبيعات ابليكشن':'App Sales Offers','بدلات متنوعه':'Allowances','عمولات ادارية':'Admin Commissions','تغليف وشحن بضاعة':'Packaging & Shipping'};
 const HQ_ITEMS=['فوائد القروض - ابوظبى الاولFAB','فوائد القروض بنك ADIB','فوائد القروض بنك كريدي أجريكول','فوائد القروض - العربى الافريقىAAIB','فوائد المصرية للتمويل العقارى','فوائد القروض البنك الاهلى المصرى','فوائد القروض بنك الاهلى الكويتى ABK','فوائد القروض بنك الاهلى المتحد AUB','فوائد القروض البنك التجارى الدولى CIB','فوائد القروض - التجارى وفا بنك AWB','فوائد القروض - بنك القاهرة BDC','مرتبات الادارة','الايجار - الادارة','اتعاب استشارات محاسبية','اتعاب محاماه'];
 function en(ar){return EE[ar]||ar;}
+
+// ── TAX LINES (for EBITDA / EBIT) ───────────────────────────────────────
+// The "T" in EBITDA/EBIT means TAX, so every tax line has to be taken back
+// out of the figure. We take the lines declared in EG['Taxes'] plus anything
+// added later whose name starts with ضريبة / ضرائب — so the day an income-tax
+// line appears in the Excel, EBITDA stays right on its own.
+// دمغات (stamps) and زكاة (zakat) are NOT taxes in this sense: they are
+// operating costs and stay inside EBITDA.
+function isTaxLabel(it){ return /^(ال)?ضر[ايئ]/.test(normAr(it)); }
+// Scanned once per workbook and cached on the dataset itself. The cache is a
+// NON-enumerable property, so Object.keys(D) still lists branches only.
+function taxLinesOf(Dobj){
+  if(!Dobj)return (EG['Taxes']||[]).slice();
+  if(Dobj.__taxLines)return Dobj.__taxLines;
+  var out=(EG['Taxes']||[]).slice();
+  try{
+    Object.keys(Dobj).forEach(function(sh){
+      ((Dobj[sh]&&Dobj[sh].__order)||[]).forEach(function(it){
+        if(out.indexOf(it)<0&&isTaxLabel(it))out.push(it);
+      });
+    });
+  }catch(e){}
+  try{Object.defineProperty(Dobj,'__taxLines',{value:out,enumerable:false,configurable:true});}
+  catch(e){}
+  return out;
+}
 
 let CH={};
 
@@ -669,6 +820,28 @@ function branchGP(from,to){
 function gvGP(sh,from,to){
   return gv(sh,'المبيعات',from,to)-gv(sh,'تكلفة البضاعة المباعة',from,to);
 }
+// ══ AUTHORITATIVE SOURCES ══════════════════════════════════════════════
+// The workbook carries the same figures twice and they do NOT always agree.
+//   · branch sheets + "مجمعة إجمالية"  = the P&L of record; they match to the pound
+//   · "تقرير إحصائية بحجم المبيعات"    = the ONLY place the sales discount exists
+// So: Net Sales and COGS come from the P&L of record, the discount comes from the
+// statistics sheet, and Gross Sales is DERIVED (net + discount). That keeps both
+// identities true on screen for every filter and every year:
+//        Gross − Discount = Net            Net − COGS = Gross Profit
+// Reading COGS from the statistics sheet used to break the second identity by
+// 443,888 EGP in 2025. Do not switch these back.
+function selNet(isAll,from,to){
+  return isAll?getConsolidated('net_sales',from,to):sumBranch('المبيعات',from,to);
+}
+function selCogs(isAll,from,to){
+  return isAll?getConsolidated('cogs',from,to):sumBranch('تكلفة البضاعة المباعة',from,to);
+}
+function selDisc(isAll,from,to){
+  if(isAll)return getStats('disc',from,to);
+  return getActiveBranches().reduce(function(a,sh){return a+getBranchDisc(sh,from,to);},0);
+}
+function selGross(isAll,from,to){ return selNet(isAll,from,to)+selDisc(isAll,from,to); }
+
 function getBranchDisc(branchKey,from,to){
   if(!STATS.__discBySales||!D[branchKey])return 0;
   var sales=D[branchKey]['\u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a']||[];
@@ -712,21 +885,25 @@ if(typeof window!=='undefined' && typeof window.Chart==='undefined'){
 function renderKPIs(){
   const fr=getFrom(),to=getTo(),type=getType(),br=getBranch();
   const isHQ=type==='HQ'||br==='HQ';
-  const isAll=br==='ALL';
+  // "All" means nothing is filtered at all — a Type filter narrows the selection
+  // just like picking one branch does, so it must NOT fall through to the
+  // whole-company totals.
+  const isAll=(br==='ALL'&&type==='ALL');
 
-  // From correct sources
-  const grossSales = isAll?getStats('gross',fr,to):getBranchGross(br,fr,to);
-  const salesDisc = isAll?getStats('disc',fr,to):getBranchDisc(br,fr,to);
-  const netSales = isAll?getStats('net',fr,to):getBranchNet(br,fr,to);
-  const cogs = isAll?getStats('cogs',fr,to):sumBranch('تكلفة البضاعة المباعة',fr,to);
+  const grossSales = selGross(isAll,fr,to);
+  const salesDisc = selDisc(isAll,fr,to);
+  const netSales = selNet(isAll,fr,to);
+  const cogs = selCogs(isAll,fr,to);
   const grossProfit = isAll?getConsolidated('gross_profit',fr,to):branchGP(fr,to);
   const cashDisc = sumBranch('خصم نقدى',fr,to);
-  const otherIncome = isAll?getConsolidated('other_income',fr,to):sumBranch('ايرادات اخرى',fr,to);
+  const otherIncome = isAll?getConsolidated('other_income',fr,to):sumBranch('إجمالي الايرادات اخرى',fr,to);
   const totalExp = isAll?getConsolidated('expenses',fr,to):sumBranch('إجمالي المصروفات',fr,to);
   const netProfit = isAll?getConsolidated('net_profit',fr,to):sumBranch('صافي الربح / الخسارة',fr,to);
-  const dep=(EG['Depreciation & Amortization']||[]).reduce((s,it)=>s+(isAll?sumAll(it,fr,to):sumBranch(it,fr,to)),0);
-  const inter=(EG['Interest']||[]).reduce((s,it)=>s+(isAll?sumAll(it,fr,to):sumBranch(it,fr,to)),0);
-  const ebitda=netProfit+dep+inter;
+  // sumBranch already covers every branch when nothing is filtered
+  const dep=(EG['Depreciation & Amortization']||[]).reduce((s,it)=>s+sumBranch(it,fr,to),0);
+  const inter=(EG['Interest']||[]).reduce((s,it)=>s+sumBranch(it,fr,to),0);
+  const taxes=taxLinesOf(D).reduce((s,it)=>s+sumBranch(it,fr,to),0);
+  const ebitda=netProfit+dep+inter+taxes;
   const gm=netSales?grossProfit/netSales:0;
   const nm=netSales?netProfit/netSales:0;
   const cogsP=netSales?cogs/netSales:0;
@@ -773,8 +950,6 @@ function renderBranchRank(){
   const sort=document.getElementById('br-rank-sort').value;
 
   let list=Object.entries(BM).map(([sh,dn])=>{
-    const gs=getStats('gross',fr,to)||gv(sh,'المبيعات',fr,to);
-    const ns=getStats('net',fr,to)||gv(sh,'المبيعات',fr,to);
     const c=gv(sh,'تكلفة البضاعة المباعة',fr,to);
     const g=gvGP(sh,fr,to);
     const n=gv(sh,'صافي الربح / الخسارة',fr,to);
@@ -822,9 +997,11 @@ function monthlySeries(metric){
   var isAll=(getBranch()==='ALL'&&getType()==='ALL');
   var out=Array(12).fill(0);
   for(var i=0;i<12;i++){
-    if(metric==='gross')      out[i]=isAll?(STATS.gross[i]||0):sumBranch('المبيعات',i,i);
-    else if(metric==='net')   out[i]=isAll?(STATS.net[i]||0):(sumBranch('المبيعات',i,i)-getBranchDisc(getBranch(),i,i));
-    else if(metric==='cogs')  out[i]=isAll?(STATS.cogs[i]||0):sumBranch('تكلفة البضاعة المباعة',i,i);
+    // "المبيعات" on a branch sheet is ALREADY net of discount — the old code
+    // subtracted the discount from it a second time.
+    if(metric==='gross')      out[i]=selNet(isAll,i,i)+selDisc(isAll,i,i);
+    else if(metric==='net')   out[i]=selNet(isAll,i,i);
+    else if(metric==='cogs')  out[i]=selCogs(isAll,i,i);
     else if(metric==='gross_profit') out[i]=isAll?(CON.gross_profit[i]||0):branchGP(i,i);
     else if(metric==='net_profit')   out[i]=isAll?(CON.net_profit[i]||0):sumBranch('صافي الربح / الخسارة',i,i);
     else if(metric==='expenses')     out[i]=isAll?(CON.expenses[i]||0):sumBranch('إجمالي المصروفات',i,i);
@@ -954,26 +1131,27 @@ function grpAr(g){
 }
 function renderPnL(){
   const fr=getFrom(),to=getTo(),type=getType(),br=getBranch();
-  const isAll=br==='ALL';
+  const isAll=(br==='ALL'&&type==='ALL');
   const isHQ=type==='HQ'||br==='HQ';
   var MNSloc=(typeof LANG!=='undefined'&&LANG==='ar')?['يناير','فبراير','مارس','ابريل','مايو','يونيو','يوليو','اغسطس','سبتمبر','اكتوبر','نوفمبر','ديسمبر']:MNS;
   var allLbl=(typeof LANG!=='undefined'&&LANG==='ar')?'كل الفروع':'All Branches';
   document.getElementById('pnl-lbl').textContent=(br!=='ALL'?BM[br]:type!=='ALL'?type:allLbl)+' · '+(fr===to?MNSloc[fr]:MNSloc[fr]+' → '+MNSloc[to]);
 
-  const grossSales=isAll?getStats('gross',fr,to):getBranchGross(br,fr,to);
-  const disc=isAll?getStats('disc',fr,to):getBranchDisc(br,fr,to);
-  const netSales=isAll?getStats('net',fr,to):getBranchNet(br,fr,to);
-  const cogs=isAll?getStats('cogs',fr,to):sumBranch('تكلفة البضاعة المباعة',fr,to);
+  const grossSales=selGross(isAll,fr,to);
+  const disc=selDisc(isAll,fr,to);
+  const netSales=selNet(isAll,fr,to);
+  const cogs=selCogs(isAll,fr,to);
   const gp=isAll?getConsolidated('gross_profit',fr,to):branchGP(fr,to);
   const cashDisc=sumBranch('خصم نقدى',fr,to);
-  const oi=isAll?getConsolidated('other_income',fr,to):sumBranch('ايرادات اخرى',fr,to);
+  const oi=isAll?getConsolidated('other_income',fr,to):sumBranch('إجمالي الايرادات اخرى',fr,to);
   const invSurplus=sumBranch('فائض جرد',fr,to);
   const totalExp=isAll?getConsolidated('expenses',fr,to):sumBranch('إجمالي المصروفات',fr,to);
   const net=isAll?getConsolidated('net_profit',fr,to):sumBranch('صافي الربح / الخسارة',fr,to);
-  const dep=(EG['Depreciation & Amortization']||[]).reduce((s,it)=>s+(isAll?sumAll(it,fr,to):sumBranch(it,fr,to)),0);
-  const inter=(EG['Interest']||[]).reduce((s,it)=>s+(isAll?sumAll(it,fr,to):sumBranch(it,fr,to)),0);
-  const ebitda=net+dep+inter;
-  const ebit=net+inter;
+  const dep=(EG['Depreciation & Amortization']||[]).reduce((s,it)=>s+sumBranch(it,fr,to),0);
+  const inter=(EG['Interest']||[]).reduce((s,it)=>s+sumBranch(it,fr,to),0);
+  const taxes=taxLinesOf(D).reduce((s,it)=>s+sumBranch(it,fr,to),0);
+  const ebitda=net+dep+inter+taxes;
+  const ebit=net+inter+taxes;
   const tax=(sumBranch('الضرائب العامة',fr,to)||0)+(sumBranch('الضرائب العقارية',fr,to)||0);
   const ebt=net+tax;
   const sRef=grossSales||1;
@@ -1276,7 +1454,7 @@ function renderCompare(){
     ['Total Expenses','إجمالي المصروفات',true],
     ['Net Profit / Loss','صافي الربح / الخسارة',false],
     ['App Discount','خصم أبليكيشن',true],
-    ['Other Income','ايرادات اخرى',false],
+    ['Other Income','إجمالي الايرادات اخرى',false],
   ];
 
   // sales base for each side (for % of sales)
@@ -1423,29 +1601,567 @@ function renderForecast(){
     </div>`;
 }
 
+
+// ══════════════════════════════════════════════════════════════════════════
+// YEAR-OVER-YEAR ENGINE
+// Reads two years side by side WITHOUT touching the globals D/CON/STATS/BM/BT,
+// so nothing on the rest of the dashboard is affected by this page.
+// Every figure here comes from the same lines the single-year pages use.
+// ══════════════════════════════════════════════════════════════════════════
+var yoyChart=null;
+// which expense groups are expanded on the Year-vs-Year page (collapsed by default)
+var YOY_EXP_OPEN={};
+function yoyToggleCat(i){ YOY_EXP_OPEN[i]=!YOY_EXP_OPEN[i]; renderYoY(); }
+function yoyExpandAll(open){
+  if(typeof EXPENSE_CAT_ORDER!=='undefined')
+    EXPENSE_CAT_ORDER.forEach(function(c,i){ YOY_EXP_OPEN[i]=!!open; });
+  renderYoY();
+}
+// Arabic labels for the expense groups — same wording as the Expense Analysis page
+var YOY_CAT_AR={'Salaries & Benefits':'الرواتب والمزايا','Utilities':'المرافق','Rent':'الإيجارات','Consumables':'المستهلكات','Advertising & Marketing':'الدعاية والتسويق','Incentives & Rewards':'الحوافز والمكافآت','Repairs & Maintenance':'الإصلاح والصيانة','IT Support':'الدعم الفني','Depreciation & Amortization':'الإهلاك','Taxes':'الضرائب','Loan Interest':'فوائد القروض','Sales Discount':'خصم المبيعات','App Commission':'عمولة الأبليكيشن','Other Overhead Expenses':'مصروفات أخرى'};
+var YOY_PRESETS={q1:[0,2],q2:[3,5],q3:[6,8],q4:[9,11],h1:[0,5],h2:[6,11]};
+
+function yE(y){ return (YEARS[y]&&(YEARS[y].ready||ensureYearParsed(y)))?YEARS[y]:null; }
+
+function yGv(e,sh,item,a,b){
+  var v=e.D[sh]&&e.D[sh][item]; if(!v)return 0;
+  var s=0; for(var i=a;i<=b;i++)s+=v[i]||0; return s;
+}
+// gross / net / disc for one branch, via the stats-sheet match (same as getBranch*)
+function yBrStat(e,sh,field,a,b){
+  var dbs=e.STATS&&e.STATS.__discBySales, sales=(e.D[sh]&&e.D[sh]['المبيعات'])||[];
+  var t=0;
+  for(var i=a;i<=b;i++){
+    var k=Math.round(sales[i]||0);
+    if(k>0&&dbs&&dbs[k])t+=dbs[k][field][i]||0;
+    else if(field!=='disc')t+=sales[i]||0;
+  }
+  return t;
+}
+function yMetric(e,sh,m,a,b){
+  if(!e||!e.BM[sh])return 0;
+  // derived, exactly like the rest of the dashboard: net + discount
+  if(m==='gross')return yGv(e,sh,'المبيعات',a,b)+yBrStat(e,sh,'disc',a,b);
+  if(m==='disc') return yBrStat(e,sh,'disc',a,b);
+  if(m==='net')  return yGv(e,sh,'المبيعات',a,b);
+  if(m==='cash')     return yGv(e,sh,'نقدى',a,b);
+  if(m==='delivery') return yGv(e,sh,'دليفرى',a,b);
+  if(m==='credit')   return yGv(e,sh,'اجل',a,b);
+  if(m==='cogs') return yGv(e,sh,'تكلفة البضاعة المباعة',a,b);
+  if(m==='gp')   return yGv(e,sh,'المبيعات',a,b)-yGv(e,sh,'تكلفة البضاعة المباعة',a,b);
+  if(m==='exp')  return yGv(e,sh,'إجمالي المصروفات',a,b);
+  if(m==='oi')   return yGv(e,sh,'إجمالي الايرادات اخرى',a,b);
+  if(m==='np')   return yGv(e,sh,'صافي الربح / الخسارة',a,b);
+  // Depreciation and loan interest use the same item lists the single-year KPIs use,
+  // so EBITDA here is identical to EBITDA on the Overview page.
+  if(m==='dep')  return yItems(e,sh,EG['Depreciation & Amortization'],a,b);
+  if(m==='int')  return yItems(e,sh,EG['Interest'],a,b);
+  if(m==='tax')  return yItems(e,sh,taxLinesOf(e.D),a,b);
+  if(m==='ebitda')return yGv(e,sh,'صافي الربح / الخسارة',a,b)+yItems(e,sh,EG['Depreciation & Amortization'],a,b)+yItems(e,sh,EG['Interest'],a,b)+yItems(e,sh,taxLinesOf(e.D),a,b);
+  if(m==='ebit')  return yGv(e,sh,'صافي الربح / الخسارة',a,b)+yItems(e,sh,EG['Interest'],a,b)+yItems(e,sh,taxLinesOf(e.D),a,b);
+  // cash operating expenses = total expenses without depreciation, interest and taxes
+  if(m==='opex') return yGv(e,sh,'إجمالي المصروفات',a,b)-yItems(e,sh,EG['Depreciation & Amortization'],a,b)-yItems(e,sh,EG['Interest'],a,b)-yItems(e,sh,taxLinesOf(e.D),a,b);
+  return 0;
+}
+function yItems(e,sh,items,a,b){var s=0;(items||[]).forEach(function(it){s+=yGv(e,sh,it,a,b);});return s;}
+function yTot(e,list,m,a,b){var s=0;for(var i=0;i<list.length;i++)s+=yMetric(e,list[i],m,a,b);return s;}
+function yLastMonth(e){
+  var last=-1;
+  for(var i=0;i<12;i++){ if(((e.STATS.gross[i]||0)!==0)||((e.STATS.net[i]||0)!==0))last=i; }
+  return last;
+}
+// metrics where an INCREASE is bad (expenses, cost, discount)
+function yoyIsCost(m){return m==='cogs'||m==='exp'||m==='disc'||m==='dep'||m==='int'||m==='opex'||m==='tax';}
+
+// Every branch that exists in either year, base year first.
+function yoyAllBranches(eB,eV){
+  var all=Object.keys(eB.BM).slice();
+  Object.keys(eV.BM).forEach(function(k){ if(all.indexOf(k)<0)all.push(k); });
+  return all;
+}
+function yoyBranchList(eB,eV,scope){
+  var all=yoyAllBranches(eB,eV);
+  // a single branch picked in the Branch box overrides the Scope box
+  var pick=document.getElementById('yoy-branch');
+  var one=pick?pick.value:'ALL';
+  if(one&&one!=='ALL')return all.filter(function(sh){return sh===one;});
+  return all.filter(function(sh){
+    var inB=!!eB.BM[sh], inV=!!eV.BM[sh];
+    if(scope==='COMP')return inB&&inV;
+    if(scope==='ALL')return true;
+    var t=eB.BT[sh]||eV.BT[sh];
+    return t===scope;
+  });
+}
+
+function yoyPreset(){
+  var p=document.getElementById('yoy-preset').value;
+  if(YOY_PRESETS[p]){
+    document.getElementById('yoy-from').value=String(YOY_PRESETS[p][0]);
+    document.getElementById('yoy-to').value=String(YOY_PRESETS[p][1]);
+  }
+  renderYoY();
+}
+function yoyCustom(){ document.getElementById('yoy-preset').value='custom'; renderYoY(); }
+
+// Resolve the month range for each side.
+function yoyRanges(eB,eV){
+  var p=document.getElementById('yoy-preset').value;
+  var lb=yLastMonth(eB), lv=yLastMonth(eV);
+  if(p==='full')  return {b:[0,Math.max(lb,0)], v:[0,Math.max(lv,0)], mode:'full'};
+  if(p==='auto'){ var c=Math.min(lb,lv); if(c<0)c=0; return {b:[0,c], v:[0,c], mode:'auto'}; }
+  var r;
+  if(YOY_PRESETS[p]) r=YOY_PRESETS[p].slice();
+  else{
+    var f=parseInt(document.getElementById('yoy-from').value)||0;
+    var t=parseInt(document.getElementById('yoy-to').value)||0;
+    r=[Math.min(f,t),Math.max(f,t)];
+  }
+  return {b:r.slice(), v:r.slice(), mode:p};
+}
+
+function yoyPct(cur,prev){
+  if(prev===0||prev===null||prev===undefined)return null;
+  return (cur-prev)/Math.abs(prev);
+}
+// growth badge: green when the move is good for that line, red when it is bad
+function yoyBadge(cur,prev,isCost){
+  var g=yoyPct(cur,prev);
+  if(g===null)return '<span class="pp" style="background:#f1f5f9;color:#64748b">—</span>';
+  var good=isCost?(g<=0):(g>=0);
+  var cls=Math.abs(g)<0.005?'pp-a':(good?'pp-g':'pp-r');
+  var arrow=g>=0?'▲':'▼';
+  return '<span class="pp '+cls+'" title="'+(g*100).toFixed(2)+'%">'+arrow+' '+(Math.abs(g)*100).toFixed(1)+'%</span>';
+}
+function yoyDeltaCell(d,isCost){
+  var good=isCost?(d<=0):(d>=0);
+  var col=Math.abs(d)<1?'var(--text3)':(good?'var(--green)':'var(--danger)');
+  var sign=d>0?'+':'';
+  return '<td style="text-align:center;font-weight:600;color:'+col+'" title="'+fmt(d,true)+'">'+sign+fmt(d)+'</td>';
+}
+
+function renderYoY(){
+  var host=document.getElementById('page-yoy'); if(!host)return;
+  var L=(typeof LANG!=='undefined'&&LANG==='ar');
+  var T=function(en,ar){return L?ar:en;};
+  var selB=document.getElementById('yoy-base'), selV=document.getElementById('yoy-vs');
+  if(!selB||!selV)return;
+
+  // fill the year pickers once (and whenever the year list changes)
+  var sig=YEAR_LIST.join(',');
+  if(selB.getAttribute('data-sig')!==sig){
+    var opts=YEAR_LIST.map(function(y){return '<option value="'+y+'">'+y+'</option>';}).join('');
+    selB.innerHTML=opts; selV.innerHTML=opts;
+    selB.setAttribute('data-sig',sig); selV.setAttribute('data-sig',sig);
+    selB.value=YEAR_LIST[0]||'';
+    selV.value=YEAR_LIST[1]||YEAR_LIST[0]||'';
+  }
+
+  var warn=document.getElementById('yoy-warn');
+  if(YEAR_LIST.length<2){
+    warn.innerHTML='<div class="card" style="padding:16px;color:var(--text2)">'+
+      T('Only one year of data is loaded. Add another <b>P_L_&lt;year&gt;.xlsx</b> next to this page to use this report.',
+        'في سنة واحدة بس محمّلة. حط ملف <b>P_L_&lt;السنة&gt;.xlsx</b> تاني جنب الصفحة دي عشان التقرير ده يشتغل.')+'</div>';
+    ['yoy-kpis','yoy-samestore'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML='';});
+    ['yoy-month-tbl','yoy-branch-tbl','yoy-pnl-tbl'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML='';});
+    return;
+  }
+
+  var yB=selB.value, yV=selV.value;
+  var eB=yE(yB), eV=yE(yV);
+  if(!eB||!eV){
+    warn.innerHTML='<div class="card" style="padding:16px;color:var(--warn)">'+
+      T('Still loading the other year — one moment.','لسه بيحمّل السنة التانية — لحظة.')+'</div>';
+    // raw bytes may not have landed yet; try again shortly
+    [yB,yV].forEach(function(y){ if(YEARS[y]&&!YEARS[y].ready)fetchYearRaw(y,function(ok){if(ok)renderYoY();}); });
+    return;
+  }
+  if(yB===yV){
+    warn.innerHTML='<div class="card" style="padding:16px;color:var(--warn)">'+
+      T('Pick two different years.','اختار سنتين مختلفتين.')+'</div>';
+    return;
+  }
+
+  // branch picker — every branch in either year, marked when it is missing from one
+  var bp=document.getElementById('yoy-branch');
+  var bsig=yB+'|'+yV;
+  if(bp&&bp.getAttribute('data-sig')!==bsig){
+    var keep=bp.value;
+    var opts='<option value="ALL">'+T('All branches','كل الفروع')+'</option>';
+    yoyAllBranches(eB,eV).forEach(function(sh){
+      var inB=!!eB.BM[sh], inV=!!eV.BM[sh];
+      var tag=inB&&inV?'':(inB?' \u00b7 '+yB+' '+T('only','فقط'):' \u00b7 '+yV+' '+T('only','فقط'));
+      opts+='<option value="'+sh+'">'+(eB.BM[sh]||eV.BM[sh]||sh)+tag+'</option>';
+    });
+    bp.innerHTML=opts;
+    bp.setAttribute('data-sig',bsig);
+    bp.value=(keep&&(keep==='ALL'||eB.BM[keep]||eV.BM[keep]))?keep:'ALL';
+  }
+  var R=yoyRanges(eB,eV), aB=R.b[0],bB=R.b[1], aV=R.v[0],bV=R.v[1];
+  var scope=document.getElementById('yoy-scope').value;
+  var list=yoyBranchList(eB,eV,scope);
+  var onlyBranch=(bp&&bp.value!=='ALL')?bp.value:null;
+  // Scope is meaningless once a single branch is picked — grey it out so the
+  // two boxes can never look like they disagree.
+  var scEl=document.getElementById('yoy-scope');
+  if(scEl){scEl.disabled=!!onlyBranch;scEl.style.opacity=onlyBranch?'.45':'';}
+  var MN=L?MNS_AR:MNS;
+
+  // ── period banner + honesty warnings ────────────────────────────────
+  var lb=yLastMonth(eB), lv=yLastMonth(eV);
+  var nB=bB-aB+1, nV=bV-aV+1;
+  var basis=document.getElementById('yoy-basis');
+  basis.innerHTML=(R.mode==='full'
+      ? T('Each year over its own full range','كل سنة على مداها الكامل')
+      : T('Same months both years','نفس الشهور في السنتين'))+
+    ' · '+yB+': '+MN[aB]+'–'+MN[bB]+' ('+nB+') · '+yV+': '+MN[aV]+'–'+MN[bV]+' ('+nV+')';
+
+  var msgs=[];
+  if(nB!==nV) msgs.push(T('⚠️ Different lengths: '+yB+' has '+nB+' month(s), '+yV+' has '+nV+'. Growth % is <b>not</b> like-for-like.',
+                          '⚠️ الفترتين مش متساويين: '+yB+' فيها '+nB+' شهر و'+yV+' فيها '+nV+'. نسب النمو <b>مش</b> مقارنة عادلة.'));
+  if(bB>lb) msgs.push(T('⚠️ '+yB+' has no data after '+MN[lb]+' — the months after it count as zero.',
+                        '⚠️ '+yB+' مافيهاش بيانات بعد '+MN[lb]+' — الشهور اللي بعده بتتحسب صفر.'));
+  if(bV>lv) msgs.push(T('⚠️ '+yV+' has no data after '+MN[lv]+' — the months after it count as zero.',
+                        '⚠️ '+yV+' مافيهاش بيانات بعد '+MN[lv]+' — الشهور اللي بعده بتتحسب صفر.'));
+  warn.innerHTML=msgs.length?('<div class="card" style="padding:12px 16px;border-left:3px solid var(--warn);font-size:12px;line-height:1.9;color:var(--text2)">'+msgs.join('<br>')+'</div>'):'';
+
+  // ── KPI cards ───────────────────────────────────────────────────────
+  var K=[
+    ['gross',T('Gross Sales','إجمالي المبيعات'),'kpi-blue'],
+    ['disc', T('Sales Discount','خصم المبيعات'),'kpi-warn'],
+    ['net',  T('Net Sales','صافي المبيعات'),'kpi-teal'],
+    ['cogs', T('COGS','تكلفة البضاعة'),'kpi-warn'],
+    ['gp',   T('Gross Profit','مجمل الربح'),'kpi-green'],
+    ['oi',   T('Other Income','إيرادات أخرى'),'kpi-teal'],
+    ['exp',  T('Total Expenses','إجمالي المصروفات'),'kpi-warn'],
+    ['ebitda',T('EBITDA','الأرباح قبل الفوايد والضرايب والإهلاك'),'kpi-purple'],
+    ['ebit', T('EBIT','الأرباح قبل الفوايد والضرايب'),'kpi-purple'],
+    ['np',   T('Net Profit','صافي الربح'),'kpi-green']
+  ];
+  var netB=yTot(eB,list,'net',aB,bB), netV=yTot(eV,list,'net',aV,bV);
+  document.getElementById('yoy-kpis').innerHTML=K.map(function(k){
+    var cur=yTot(eB,list,k[0],aB,bB), prev=yTot(eV,list,k[0],aV,bV);
+    var d=cur-prev, isC=yoyIsCost(k[0]);
+    var cls=k[2]; if((k[0]==='np'||k[0]==='ebitda'||k[0]==='ebit')&&cur<0)cls='kpi-danger';
+    var pctCur=netB?cur/netB:0, pctPrev=netV?prev/netV:0;
+    var bps=(pctCur-pctPrev)*100;
+    var showPct=(k[0]!=='gross'&&k[0]!=='net');
+    return '<div class="kpi '+cls+'" data-full="'+fmt(cur,true)+'">'+
+      '<div class="kpi-lbl">'+k[1]+'</div>'+
+      '<div class="kpi-val">'+fmt(cur)+'</div>'+
+      '<div class="kpi-sub" style="margin-top:4px">'+yB+' · '+T('vs','مقابل')+' '+yV+' '+fmt(prev)+'</div>'+
+      '<div style="margin-top:5px">'+yoyBadge(cur,prev,isC)+
+        ' <span style="font-size:10.5px;color:'+((isC?d<=0:d>=0)?'var(--green)':'var(--danger)')+'">'+(d>=0?'+':'')+fmt(d)+'</span></div>'+
+      (showPct?'<div class="kpi-sub" style="margin-top:3px" title="'+T('share of net sales','النسبة من صافي المبيعات')+'">'+
+        fp(pctCur)+' '+T('of net sales','من صافي المبيعات')+' <span style="color:'+((isC?bps<=0:bps>=0)?'var(--green)':'var(--danger)')+'">('+(bps>=0?'+':'')+bps.toFixed(2)+' pp)</span></div>':'')+
+      '</div>';
+  }).join('');
+
+  // ── same-store / like-for-like split ────────────────────────────────
+  var comp=[],opened=[],closed=[];
+  list.forEach(function(sh){
+    var inB=!!eB.BM[sh], inV=!!eV.BM[sh];
+    if(inB&&inV)comp.push(sh); else if(inB)opened.push(sh); else closed.push(sh);
+  });
+  var compB=yTot(eB,comp,'net',aB,bB), compV=yTot(eV,comp,'net',aV,bV);
+  var newB =yTot(eB,opened,'net',aB,bB), lostV=yTot(eV,closed,'net',aV,bV);
+  var totB=netB, totV=netV;
+  var ssBox=document.getElementById('yoy-samestore');
+  if(onlyBranch){ ssBox.innerHTML=''; }
+  else{
+  function pill(lbl,val,sub,col){
+    return '<div style="flex:1;min-width:150px;padding:12px 14px;border-radius:10px;background:var(--system-bg);border:1px solid var(--border)">'+
+      '<div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px">'+lbl+'</div>'+
+      '<div style="font-size:17px;font-weight:800;color:'+col+';margin:3px 0">'+val+'</div>'+
+      '<div style="font-size:10.5px;color:var(--text3)">'+sub+'</div></div>';
+  }
+  var ssG=yoyPct(compB,compV);
+  var totG=yoyPct(totB,totV);
+  ssBox.innerHTML='<div class="card"><div class="card-hdr"><div class="card-title">'+
+    T('Like-for-like (same-branch) growth','النمو الحقيقي للفروع المشتركة')+'</div>'+
+    '<div style="font-size:11px;color:var(--text3)">'+T('Net Sales · the retail standard: new and closed branches are separated out',
+      'صافي المبيعات · المعيار في الريتيل: الفروع الجديدة والمقفولة بتتفصل لوحدها')+'</div></div>'+
+    '<div style="padding:14px;display:flex;gap:10px;flex-wrap:wrap">'+
+    pill(T('Comparable branches','فروع مشتركة')+' ('+comp.length+')',
+         ssG===null?'—':((ssG>=0?'+':'')+(ssG*100).toFixed(1)+'%'),
+         fmt(compV)+' → '+fmt(compB), ssG>=0?'var(--green)':'var(--danger)')+
+    pill(T('Opened in','فتحت في')+' '+yB+' ('+opened.length+')', opened.length?'+'+fmt(newB):'—',
+         opened.length?opened.map(function(s){return eB.BM[s];}).join(', '):T('none','لا يوجد'),'var(--navy)')+
+    pill(T('Not in','مش موجودة في')+' '+yB+' ('+closed.length+')', closed.length?'−'+fmt(lostV):'—',
+         closed.length?closed.map(function(s){return eV.BM[s];}).join(', '):T('none','لا يوجد'),'var(--warn)')+
+    pill(T('Total reported growth','النمو الإجمالي المعلن'),
+         totG===null?'—':((totG>=0?'+':'')+(totG*100).toFixed(1)+'%'),
+         fmt(totV)+' → '+fmt(totB), totG>=0?'var(--green)':'var(--danger)')+
+    '</div></div>';
+  }
+
+  // ── profitability ladder: Net Sales → EBITDA → EBIT → Net Profit ────
+  // EBITDA = Net Profit + Depreciation + Interest, exactly as on the Overview page.
+  // Reading it next to Net Profit separates how the business TRADES from what it
+  // pays to BORROW — the whole reason the metric exists.
+  (function(){
+    var L2=function(m){return yTot(eB,list,m,aB,bB);}, V2=function(m){return yTot(eV,list,m,aV,bV);};
+    var rowsL=[
+      [T('Net Sales','صافي المبيعات'),'net',1,0],
+      [T('COGS','تكلفة البضاعة المباعة'),'cogs',0,1],
+      [T('Gross Profit','مجمل الربح'),'gp',1,0],
+      [T('Other Income','إيرادات أخرى'),'oi',0,0],
+      [T('Cash operating expenses','المصروفات النقدية'),'opex',0,1],
+      [T('EBITDA','EBITDA'),'ebitda',1,0],
+      [T('Depreciation','الإهلاك'),'dep',0,1],
+      [T('EBIT','EBIT'),'ebit',1,0],
+      [T('Loan interest','فوايد القروض'),'int',0,1],
+      [T('Taxes','الضرائب'),'tax',0,1],
+      [T('NET PROFIT','صافي الربح'),'np',1,0]
+    ];
+    var h='<thead><tr><th>'+T('Line','البند')+'</th><th style="text-align:center">'+yB+'</th><th style="text-align:center">%</th>'+
+      '<th style="text-align:center">'+yV+'</th><th style="text-align:center">%</th>'+
+      '<th style="text-align:center">'+T('Change','الفرق')+'</th><th style="text-align:center">'+T('Growth','النمو')+
+      '</th><th style="text-align:center" title="'+T('margin change in percentage points','تغير الهامش بالنقطة المئوية')+'">pp</th></tr></thead><tbody>';
+    rowsL.forEach(function(r){
+      var c=L2(r[1]), p=V2(r[1]), bold=r[2], cost=r[3];
+      var sc=netB?c/netB:0, sp=netV?p/netV:0, bps=(sc-sp)*100;
+      var d=c-p;
+      h+='<tr style="'+(bold?'font-weight:700;background:var(--system-bg);':'')+'">'+
+        '<td style="'+(bold?'font-weight:700;':(L?'padding-right:26px;':'padding-left:26px;'))+'">'+(cost?'− ':'')+r[0]+'</td>'+
+        '<td style="text-align:center" title="'+fmt(c,true)+'">'+fmt(c)+'</td>'+
+        '<td style="text-align:center;font-size:11px;color:var(--text3)">'+(netB?fp(sc):'—')+'</td>'+
+        '<td style="text-align:center;color:var(--text2)" title="'+fmt(p,true)+'">'+fmt(p)+'</td>'+
+        '<td style="text-align:center;font-size:11px;color:var(--text3)">'+(netV?fp(sp):'—')+'</td>'+
+        yoyDeltaCell(d,cost)+
+        '<td style="text-align:center">'+yoyBadge(c,p,cost)+'</td>'+
+        '<td style="text-align:center;font-size:11px;color:'+((cost?bps<=0:bps>=0)?'var(--green)':'var(--danger)')+'">'+(bps>=0?'+':'')+bps.toFixed(2)+'</td></tr>';
+    });
+    // one-line read of what EBITDA is telling us
+    var eb=L2('ebitda'),ev=V2('ebitda'),nb=L2('np'),nv=V2('np'),ib=L2('int'),iv=V2('int');
+    var gE=yoyPct(eb,ev), gN=yoyPct(nb,nv), gI=yoyPct(ib,iv);
+    var note='';
+    if(gE!==null&&gN!==null){
+      var sign=function(x){return (x>=0?'+':'')+(x*100).toFixed(1)+'%';};
+      note=T('EBITDA '+sign(gE)+' vs Net Profit '+sign(gN)+' · interest '+(gI===null?'—':sign(gI))+'. ',
+             'EBITDA '+sign(gE)+' مقابل صافي الربح '+sign(gN)+' · الفوايد '+(gI===null?'—':sign(gI))+'. ')+
+        (gE<0
+          ? T('Operations themselves are weaker — this is not a financing story.','الضعف في التشغيل نفسه — مش مسألة تمويل.')
+          : T('Operations improved; the gap to Net Profit comes from interest and depreciation.','التشغيل اتحسّن؛ الفرق لحد صافي الربح جاي من الفوايد والإهلاك.'));
+    }
+    var el=document.getElementById('yoy-ladder-tbl');
+    if(el)el.innerHTML=h+'</tbody>'+(note?'<tfoot><tr><td colspan="8" style="background:var(--system-bg);font-size:11.5px;color:var(--text2);line-height:1.8;white-space:normal">'+note+'</td></tr></tfoot>':'');
+  })();
+
+  // ── month by month ──────────────────────────────────────────────────
+  var metric=document.getElementById('yoy-metric').value;
+  var isC=yoyIsCost(metric);
+  var nM=Math.max(bB-aB+1,bV-aV+1);
+  var labels=[],curArr=[],prvArr=[];
+  for(var i=0;i<nM;i++){
+    var mB=aB+i, mV=aV+i;
+    labels.push((mB<12?(L?MNS_AR[mB]:MNS_S[mB]):''));
+    curArr.push(mB<=bB&&mB<12?yTot(eB,list,metric,mB,mB):null);
+    prvArr.push(mV<=bV&&mV<12?yTot(eV,list,metric,mV,mV):null);
+  }
+  var mh='<thead><tr><th>'+T('Month','الشهر')+'</th><th style="text-align:center">'+yB+'</th><th style="text-align:center">'+yV+
+    '</th><th style="text-align:center">'+T('Change','الفرق')+'</th><th style="text-align:center">'+T('Growth','النمو')+'</th></tr></thead><tbody>';
+  for(var i=0;i<nM;i++){
+    var c=curArr[i], p=prvArr[i];
+    if(c===null&&p===null)continue;
+    var cv=c||0, pv=p||0;
+    mh+='<tr><td style="font-weight:600">'+labels[i]+'</td>'+
+      '<td style="text-align:center" title="'+fmt(cv,true)+'">'+(c===null?'—':fmt(cv))+'</td>'+
+      '<td style="text-align:center;color:var(--text2)" title="'+fmt(pv,true)+'">'+(p===null?'—':fmt(pv))+'</td>'+
+      yoyDeltaCell(cv-pv,isC)+
+      '<td style="text-align:center">'+yoyBadge(cv,pv,isC)+'</td></tr>';
+  }
+  var tc=yTot(eB,list,metric,aB,bB), tp=yTot(eV,list,metric,aV,bV);
+  mh+='<tr style="font-weight:700;background:var(--system-bg)"><td>'+T('Total','الإجمالي')+'</td>'+
+    '<td style="text-align:center" title="'+fmt(tc,true)+'">'+fmt(tc)+'</td>'+
+    '<td style="text-align:center" title="'+fmt(tp,true)+'">'+fmt(tp)+'</td>'+
+    yoyDeltaCell(tc-tp,isC)+'<td style="text-align:center">'+yoyBadge(tc,tp,isC)+'</td></tr>';
+  document.getElementById('yoy-month-tbl').innerHTML=mh+'</tbody>';
+
+  // chart
+  try{
+    if(yoyChart){yoyChart.destroy();yoyChart=null;}
+    var cv2=document.getElementById('ch-yoy');
+    if(cv2&&typeof Chart==='function'){
+      yoyChart=new Chart(cv2.getContext('2d'),{type:'bar',data:{labels:labels,datasets:[
+        {label:String(yV),data:prvArr,backgroundColor:'rgba(148,163,184,.55)',borderColor:'#94a3b8',borderWidth:1,borderRadius:4},
+        {label:String(yB),data:curArr,backgroundColor:'rgba(2,3,83,.85)',borderColor:'#020353',borderWidth:1,borderRadius:4}
+      ]},options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'top',labels:{boxWidth:12,font:{size:11}}},
+          tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+fmt(c.parsed.y,true);}}}},
+        scales:{y:{beginAtZero:true,ticks:{callback:function(v){return fmt(v);},font:{size:10}}},x:{ticks:{font:{size:10}}}}}});
+    }
+  }catch(e){}
+
+  // ── branch by branch ────────────────────────────────────────────────
+  var totDelta=tc-tp;
+  var rows=list.map(function(sh){
+    var c=yMetric(eB,sh,metric,aB,bB), p=yMetric(eV,sh,metric,aV,bV);
+    var inB=!!eB.BM[sh], inV=!!eV.BM[sh];
+    return {sh:sh,name:eB.BM[sh]||eV.BM[sh]||sh,type:eB.BT[sh]||eV.BT[sh]||'',
+            c:c,p:p,d:c-p,g:yoyPct(c,p),
+            status:(inB&&inV)?'comp':(inB?'new':'closed')};
+  }).filter(function(r){return r.c!==0||r.p!==0;});
+
+  var sort=document.getElementById('yoy-br-sort').value;
+  if(sort==='growth')      rows.sort(function(a,b){return (b.g===null?-99:b.g)-(a.g===null?-99:a.g);});
+  else if(sort==='decline')rows.sort(function(a,b){return (a.g===null?99:a.g)-(b.g===null?99:b.g);});
+  else if(sort==='contrib')rows.sort(function(a,b){return Math.abs(b.d)-Math.abs(a.d);});
+  else if(sort==='base')   rows.sort(function(a,b){return b.c-a.c;});
+  else                     rows.sort(function(a,b){return a.name.localeCompare(b.name);});
+
+  var TAG={comp:'',new:'<span class="pp pp-g" style="margin-inline-start:5px">'+T('new','جديد')+'</span>',
+           closed:'<span class="pp pp-a" style="margin-inline-start:5px">'+T('not in','مش في')+' '+yB+'</span>'};
+  var bh='<thead><tr><th>#</th><th>'+T('Branch','الفرع')+'</th><th style="text-align:center">'+yB+'</th><th style="text-align:center">'+yV+
+    '</th><th style="text-align:center">'+T('Change','الفرق')+'</th><th style="text-align:center">'+T('Growth','النمو')+
+    '</th><th style="text-align:center" title="'+T('share of the total change','نصيبه من إجمالي التغير')+'">'+T('Share of change','نصيبه من التغير')+'</th></tr></thead><tbody>';
+  rows.forEach(function(r,i){
+    var share=totDelta?(r.d/totDelta)*100:null;
+    bh+='<tr><td class="mut">'+(i+1)+'</td>'+
+      '<td style="font-weight:600">'+r.name+TAG[r.status]+'</td>'+
+      '<td style="text-align:center" title="'+fmt(r.c,true)+'">'+fmt(r.c)+'</td>'+
+      '<td style="text-align:center;color:var(--text2)" title="'+fmt(r.p,true)+'">'+fmt(r.p)+'</td>'+
+      yoyDeltaCell(r.d,isC)+
+      '<td style="text-align:center">'+yoyBadge(r.c,r.p,isC)+'</td>'+
+      '<td style="text-align:center;font-size:11px;color:var(--text2)">'+(share===null?'—':(share>=0?'+':'')+share.toFixed(1)+'%')+'</td></tr>';
+  });
+  bh+='<tr style="font-weight:700;background:var(--system-bg)"><td></td><td>'+T('Total','الإجمالي')+' ('+rows.length+')</td>'+
+    '<td style="text-align:center">'+fmt(tc)+'</td><td style="text-align:center">'+fmt(tp)+'</td>'+
+    yoyDeltaCell(totDelta,isC)+'<td style="text-align:center">'+yoyBadge(tc,tp,isC)+'</td><td style="text-align:center">100%</td></tr>';
+  document.getElementById('yoy-branch-tbl').innerHTML=bh+'</tbody>';
+
+  // ── detailed P&L, line by line, common-size ─────────────────────────
+  var onlyMat=document.getElementById('yoy-material').checked;
+  function lineVals(item){
+    var c=0,p=0;
+    list.forEach(function(sh){ c+=yGv(eB,sh,item,aB,bB); p+=yGv(eV,sh,item,aV,bV); });
+    return [c,p];
+  }
+  function pnlRow(label,c,p,opt){
+    opt=opt||{};
+    var d=c-p, isCost=!!opt.cost;
+    if(onlyMat&&!opt.bold){
+      var gg=yoyPct(c,p);
+      if(!(Math.abs(d)>=50000&&(gg===null||Math.abs(gg)>=0.10)))return '';
+    }
+    var sc=netB?c/netB:0, sp=netV?p/netV:0, bps=(sc-sp)*100;
+    var st=opt.bold?'font-weight:700;background:var(--system-bg);':'';
+    var pad=opt.indent?(L?'padding-right:26px;':'padding-left:26px;'):'';
+    var clk=opt.click?(' onclick="'+opt.click+'" style="cursor:pointer;'+st+'" title="'+T('click to expand / collapse','اضغط للفتح والقفل')+'"'):(' style="'+st+'"');
+    var arrow=opt.arrow?('<span style="display:inline-block;width:14px;color:var(--text3)">'+(opt.open?'\u25be':'\u25b8')+'</span>'):'';
+    return '<tr'+clk+'>'+
+      '<td style="'+pad+(opt.bold?'font-weight:700;':'')+'">'+arrow+label+'</td>'+
+      '<td style="text-align:center" title="'+fmt(c,true)+'">'+fmt(c)+'</td>'+
+      '<td style="text-align:center;font-size:11px;color:var(--text3)">'+(netB?fp(sc):'—')+'</td>'+
+      '<td style="text-align:center;color:var(--text2)" title="'+fmt(p,true)+'">'+fmt(p)+'</td>'+
+      '<td style="text-align:center;font-size:11px;color:var(--text3)">'+(netV?fp(sp):'—')+'</td>'+
+      yoyDeltaCell(d,isCost)+
+      '<td style="text-align:center">'+yoyBadge(c,p,isCost)+'</td>'+
+      '<td style="text-align:center;font-size:11px;color:'+((isCost?bps<=0:bps>=0)?'var(--green)':'var(--danger)')+'">'+(bps>=0?'+':'')+bps.toFixed(2)+'</td></tr>';
+  }
+  var ph='<thead><tr><th>'+T('Line','البند')+'</th>'+
+    '<th style="text-align:center">'+yB+'</th><th style="text-align:center">%</th>'+
+    '<th style="text-align:center">'+yV+'</th><th style="text-align:center">%</th>'+
+    '<th style="text-align:center">'+T('Change','الفرق')+'</th><th style="text-align:center">'+T('Growth','النمو')+'</th>'+
+    '<th style="text-align:center" title="'+T('change in share of net sales, percentage points','تغير النسبة من صافي المبيعات بالنقطة المئوية')+'">pp</th></tr></thead><tbody>';
+
+  var gsB=yTot(eB,list,'gross',aB,bB), gsV=yTot(eV,list,'gross',aV,bV);
+  var dsB=yTot(eB,list,'disc',aB,bB),  dsV=yTot(eV,list,'disc',aV,bV);
+  var cgB=yTot(eB,list,'cogs',aB,bB),  cgV=yTot(eV,list,'cogs',aV,bV);
+  var gpB=netB-cgB,                    gpV=netV-cgV;
+  ph+='<tr><td colspan="8" style="background:var(--navy);color:#fff;font-weight:700;font-size:11px;letter-spacing:.3px;padding:9px 12px">'+
+      T('SALES — by payment type','المبيعات — حسب طريقة الدفع')+'</td></tr>';
+  var mixB=0,mixV=0;
+  [['cash',T('Cash','نقدي')],['delivery',T('Delivery','دليفري')],['credit',T('Credit','آجل')]].forEach(function(mm){
+    var c=yTot(eB,list,mm[0],aB,bB), p=yTot(eV,list,mm[0],aV,bV);
+    mixB+=c;mixV+=p;
+    ph+=pnlRow(mm[1],c,p,{indent:1});
+  });
+  ph+=pnlRow(T('Net Sales','صافي المبيعات'),netB,netV,{bold:1});
+  // نقدي + دليفري + آجل must equal net sales — flag it loudly if the Excel disagrees
+  if(Math.abs(mixB-netB)>2||Math.abs(mixV-netV)>2){
+    ph+='<tr><td colspan="8" style="background:var(--warn-bg);color:var(--warn);font-size:11px;padding:8px 12px;white-space:normal">'+
+      T('⚠️ Cash + Delivery + Credit does not equal Net Sales — check the Excel. ',
+        '⚠️ نقدي + دليفري + آجل مش بيساوي صافي المبيعات — راجع الإكسل. ')+
+      yB+': '+fmt(mixB-netB,true)+' · '+yV+': '+fmt(mixV-netV,true)+'</td></tr>';
+  }
+  ph+='<tr><td colspan="8" style="background:var(--navy);color:#fff;font-weight:700;font-size:11px;letter-spacing:.3px;padding:9px 12px">'+
+      T('SALES — gross to net','المبيعات — من الإجمالي للصافي')+'</td></tr>';
+  ph+=pnlRow(T('Gross Sales','إجمالي المبيعات'),gsB,gsV,{bold:1});
+  ph+=pnlRow(T('Sales Discount','خصم المبيعات'),dsB,dsV,{cost:1,indent:1});
+  ph+=pnlRow(T('Net Sales','صافي المبيعات'),netB,netV,{bold:1});
+  ph+=pnlRow(T('COGS','تكلفة البضاعة المباعة'),cgB,cgV,{cost:1,indent:1});
+  ph+=pnlRow(T('Gross Profit','مجمل الربح'),gpB,gpV,{bold:1});
+
+  var oiB=yTot(eB,list,'oi',aB,bB), oiV=yTot(eV,list,'oi',aV,bV);
+  ph+=pnlRow(T('Total Other Income','إجمالي الإيرادات الأخرى'),oiB,oiV,{bold:1});
+
+  // expenses grouped exactly like the Expense Analysis page
+  var seen={};
+  var order=[];
+  [eB,eV].forEach(function(e){
+    Object.keys(e.D).forEach(function(sh){
+      ((e.D[sh]&&e.D[sh].__order)||[]).forEach(function(it){ if(!seen[it]){seen[it]=1;order.push(it);} });
+    });
+  });
+  var expB=yTot(eB,list,'exp',aB,bB), expV=yTot(eV,list,'exp',aV,bV);
+  ph+='<tr><td colspan="8" style="background:var(--navy);color:#fff;font-weight:700;font-size:11px;letter-spacing:.3px;padding:9px 12px">'+
+      T('EXPENSES — by category','المصروفات — حسب المجموعة')+'</td></tr>';
+  var covered=0, coveredV=0;
+  EXPENSE_CAT_ORDER.forEach(function(cat,ci){
+    var items=order.filter(function(it){return EXPENSE_CAT[normAr(it)]===cat[0];});
+    if(!items.length)return;
+    var cc=0,pp2=0, sub='', n=0;
+    var isOpen=!!YOY_EXP_OPEN[ci];
+    items.forEach(function(it){
+      var v=lineVals(it);
+      if(v[0]===0&&v[1]===0)return;
+      cc+=v[0];pp2+=v[1];n++;
+      if(isOpen)sub+=pnlRow(L?it:(ITEM_EN[normAr(it)]||it),v[0],v[1],{cost:1,indent:1});
+    });
+    if(cc===0&&pp2===0)return;
+    covered+=cc; coveredV+=pp2;
+    var head=(L?(YOY_CAT_AR[cat[1]]||cat[1]):cat[1])+
+      ' <span style="font-weight:500;font-size:10.5px;color:var(--text3)">('+n+')</span>';
+    ph+=pnlRow(head,cc,pp2,{cost:1,bold:1,click:'yoyToggleCat('+ci+')',arrow:1,open:isOpen})+sub;
+  });
+  var uncB=expB-covered, uncV=expV-coveredV;
+  if(Math.abs(uncB)>1||Math.abs(uncV)>1)
+    ph+=pnlRow(T('Unclassified expenses','مصروفات غير مصنّفة'),uncB,uncV,{cost:1,bold:1});
+  ph+=pnlRow(T('TOTAL EXPENSES','إجمالي المصروفات'),expB,expV,{cost:1,bold:1});
+
+  var npB=yTot(eB,list,'np',aB,bB), npV=yTot(eV,list,'np',aV,bV);
+  ph+=pnlRow(T('NET PROFIT / LOSS','صافي الربح / الخسارة'),npB,npV,{bold:1});
+  document.getElementById('yoy-pnl-tbl').innerHTML=ph+'</tbody>';
+}
+
 // ── LOGIN ──
 var __excelLoaded=false; // becomes true once GitHub Excel RAW bytes are fetched
+// After login: parse ONLY the newest year and show it. Older years stay as raw
+// bytes until the user actually opens them, which keeps login exactly as fast
+// as it is today. If the network is still fetching, we wait quietly instead of
+// showing an empty dashboard.
+function bootData(tries){
+  if(window.__dataReady)return;
+  var y=YEAR_LIST[0];
+  if(y&&YEARS[y]&&YEARS[y].raw&&ensureYearParsed(y)){
+    window.__dataReady=true;
+    buildYearSelect();
+    useYear(y,true);
+    return;
+  }
+  if(tries<80){setTimeout(function(){bootData(tries+1);},250);return;}
+  var lu=document.getElementById('last-upd');
+  if(lu)lu.textContent=(typeof LANG!=='undefined'&&LANG==='ar')?'لم يتم العثور على ملف بيانات':'No data file found';
+}
+
 function doLogin(){
   const pw=document.getElementById('pw-input').value;
   if(pw===PASS){
-    // parse the raw workbook NOW (only after correct password)
-    if(__rawWB && !window.__dataReady){
-      try{
-        var wb=XLSX.read(__rawWB,{type:'array'});
-        var res=parseWorkbook(wb);
-        applyWorkbookData(res,__rawName,false);
-        window.__dataReady=true;
-        __rawWB=null; // free raw bytes
-      }catch(e){}
-    }
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='block';
     initDashboard();
-    if(window.__dataReady){
-      var lastM=detectLastMonth();
-      var ft=document.getElementById('f-to'); if(ft)ft.value=String(lastM);
-      onFilter();
-    }
+    bootData(0);
   }else{
     document.getElementById('login-err').style.display='block';
     document.getElementById('pw-input').value='';
@@ -1487,10 +2203,11 @@ var PAGE_RENDERERS={
   bstatement:['renderKPIs','renderBStatement'],
   heatmap:['renderKPIs','renderHeatmap'],
   compare:['renderKPIs','renderCompare'],
+  yoy:['renderYoY'],
   alerts:['renderKPIs','renderAlerts'],
   forecast:['renderKPIs','renderForecast']
 };
-var ALL_RENDERERS=['renderKPIs','renderBranchRank','renderMonthlyChart','renderMixChart','renderExpChart','renderPnL','renderBranches','renderExpenses','renderHeatmap','renderCompare','renderAlerts','renderForecast'];
+var ALL_RENDERERS=['renderKPIs','renderBranchRank','renderMonthlyChart','renderMixChart','renderExpChart','renderPnL','renderBranches','renderExpenses','renderHeatmap','renderCompare','renderAlerts','renderForecast','renderYoY'];
 var __deferTimer=null;
 function runRenderers(list){
   list.forEach(function(fn){ try{ if(typeof window[fn]==='function')window[fn](); }catch(e){} });
@@ -1676,8 +2393,8 @@ function renderBStatement(){
 // ===== Language toggle (Arabic ⇄ English). English stays the default; nothing English is removed. =====
 var LANG='en';
 var PAGE_TITLES={
-  en:{overview:'Overview',pnl:'P&L Statement',expenses:'Expense Analysis',branches:'Branch Performance',bstatement:'Branch Statement',heatmap:'Performance Map',compare:'Compare Branches',alerts:'Alerts & Insights',forecast:'Forecast '+YEAR},
-  ar:{overview:'الرئيسية',pnl:'قائمة الدخل',expenses:'تحليل المصروفات',branches:'أداء الفروع',bstatement:'كشف حساب الفرع',heatmap:'خريطة الأداء',compare:'مقارنة الفروع',alerts:'التنبيهات والرؤى',forecast:'توقعات '+YEAR}
+  en:{overview:'Overview',pnl:'P&L Statement',expenses:'Expense Analysis',branches:'Branch Performance',bstatement:'Branch Statement',heatmap:'Performance Map',compare:'Compare Branches',yoy:'Year vs Year',alerts:'Alerts & Insights',forecast:'Forecast '+YEAR},
+  ar:{overview:'الرئيسية',pnl:'قائمة الدخل',expenses:'تحليل المصروفات',branches:'أداء الفروع',bstatement:'كشف حساب الفرع',heatmap:'خريطة الأداء',compare:'مقارنة الفروع',yoy:'مقارنة السنوات',alerts:'التنبيهات والرؤى',forecast:'توقعات '+YEAR}
 };
 var CUR_PAGE='overview';
 function lastUpdText(m){
@@ -1823,12 +2540,33 @@ function parseStats(ws){
   S.__discBySales=discBySales;
   return S;
 }
+// A sheet is a branch sheet when its label column carries the "المبيعات" line.
+// Detecting it this way means a branch that opens (or gets renamed) in a future
+// year shows up on its own, instead of being dropped without any warning.
+function isBranchSheet(ws){
+  try{
+    var rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null});
+    var lim=Math.min(rows.length,150);
+    for(var i=0;i<lim;i++){
+      var r=rows[i];if(!r)continue;
+      var lab=(r[2]==null?'':String(r[2])).replace(/\s+/g,' ').trim();
+      if(lab==='المبيعات')return true;
+    }
+  }catch(e){}
+  return false;
+}
 function parseWorkbook(wb){
-  const Dn={};
-  Object.keys(BM).forEach(function(sn){Dn[sn]=wb.Sheets[sn]?parseBranchSheet(wb.Sheets[sn]):{};});
+  const Dn={};const names=[];const unknown=[];
+  (wb.SheetNames||[]).forEach(function(sn){
+    if(/^(Dashboard|Sheet\d*)$/i.test(sn))return;
+    if(sn.indexOf('تقرير')===0||sn.indexOf('مجمعة')===0)return;
+    var ws=wb.Sheets[sn];if(!ws||!isBranchSheet(ws))return;
+    Dn[sn]=parseBranchSheet(ws);names.push(sn);
+    if(!BM_ALL[sn])unknown.push(sn);
+  });
   const conSheet=wb.Sheets['\u0645\u062c\u0645\u0639\u0629 \u0625\u062c\u0645\u0627\u0644\u064a\u0629'];
   const statSheet=wb.Sheets['\u062a\u0642\u0631\u064a\u0631 \u0625\u062d\u0635\u0627\u0626\u064a\u0629 \u0628\u062d\u062c\u0645 \u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a'];
-  return {D:Dn,CON:conSheet?parseConsolidated(conSheet):null,STATS:statSheet?parseStats(statSheet):null};
+  return {D:Dn,names:names,unknown:unknown,CON:conSheet?parseConsolidated(conSheet):null,STATS:statSheet?parseStats(statSheet):null};
 }
 
 // Detect last month that actually has data (across CON + STATS), 0-indexed
@@ -1847,28 +2585,109 @@ function detectLastMonth(){
   return last;
 }
 
-// Apply parsed workbook to globals + UI (shared by upload & auto-load)
-function applyWorkbookData(res,sourceLabel,reveal){
-  if(!res||!res.CON||!res.STATS) return false;
-  D=res.D;CON=res.CON;STATS=res.STATS;
-  var branchesCount=Object.keys(D).filter(function(k){return Object.keys(D[k]).length;}).length;
-  if(typeof setYearFrom==='function')setYearFrom(sourceLabel);
-  var fl=document.getElementById('file-lbl');
-  window.__srcLabel=sourceLabel||('P_L_'+YEAR+'.xlsx'); window.__brCount=branchesCount;
-  if(fl)fl.textContent=window.__srcLabel+' \u00b7 '+branchesCount+((typeof LANG!=='undefined'&&LANG==='ar')?' فرع':' Branches');
+// ── MULTI-YEAR ENGINE ────────────────────────────────────────────────────
+// Every year is its own workbook sitting next to this page (P_L_2025.xlsx,
+// P_L_2026.xlsx, P_L_2027.xlsx ...). Raw bytes for all of them are fetched in
+// the background at start-up, but a year is only PARSED the first time it is
+// actually opened. Adding a year therefore costs nothing on load, and the
+// dashboard stays exactly as fast as it is today no matter how many years pile
+// up.
+var YEARS={};      // { '2026': {file, raw, D, CON, STATS, BM, BT, unknown, ready} }
+var YEAR_LIST=[];  // years we found, newest first
+
+// Turn a parsed workbook into a ready year entry.
+function registerYear(y,res,fileName){
+  if(!res||!res.CON||!res.STATS)return false;
+  var e=YEARS[y]||(YEARS[y]={});
+  e.file=fileName||e.file||('P_L_'+y+'.xlsx');
+  e.D=res.D;e.CON=res.CON;e.STATS=res.STATS;e.unknown=res.unknown||[];
+  // Rebuild the branch maps from the sheets this year actually has. Known
+  // branches keep their display name and type; anything new is added at the end
+  // using its sheet name, so it is visible rather than silently missing.
+  var names=res.names||Object.keys(res.D);
+  var ordered=Object.keys(BM_ALL).filter(function(k){return names.indexOf(k)>=0;})
+    .concat(names.filter(function(k){return !BM_ALL[k];}));
+  e.BM={};e.BT={};
+  ordered.forEach(function(sn){
+    e.BM[sn]=BM_ALL[sn]||sn;
+    e.BT[sn]=BT_ALL[sn]||(sn==='HQ'?'HQ':'Branch');
+  });
+  e.ready=true;e.raw=null;
+  return true;
+}
+
+// Parse a year on demand (first time it is opened).
+function ensureYearParsed(y){
+  var e=YEARS[y];
+  if(!e)return false;
+  if(e.ready)return true;
+  if(!e.raw)return false;
+  try{
+    var wb=XLSX.read(e.raw,{type:'array'});
+    return registerYear(y,parseWorkbook(wb),e.file);
+  }catch(err){return false;}
+}
+
+// Point the whole dashboard at one year. Every render function reads D / CON /
+// STATS / BM / BT as globals, so swapping these references switches the year
+// without touching a single formula or label.
+function useYear(y,reRender){
+  if(!ensureYearParsed(y))return false;
+  var e=YEARS[y];
+  var prevBranch=null,prevType=null;
+  if(reRender){
+    var fb=document.getElementById('f-branch');if(fb)prevBranch=fb.value;
+    var ftp=document.getElementById('f-type');if(ftp)prevType=ftp.value;
+  }
+  D=e.D;CON=e.CON;STATS=e.STATS;BM=e.BM;BT=e.BT;
+  YEAR=String(y);applyYearLabels();
   var lastM=detectLastMonth();
-  var ft=document.getElementById('f-to'); if(ft)ft.value=String(lastM);
-  var ff=document.getElementById('f-from'); if(ff)ff.value='0';
-  var lu=document.getElementById('last-upd');
-  window.__lastM=lastM;
-  if(lu)lu.textContent=lastUpdText(lastM);
-  // Only reveal the dashboard if explicitly asked (i.e. after password) AND already logged in
-  if(reveal && document.getElementById('app').style.display==='block'){
+  window.__lastM=lastM;window.__srcLabel=e.file;window.__brCount=Object.keys(BM).length;
+  var fl=document.getElementById('file-lbl');
+  if(fl)fl.textContent=e.file+' \u00b7 '+window.__brCount+((typeof LANG!=='undefined'&&LANG==='ar')?' فرع':' Branches');
+  var lu=document.getElementById('last-upd');if(lu)lu.textContent=lastUpdText(lastM);
+  var ys=document.getElementById('f-year');if(ys&&ys.value!==String(y))ys.value=String(y);
+  // the Branch Statement dropdown is filled once from BM — clear it so it is
+  // rebuilt for this year's branch list
+  var bs=document.getElementById('bs-branch');if(bs)bs.innerHTML='';
+  if(reRender){
     if(typeof initDashboard==='function')initDashboard();
-    if(ft)ft.value=String(lastM);
+    var fb2=document.getElementById('f-branch');
+    // keep the user's branch if this year has it, otherwise fall back to All
+    if(fb2)fb2.value=(prevBranch&&(prevBranch==='ALL'||BM[prevBranch]))?prevBranch:'ALL';
+    var ftp2=document.getElementById('f-type');
+    if(ftp2&&prevType)ftp2.value=prevType;
+    var ff=document.getElementById('f-from');if(ff)ff.value='0';
+    var ft=document.getElementById('f-to');if(ft)ft.value=String(lastM);
     onFilter();
   }
   return true;
+}
+
+function buildYearSelect(){
+  var sel=document.getElementById('f-year');if(!sel)return;
+  sel.innerHTML=YEAR_LIST.map(function(y){return '<option value="'+y+'">'+y+'</option>';}).join('');
+  sel.value=YEAR;
+  var grp=document.getElementById('f-year-grp');
+  if(grp)grp.style.display=YEAR_LIST.length>1?'':'none';
+}
+
+function onYearChange(){
+  var sel=document.getElementById('f-year');if(!sel)return;
+  var y=sel.value;
+  if(y===YEAR)return;
+  var e=YEARS[y];
+  var fail=function(){
+    alert((typeof LANG!=='undefined'&&LANG==='ar')?('تعذّر تحميل بيانات سنة '+y):('Could not load data for '+y));
+    sel.value=YEAR;sel.disabled=false;
+  };
+  if(!e){fail();return;}
+  if(e.ready||e.raw){ if(!useYear(y,true))fail(); return; }
+  sel.disabled=true;                       // bytes still on the way
+  fetchYearRaw(y,function(ok){
+    sel.disabled=false;
+    if(!ok||!useYear(y,true))fail();
+  });
 }
 
 // Auto-load the Excel sitting next to this page on GitHub Pages
@@ -1892,31 +2711,66 @@ function applyYearLabels(){
     if(typeof PAGE_TITLES!=='undefined'){PAGE_TITLES.en.forecast='Forecast '+YEAR;PAGE_TITLES.ar.forecast='توقعات '+YEAR;}
   }catch(e){}
 }
-// Files tried automatically. Current year first, then previous/next, then generic names.
-var AUTO_FILES=(function(){
-  var y=new Date().getFullYear(),list=[];
-  [y,y+1,y-1].forEach(function(yy){list.push('P_L_'+yy+'.xlsx','P&L '+yy+'.xlsx','PL_'+yy+'.xlsx');});
-  list.push('data.xlsx');
-  return list;
-})();
-var __rawWB=null, __rawName='';
-function autoLoadFromGitHub(cb){
-  var idx=0;
-  function tryNext(){
-    if(idx>=AUTO_FILES.length){ if(cb)cb(false); return; }
-    var fn=AUTO_FILES[idx++];
-    fetch(encodeURIComponent(fn)+'?t='+Date.now())
-      .then(function(r){ if(!r.ok) throw 0; return r.arrayBuffer(); })
-      .then(function(buf){
-        // keep raw bytes only; DO NOT parse or store data yet
-        __rawWB=new Uint8Array(buf); __rawName=fn; __excelLoaded=true;
-        if(cb)cb(true);
-      })
-      .catch(function(){ tryNext(); });
-  }
-  tryNext();
+// Filenames tried for a given year. P_L_<year>.xlsx is the convention; the
+// others are accepted so existing files keep working without being renamed.
+function yearFileCandidates(y){
+  return ['P_L_'+y+'.xlsx','P&L '+y+'.xlsx','PL_'+y+'.xlsx','P&L Dec '+y+'.xlsx','P_L_Dec_'+y+'.xlsx','P&L_'+y+'.xlsx'];
 }
 
+// Look for every year's workbook next to this page. Cheap HEAD requests, all
+// fired at once. Drop P_L_2027.xlsx in the repo and it appears on its own —
+// nothing in this file needs editing.
+function scanYears(cb){
+  var now=new Date().getFullYear(),found={},jobs=[],done=false;
+  for(var y=now+1;y>=2020;y--){
+    (function(yy){
+      yearFileCandidates(yy).forEach(function(fn,rank){jobs.push([String(yy),fn,rank]);});
+    })(y);
+  }
+  var pending=jobs.length;
+  function finish(){
+    if(done)return;done=true;
+    YEAR_LIST=Object.keys(found).sort(function(a,b){return Number(b)-Number(a);});
+    YEAR_LIST.forEach(function(y){ if(!YEARS[y])YEARS[y]={file:found[y].name,raw:null,ready:false}; });
+    if(cb)cb(YEAR_LIST);
+  }
+  if(!pending){finish();return;}
+  jobs.forEach(function(j){
+    fetch(encodeURIComponent(j[1])+'?t='+Date.now(),{method:'HEAD'})
+      .then(function(r){
+        // A year may have more than one matching file in the folder. Pick by the
+        // order in yearFileCandidates (P_L_<year>.xlsx wins), never by whichever
+        // HTTP response happens to come back first — otherwise the file picked
+        // changes from one page load to the next.
+        if(r&&r.ok&&(!found[j[0]]||j[2]<found[j[0]].rank))found[j[0]]={name:j[1],rank:j[2]};
+      })
+      .catch(function(){})
+      .then(function(){ if(--pending<=0)finish(); });
+  });
+  setTimeout(finish,9000);   // never hang on a slow network
+}
+
+// Fetch one year's raw bytes. Nothing is parsed here — parsing waits for the
+// password, and for the year to actually be opened.
+function fetchYearRaw(y,cb){
+  var e=YEARS[y];
+  if(!e){if(cb)cb(false);return;}
+  if(e.ready||e.raw){if(cb)cb(true);return;}
+  if(e.__loading){e.__waiting=(e.__waiting||[]).concat([cb]);return;}
+  e.__loading=true;
+  fetch(encodeURIComponent(e.file)+'?t='+Date.now())
+    .then(function(r){ if(!r.ok)throw 0; return r.arrayBuffer(); })
+    .then(function(buf){
+      e.raw=new Uint8Array(buf);e.__loading=false;__excelLoaded=true;
+      if(cb)cb(true);(e.__waiting||[]).forEach(function(f){f(true);});e.__waiting=[];
+    })
+    .catch(function(){
+      e.__loading=false;
+      if(cb)cb(false);(e.__waiting||[]).forEach(function(f){f(false);});e.__waiting=[];
+    });
+}
+
+// Manual upload still works, and now simply registers as another year.
 function loadFile(e){
   const file=e.target.files[0];if(!file)return;
   const r=new FileReader();
@@ -1924,20 +2778,28 @@ function loadFile(e){
     try{
       const wb=XLSX.read(ev.target.result,{type:'array'});
       const res=parseWorkbook(wb);
-      if(!applyWorkbookData(res,file.name,true)){
-        alert('\u0627\u0644\u0645\u0644\u0641 \u0645\u0634 \u0641\u064a\u0647 \u0634\u064a\u062a \u0627\u0644\u0645\u062c\u0645\u0639\u0629/\u0627\u0644\u0625\u062d\u0635\u0627\u0626\u064a\u0629 \u0627\u0644\u0645\u0637\u0644\u0648\u0628\u0629');
+      var m=String(file.name).match(/(20\d{2})/);
+      var y=m?m[1]:String(new Date().getFullYear());
+      if(!YEARS[y])YEARS[y]={raw:null,ready:false};
+      if(!registerYear(y,res,file.name)){
+        alert('الملف مش فيه شيت المجمعة/الإحصائية المطلوبة');return;
       }
+      if(YEAR_LIST.indexOf(y)<0){
+        YEAR_LIST.push(y);YEAR_LIST.sort(function(a,b){return Number(b)-Number(a);});
+      }
+      window.__dataReady=true;
+      buildYearSelect();
+      useYear(y,true);
     }catch(err){alert('Error: '+err.message);}
   };
   r.readAsArrayBuffer(file);
 }
 
-// On page load: fetch the Excel from GitHub in the BACKGROUND.
-// The password screen still shows; data is revealed only after correct login.
+// On page load: find the years and pull their bytes in the background. The
+// password screen still shows; nothing is parsed until after login.
 window.addEventListener('DOMContentLoaded',function(){
-  autoLoadFromGitHub(function(ok){
-    // ok=true => GitHub Excel loaded & ready; shown after password.
-    // ok=false => falls back to built-in data after password.
+  scanYears(function(list){
+    list.forEach(function(y){ fetchYearRaw(y,function(){}); });
   });
 });
 
