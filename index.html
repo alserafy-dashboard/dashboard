@@ -187,10 +187,12 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
 .tw{overflow:auto}
 .tw table{width:100%;border-collapse:collapse;font-size:12px}
 .tw th{background:var(--system-bg);color:var(--text2);font-weight:600;font-size:11px;padding:11px 14px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
-.tw th:first-child{position:sticky;left:0;z-index:11;background:var(--system-bg)}
+/* العمود الأول يثبت على بداية السطر: يسار في الإنجليزي، يمين في العربي.
+   كان left:0 — وده بيخلي العمود يهرب برّه الشاشة في الوضع العربي. */
+.tw th:first-child{position:sticky;inset-inline-start:0;z-index:11;background:var(--system-bg)}
 .tw td{padding:10px 14px;border-bottom:1px solid #f1f5f9;white-space:nowrap;vertical-align:middle}
-.tw td:first-child{position:sticky;left:0;background:#fff;z-index:5;font-weight:500}
-.tw tr:hover td{background:#f8fafc}.tw tr:hover td:first-child{background:#f8fafc}
+.tw td:first-child{position:sticky;inset-inline-start:0;background:#fff;z-index:5;font-weight:500}
+@media(hover:hover){.tw tr:hover td{background:#f8fafc}.tw tr:hover td:first-child{background:#f8fafc}}
 .tw .sec-row td{background:var(--navy)!important;color:#fff!important;font-weight:700;font-size:11px;letter-spacing:0.3px;padding:9px 12px}
 .tw .grp-row td{background:#f0f4ff!important;font-weight:600;color:var(--navy)!important;font-size:11px}
 .tw .sub-row td{background:#f0fdf4!important;font-weight:700;color:var(--green)!important}
@@ -202,7 +204,7 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
 .tw .acc-grp td{background:#f0f4ff!important;color:var(--navy2)!important;font-weight:600;font-size:11px;cursor:pointer}
 .tw .acc-grp:hover td{background:#e4eaff!important}
 .tw .acc-child td{color:var(--text2)!important;font-weight:400!important}
-.tw .acc-child td:first-child{padding-left:28px!important}
+.tw .acc-child td:first-child{padding-inline-start:28px!important}
 .tw .acc-child.hidden{display:none}
 .acc-arr{display:inline-block;transition:transform 0.2s;margin-left:5px;font-size:10px;color:var(--navy)}
 .acc-arr.open{transform:rotate(90deg)}
@@ -259,7 +261,19 @@ html,body{max-width:100%;overflow-x:hidden}
 #sb-backdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:99}
 #sb-toggle{display:none;background:none;border:none;font-size:22px;line-height:1;cursor:pointer;color:var(--navy);padding:4px 8px;border-radius:8px}
 @media(max-width:1100px){.g2,.g3{grid-template-columns:1fr}}
+/* شريط الفلاتر: على الديسكتوب زي ما هو بالظبط، وعلى الموبايل بيتطوي ورا زرار */
+#flt-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#flt-btn{display:none;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);
+  background:var(--card-bg);border-radius:8px;cursor:pointer;font-weight:700;font-size:12px;
+  color:var(--navy);font-family:'Inter',sans-serif;white-space:nowrap;max-width:62vw;
+  overflow:hidden;text-overflow:ellipsis}
+#flt-btn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+
 @media(max-width:900px){
+  #flt-btn{display:inline-flex}
+  #flt-bar{display:none;width:100%}
+  body.flt-open #flt-bar{display:flex}
+  .tb-right{gap:6px}
   /* sidebar becomes a slide-in drawer */
   .sb{width:250px;transform:translateX(-100%);transition:transform 0.25s ease}
   .sb.open{transform:translateX(0)}
@@ -373,8 +387,10 @@ html,body{max-width:100%;overflow-x:hidden}
         <div class="tb-left">
           <button id="sb-toggle" onclick="toggleSidebar()" aria-label="Menu">&#9776;</button>
           <div><div class="tb-title" id="pg-title">Overview</div><div class="tb-sub" id="file-lbl">P_L_2026.xlsx · 31 Branches</div></div>
+          <button id="flt-btn" onclick="toggleFilters()" data-en="Filters" data-ar="فلاتر">Filters</button>
         </div>
         <div class="tb-right">
+          <div id="flt-bar">
           <div class="fgrp" id="f-year-grp" style="display:none"><div class="flbl" data-en="Year" data-ar="السنة">Year</div>
             <select class="fsel" id="f-year" onchange="onYearChange()"></select>
           </div>
@@ -414,6 +430,7 @@ html,body{max-width:100%;overflow-x:hidden}
               <option value="none" data-en="No Growth" data-ar="بدون نمو">No Growth</option>
             </select>
           </div>
+          </div><!-- /#flt-bar -->
           <div class="last-upd" id="last-upd">Last Updated: May 2026</div>
           <button id="lang-btn" onclick="toggleLang()" title="العربية / English" style="margin-inline-start:8px;padding:6px 12px;border:1px solid var(--border);background:var(--card-bg);border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap">ع</button>
         </div>
@@ -1505,10 +1522,10 @@ function renderHeatmap(){
   });
   var Lh=(typeof LANG!=='undefined'&&LANG==='ar');
   var MNH=Lh?MNS_AR:MNS_S;
-  let h=`<thead><tr><th style="position:sticky;left:0;background:var(--system-bg);z-index:11;min-width:140px;padding:8px 12px">${Lh?'الفرع':'Branch'}</th>${MNH.map(m=>`<th style="padding:7px;text-align:center">${m}</th>`).join('')}<th style="padding:7px;text-align:center">${Lh?'الإجمالي':'Total'}</th></tr></thead><tbody>`;
+  let h=`<thead><tr><th style="position:sticky;inset-inline-start:0;background:var(--system-bg);z-index:11;min-width:140px;padding:8px 12px">${Lh?'الفرع':'Branch'}</th>${MNH.map(m=>`<th style="padding:7px;text-align:center">${m}</th>`).join('')}<th style="padding:7px;text-align:center">${Lh?'الإجمالي':'Total'}</th></tr></thead><tbody>`;
   for(const[sh,dn]of active){
     const tot=MNS.reduce((s,_,mi)=>s+gv(sh,'صافي الربح / الخسارة',mi,mi),0);
-    h+=`<tr><td style="font-weight:600;white-space:nowrap;position:sticky;left:0;background:#fff;z-index:5;padding:6px 12px">${dn}</td>`;
+    h+=`<tr><td style="font-weight:600;white-space:nowrap;position:sticky;inset-inline-start:0;background:#fff;z-index:5;padding:6px 12px">${dn}</td>`;
     for(let mi=0;mi<12;mi++){
       const v=gv(sh,'صافي الربح / الخسارة',mi,mi),s=gv(sh,'المبيعات',mi,mi);
       if(s===0){h+=`<td><div class="hmc hn">—</div></td>`;continue;}
@@ -2332,14 +2349,46 @@ var __deferTimer=null;
 function runRenderers(list){
   list.forEach(function(fn){ try{ if(typeof window[fn]==='function')window[fn](); }catch(e){} });
 }
+function isPhone(){ return window.innerWidth<=900; }
+
+// زرار الفلاتر على الموبايل + شريحة بتلخّص المختار
+function toggleFilters(){
+  document.body.classList.toggle('flt-open');
+  var b=document.getElementById('flt-btn');
+  if(b)b.classList.toggle('on',document.body.classList.contains('flt-open'));
+  updateFilterChip();
+}
+function updateFilterChip(){
+  var b=document.getElementById('flt-btn'); if(!b)return;
+  var ar=(typeof LANG!=='undefined'&&LANG==='ar');
+  if(document.body.classList.contains('flt-open')){
+    b.textContent=ar?'إخفاء الفلاتر':'Hide filters';
+    return;
+  }
+  var txt=ar?'فلاتر':'Filters';
+  try{
+    var MN=ar?MNS_AR:MNS_S, fr=getFrom(), to=getTo();
+    var per=(fr===to)?MN[fr]:(MN[fr]+'–'+MN[to]);
+    var brSel=document.getElementById('f-branch');
+    var br=(brSel&&brSel.value!=='ALL')?(BM[brSel.value]||brSel.value)
+          :(ar?'كل الفروع':'All branches');
+    txt=per+' · '+br;
+  }catch(e){}
+  b.textContent='☰ '+txt;
+}
+
 function onFilter(){
   const fr=getFrom(),to=getTo();
   if(fr>to)document.getElementById('f-to').value=fr;
   // 1) paint what's on screen right now — fast
   var visible=PAGE_RENDERERS[CUR_PAGE]||ALL_RENDERERS;
   runRenderers(visible);
-  // 2) paint everything else just after, so switching pages is instant
+  updateFilterChip();
+  // 2) على الديسكتوب بنرسم باقي الصفحات مقدّماً عشان التنقل يبقى فوري.
+  //    على الموبايل بنوقف ده — goPage بيرسم الصفحة وقت فتحها أصلاً،
+  //    والرسم المقدّم كان بيكلّف ~100ms في كل ضغطة فلتر من غير فايدة.
   if(__deferTimer)clearTimeout(__deferTimer);
+  if(isPhone())return;
   __deferTimer=setTimeout(function(){
     runRenderers(ALL_RENDERERS.filter(function(f){return visible.indexOf(f)<0;}));
   },60);
@@ -2358,17 +2407,46 @@ function bsBranchChange(){
   renderBStatement();  // refresh the statement table
 }
 
+// كشف الحساب — خيار «كل الفروع»
+// بنجمع كل بند عبر كل الفروع مرة واحدة ونخزنها على D
+// (غير مرئية لـObject.keys) عشان ماتتحسبش مع كل رسمة.
+function bsAllBranches(){
+  if(D.__bsAll)return D.__bsAll;
+  var out={},order=[],seen={};
+  Object.keys(BM).forEach(function(sh){
+    var b=D[sh]; if(!b)return;
+    var ord=b.__order||Object.keys(b);
+    for(var k=0;k<ord.length;k++){
+      var it=ord[k];
+      if(!it||String(it).indexOf('__')===0)continue;
+      var src=b[it]; if(!src||!src.length)continue;
+      if(!seen[it]){seen[it]=1;order.push(it);}
+      var dst=out[it]; if(!dst)dst=out[it]=[0,0,0,0,0,0,0,0,0,0,0,0];
+      for(var i=0;i<12;i++)dst[i]+=src[i]||0;
+    }
+  });
+  try{Object.defineProperty(out,'__order',{value:order,enumerable:false,configurable:true});}catch(e){out.__order=order;}
+  try{Object.defineProperty(D,'__bsAll',{value:out,enumerable:false,configurable:true});}catch(e){}
+  return out;
+}
+
 function renderBStatement(){
   var sel=document.getElementById('bs-branch');
   if(!sel)return;
   if(!sel.options.length){
+    var oa=document.createElement('option');
+    oa.value='ALL';
+    oa.setAttribute('data-en','All Branches');
+    oa.setAttribute('data-ar','\u0643\u0644 \u0627\u0644\u0641\u0631\u0648\u0639');
+    oa.textContent=(typeof LANG!=='undefined'&&LANG==='ar')?'\u0643\u0644 \u0627\u0644\u0641\u0631\u0648\u0639':'All Branches';
+    sel.appendChild(oa);
     Object.keys(BM).forEach(function(sh){
       var o=document.createElement('option');o.value=sh;o.textContent=BM[sh];sel.appendChild(o);
     });
   }
-  var sh=sel.value||Object.keys(BM)[0];
+  var sh=sel.value||'ALL';
   var growth=document.getElementById('bs-growth').value;
-  var data=D[sh]||{};
+  var data=(sh==='ALL')?bsAllBranches():(D[sh]||{});
   var order=data.__order||Object.keys(data);
   var lastM=detectLastMonth();
 
@@ -2530,6 +2608,7 @@ function applyLang(){
   document.querySelectorAll('select').forEach(function(sel){ var v=sel.value; sel.value=v; });
   var pt=document.getElementById('pg-title'); if(pt)pt.textContent=(PAGE_TITLES[LANG][CUR_PAGE]||PAGE_TITLES.en[CUR_PAGE]||CUR_PAGE);
   var lb=document.getElementById('lang-btn'); if(lb)lb.textContent=(LANG==='ar')?'EN':'ع';
+updateFilterChip();
   var lu2=document.getElementById('last-upd');
   if(lu2&&typeof window.__lastM==='number')lu2.textContent=lastUpdText(window.__lastM);
   var fl2=document.getElementById('file-lbl');
@@ -2617,6 +2696,12 @@ function goPage(id,el){
     var showBs=(id==='bstatement')?'flex':'none';
     bsGrpB.style.display=showBs;bsGrpG.style.display=showBs;
   }
+  // على الموبايل نقفل لوحة الفلاتر بعد اختيار الصفحة
+  if(isPhone()&&document.body.classList.contains('flt-open')){
+    document.body.classList.remove('flt-open');
+    var fb=document.getElementById('flt-btn'); if(fb)fb.classList.remove('on');
+  }
+  updateFilterChip();
   // repaint the page we're opening so it always shows current filter/language
   if(window.__dataReady&&PAGE_RENDERERS[id])runRenderers(PAGE_RENDERERS[id]);
   if(id==='bstatement')renderBStatement();
@@ -2961,6 +3046,10 @@ function loadFile(e){
 // password screen still shows; nothing is parsed until after login.
 var __mapDone=false;
 window.addEventListener('DOMContentLoaded',function(){
+  // على تليفون بشاشة 3x كان كل رسم بيتعمل بثلاث أضعاف البكسلات من غير فايدة مرئية.
+  try{ if(window.Chart&&Chart.defaults)
+    Chart.defaults.devicePixelRatio=Math.min(window.devicePixelRatio||1,2); }catch(e){}
+  updateFilterChip();
   // the classification must be in place before anything is rendered, because
   // EBITDA reads its depreciation / interest / tax lines from it
   loadExpenseMapping(function(){ __mapDone=true; });
