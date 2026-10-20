@@ -147,8 +147,13 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
 .sb.col .sb-user{justify-content:center;gap:0}
 
 /* MAIN */
-.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh;display:flex;flex-direction:column;transition:margin-left 0.25s}
-.main.exp{margin-left:var(--sidebar-c)}
+/* القايمة الجانبية position:fixed يعني مش بتاخد مكان في الصف.
+   كان .main بياخد flex:1 (عرض الشاشة كامل) + margin-left:240 فوقه،
+   فكان بيطلع برّه الشاشة 240 بكسل وبتتقص بسبب body{overflow-x:hidden}.
+   الحل: نحدّد عرضه = الشاشة ناقص القايمة. */
+.main{margin-left:var(--sidebar-w);width:calc(100% - var(--sidebar-w));flex:none;min-width:0;
+  min-height:100vh;display:flex;flex-direction:column;transition:margin-left 0.25s,width 0.25s}
+.main.exp{margin-left:var(--sidebar-c);width:calc(100% - var(--sidebar-c))}
 
 /* TOPBAR */
 .topbar{background:var(--card-bg);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--sh);height:58px;gap:12px;flex-wrap:wrap}
@@ -206,8 +211,10 @@ body{font-family:'Inter',sans-serif;background:var(--system-bg);color:var(--text
 .card-body{padding:16px 18px}
 
 /* GRID */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+/* minmax(0,1fr) مش 1fr — عشان العمود مايتمددش مع محتواه ويطلع برّه الشبكة
+   (الرسوم البيانية كانت بتوسّع العمود وتخرج من الشاشة) */
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 @media(max-width:1100px){.g2,.g3{grid-template-columns:1fr}}
 
 /* TABLE */
