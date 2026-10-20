@@ -752,7 +752,15 @@ html,body{max-width:100%;overflow-x:hidden}
       الحماية الحقيقية بتيجي من بوابة Cloudflare Access فوق الموقع كله.
    ══════════════════════════════════════════════════════════════════════ */
 var USERS=[
-  {u:'admin', p:'admin.1999', name:'عبدالرحمن'}
+  {u:'abdelrahman',      p:'admin.1999', name:'Abdelrahman Mohamed'},
+  {u:'ahmed.abdelrahim', p:'admin.1999', name:'Ahmed Abdelrahim'},
+  {u:'ramy.radwan',      p:'admin.1999', name:'Ramy Radwan'},
+  {u:'mohamed.elserafy', p:'admin.1999', name:'Dr. Mohamed El-Serafy'},
+  {u:'ahmed.elserafy',   p:'admin.1999', name:'Dr. Ahmed El-Serafy'},
+  {u:'amr.elserafy',     p:'admin.1999', name:'Dr. Amr El-Serafy'},
+  {u:'nader',            p:'admin.1999', name:'Dr. Nader'},
+  {u:'karim',            p:'admin.1999', name:'Eng. Karim'},
+  {u:'admin',            p:'admin.1999', name:'Administrator'}
 ];
 var CURRENT_USER=null;
 var D={}; // data filled after login (parsed from Excel)
@@ -2336,8 +2344,11 @@ function findUser(u,p){
 function showCurrentUser(){
   var nm=document.getElementById('sb-user-nm'), av=document.getElementById('sb-user-av');
   if(!CURRENT_USER)return;
-  if(nm)nm.textContent=CURRENT_USER.name||CURRENT_USER.u;
-  if(av)av.textContent=String(CURRENT_USER.name||CURRENT_USER.u).trim().charAt(0);
+  var full=String(CURRENT_USER.name||CURRENT_USER.u).trim();
+  if(nm)nm.textContent=full;
+  // الحرف في الدايرة: نتخطّى اللقب (Dr. / Eng. / د / م) عشان مايبقوش كلهم نفس الحرف
+  var bare=full.replace(/^(dr\.?|eng\.?|mr\.?|mrs\.?|ms\.?|د\.?|م\.?|أ\.?)\s+/i,'').trim();
+  if(av)av.textContent=(bare||full).charAt(0);
 }
 function doLogin(){
   var u=document.getElementById('user-input').value;
