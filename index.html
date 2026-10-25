@@ -441,6 +441,7 @@ html,body{max-width:100%;overflow-x:hidden}
           <div class="fgrp"><div class="flbl" data-en="Type" data-ar="النوع">Type</div>
             <select class="fsel" id="f-type" onchange="onFilter()">
               <option value="ALL" data-en="All Types" data-ar="كل الأنواع">All Types</option>
+              <option value="NOHQ" data-en="All Branches (excl. HQ)" data-ar="كل الفروع بدون الإدارة">All Branches (excl. HQ)</option>
               <option value="Branch" data-en="Branch" data-ar="فرع">Branch</option>
               <option value="POS - Corporate" data-en="POS - Corporate" data-ar="نقطة بيع - شركات">POS - Corporate</option>
               <option value="HQ" data-en="HQ" data-ar="الإدارة">HQ</option>
@@ -601,7 +602,7 @@ html,body{max-width:100%;overflow-x:hidden}
             <div class="cmp-panel">
               <div class="cmp-title" data-en="🔵 Side A" data-ar="🔵 الطرف أ">🔵 Side A</div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
-                <select id="ca-type" onchange="renderCompare()" class="fsel" style="min-width:110px"><option value="ALL" data-en="All Types" data-ar="كل الأنواع">All Types</option><option value="Branch" data-en="Branch" data-ar="فرع">Branch</option><option value="POS - Corporate" data-en="POS - Corporate" data-ar="نقطة بيع - شركات">POS - Corporate</option><option value="HQ" data-en="HQ" data-ar="الإدارة">HQ</option></select>
+                <select id="ca-type" onchange="renderCompare()" class="fsel" style="min-width:110px"><option value="ALL" data-en="All Types" data-ar="كل الأنواع">All Types</option><option value="NOHQ" data-en="All Branches (excl. HQ)" data-ar="كل الفروع بدون الإدارة">All Branches (excl. HQ)</option><option value="Branch" data-en="Branch" data-ar="فرع">Branch</option><option value="POS - Corporate" data-en="POS - Corporate" data-ar="نقطة بيع - شركات">POS - Corporate</option><option value="HQ" data-en="HQ" data-ar="الإدارة">HQ</option></select>
                 <select id="ca-br" onchange="renderCompare()" class="fsel" style="min-width:120px"></select>
                 <select id="ca-from" onchange="renderCompare()" class="fsel" style="min-width:85px"><option value="0" data-en="Jan" data-ar="يناير">Jan</option><option value="1" data-en="Feb" data-ar="فبراير">Feb</option><option value="2" data-en="Mar" data-ar="مارس">Mar</option><option value="3" selected data-en="Apr" data-ar="ابريل">Apr</option><option value="4" data-en="May" data-ar="مايو">May</option><option value="5" data-en="Jun" data-ar="يونيو">Jun</option><option value="6" data-en="Jul" data-ar="يوليو">Jul</option><option value="7" data-en="Aug" data-ar="اغسطس">Aug</option><option value="8" data-en="Sep" data-ar="سبتمبر">Sep</option><option value="9" data-en="Oct" data-ar="اكتوبر">Oct</option><option value="10" data-en="Nov" data-ar="نوفمبر">Nov</option><option value="11" data-en="Dec" data-ar="ديسمبر">Dec</option></select>
                 <select id="ca-to" onchange="renderCompare()" class="fsel" style="min-width:85px"><option value="0" data-en="Jan" data-ar="يناير">Jan</option><option value="1" data-en="Feb" data-ar="فبراير">Feb</option><option value="2" data-en="Mar" data-ar="مارس">Mar</option><option value="3" selected data-en="Apr" data-ar="ابريل">Apr</option><option value="4" data-en="May" data-ar="مايو">May</option><option value="5" data-en="Jun" data-ar="يونيو">Jun</option><option value="6" data-en="Jul" data-ar="يوليو">Jul</option><option value="7" data-en="Aug" data-ar="اغسطس">Aug</option><option value="8" data-en="Sep" data-ar="سبتمبر">Sep</option><option value="9" data-en="Oct" data-ar="اكتوبر">Oct</option><option value="10" data-en="Nov" data-ar="نوفمبر">Nov</option><option value="11" data-en="Dec" data-ar="ديسمبر">Dec</option></select>
@@ -611,7 +612,7 @@ html,body{max-width:100%;overflow-x:hidden}
             <div class="cmp-panel">
               <div class="cmp-title" data-en="🟠 Side B" data-ar="🟠 الطرف ب">🟠 Side B</div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
-                <select id="cb-type" onchange="renderCompare()" class="fsel" style="min-width:110px"><option value="ALL" data-en="All Types" data-ar="كل الأنواع">All Types</option><option value="Branch" data-en="Branch" data-ar="فرع">Branch</option><option value="POS - Corporate" data-en="POS - Corporate" data-ar="نقطة بيع - شركات">POS - Corporate</option><option value="HQ" data-en="HQ" data-ar="الإدارة">HQ</option></select>
+                <select id="cb-type" onchange="renderCompare()" class="fsel" style="min-width:110px"><option value="ALL" data-en="All Types" data-ar="كل الأنواع">All Types</option><option value="NOHQ" data-en="All Branches (excl. HQ)" data-ar="كل الفروع بدون الإدارة">All Branches (excl. HQ)</option><option value="Branch" data-en="Branch" data-ar="فرع">Branch</option><option value="POS - Corporate" data-en="POS - Corporate" data-ar="نقطة بيع - شركات">POS - Corporate</option><option value="HQ" data-en="HQ" data-ar="الإدارة">HQ</option></select>
                 <select id="cb-br" onchange="renderCompare()" class="fsel" style="min-width:120px"></select>
                 <select id="cb-from" onchange="renderCompare()" class="fsel" style="min-width:85px"><option value="0" data-en="Jan" data-ar="يناير">Jan</option><option value="1" data-en="Feb" data-ar="فبراير">Feb</option><option value="2" data-en="Mar" data-ar="مارس">Mar</option><option value="3" selected data-en="Apr" data-ar="ابريل">Apr</option><option value="4" data-en="May" data-ar="مايو">May</option><option value="5" data-en="Jun" data-ar="يونيو">Jun</option><option value="6" data-en="Jul" data-ar="يوليو">Jul</option><option value="7" data-en="Aug" data-ar="اغسطس">Aug</option><option value="8" data-en="Sep" data-ar="سبتمبر">Sep</option><option value="9" data-en="Oct" data-ar="اكتوبر">Oct</option><option value="10" data-en="Nov" data-ar="نوفمبر">Nov</option><option value="11" data-en="Dec" data-ar="ديسمبر">Dec</option></select>
                 <select id="cb-to" onchange="renderCompare()" class="fsel" style="min-width:85px"><option value="0" data-en="Jan" data-ar="يناير">Jan</option><option value="1" data-en="Feb" data-ar="فبراير">Feb</option><option value="2" data-en="Mar" data-ar="مارس">Mar</option><option value="3" selected data-en="Apr" data-ar="ابريل">Apr</option><option value="4" data-en="May" data-ar="مايو">May</option><option value="5" data-en="Jun" data-ar="يونيو">Jun</option><option value="6" data-en="Jul" data-ar="يوليو">Jul</option><option value="7" data-en="Aug" data-ar="اغسطس">Aug</option><option value="8" data-en="Sep" data-ar="سبتمبر">Sep</option><option value="9" data-en="Oct" data-ar="اكتوبر">Oct</option><option value="10" data-en="Nov" data-ar="نوفمبر">Nov</option><option value="11" data-en="Dec" data-ar="ديسمبر">Dec</option></select>
@@ -668,6 +669,7 @@ html,body{max-width:100%;overflow-x:hidden}
               <div class="fgrp"><div class="flbl" data-en="Scope" data-ar="النطاق">Scope</div>
                 <select class="fsel" id="yoy-scope" onchange="renderYoY()">
                   <option value="ALL" data-en="All branches" data-ar="كل الفروع">All branches</option>
+                  <option value="NOHQ" data-en="All branches (excl. HQ)" data-ar="كل الفروع بدون الإدارة">All branches (excl. HQ)</option>
                   <option value="COMP" data-en="Comparable only (like-for-like)" data-ar="المشتركة فقط (like-for-like)">Comparable only</option>
                   <option value="Branch" data-en="Branches only" data-ar="الفروع فقط">Branches only</option>
                   <option value="POS - Corporate" data-en="POS - Corporate" data-ar="نقطة بيع - شركات">POS - Corporate</option>
@@ -978,12 +980,17 @@ function getFrom(){return parseInt(document.getElementById('f-from').value);}
 function getTo(){return Math.max(getFrom(),parseInt(document.getElementById('f-to').value));}
 function getType(){return document.getElementById('f-type').value;}
 function getBranch(){return document.getElementById('f-branch').value;}
+// مطابقة نوع الفرع. NOHQ = كل الفروع ما عدا الإدارة.
+function typeMatch(sh,t){
+  if(!t||t==='ALL')return true;
+  if(t==='NOHQ')return BT[sh]!=='HQ';
+  return BT[sh]===t;
+}
 function getActiveBranches(){
   const t=getType(),br=getBranch();
   return Object.keys(BM).filter(sh=>{
     if(br!=='ALL')return sh===br;
-    if(t==='ALL')return true;
-    return BT[sh]===t;
+    return typeMatch(sh,t);
   });
 }
 function sumBranch(item,from,to){return getActiveBranches().reduce((s,sh)=>s+gv(sh,item,from,to),0);}
@@ -1582,7 +1589,7 @@ function renderExpenses(){
 function renderHeatmap(){
   const type=getType();
   const active=Object.entries(BM).filter(([sh])=>{
-    if(type!=='ALL'&&BT[sh]!==type)return false;
+    if(!typeMatch(sh,type))return false;
     return MNS.some((_,mi)=>gv(sh,'المبيعات',mi,mi)!==0);
   });
   var Lh=(typeof LANG!=='undefined'&&LANG==='ar');
@@ -1612,7 +1619,7 @@ function renderCompare(){
     const to=parseInt(document.getElementById('c'+s+'-to').value);
     const br=document.getElementById('c'+s+'-br').value;
     const type=document.getElementById('c'+s+'-type').value;
-    const brs=Object.keys(BM).filter(sh=>{if(br!=='ALL')return sh===br;if(type!=='ALL')return BT[sh]===type;return true;});
+    const brs=Object.keys(BM).filter(sh=>{if(br!=='ALL')return sh===br;return typeMatch(sh,type);});
     const gvs=it=>brs.reduce((sum,sh)=>sum+gv(sh,it,fr,to),0);
     const S=gvs('المبيعات'),G=gvs('مجمل الربح'),E=gvs('إجمالي المصروفات'),N=gvs('صافي الربح / الخسارة');
     const lbl=br!=='ALL'?BM[br]:type!=='ALL'?type:((typeof LANG!=='undefined'&&LANG==='ar')?'الكل':'All');
@@ -1633,8 +1640,8 @@ function renderCompare(){
   const frB=parseInt(document.getElementById('cb-from').value),toB=parseInt(document.getElementById('cb-to').value);
   const brA=document.getElementById('ca-br').value,brB=document.getElementById('cb-br').value;
   const tpA=document.getElementById('ca-type').value,tpB=document.getElementById('cb-type').value;
-  const brsA=Object.keys(BM).filter(sh=>{if(brA!=='ALL')return sh===brA;if(tpA!=='ALL')return BT[sh]===tpA;return true;});
-  const brsB=Object.keys(BM).filter(sh=>{if(brB!=='ALL')return sh===brB;if(tpB!=='ALL')return BT[sh]===tpB;return true;});
+  const brsA=Object.keys(BM).filter(sh=>{if(brA!=='ALL')return sh===brA;return typeMatch(sh,tpA);});
+  const brsB=Object.keys(BM).filter(sh=>{if(brB!=='ALL')return sh===brB;return typeMatch(sh,tpB);});
   const gvA=it=>brsA.reduce((s,sh)=>s+gv(sh,it,frA,toA),0);
   const gvB=it=>brsB.reduce((s,sh)=>s+gv(sh,it,frB,toB),0);
   var _allC=(typeof LANG!=='undefined'&&LANG==='ar')?'الكل':'All';
@@ -1728,7 +1735,7 @@ function renderAlerts(){
   var Lz=(typeof LANG!=='undefined'&&LANG==='ar');
   const als=[];
   for(const[sh,dn]of Object.entries(BM)){
-    if(type!=='ALL'&&BT[sh]!==type)continue;
+    if(!typeMatch(sh,type))continue;
     const n=gv(sh,'صافي الربح / الخسارة',fr,to),s=gv(sh,'المبيعات',fr,to),a=gv(sh,'خصم أبليكيشن',fr,to);
     const mg=s?n/s:0;
     if(s===0)continue;
@@ -1885,6 +1892,7 @@ function yoyBranchList(eB,eV,scope){
     if(scope==='COMP')return inB&&inV;
     if(scope==='ALL')return true;
     var t=eB.BT[sh]||eV.BT[sh];
+    if(scope==='NOHQ')return t!=='HQ';
     return t===scope;
   });
 }
