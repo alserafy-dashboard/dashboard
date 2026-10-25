@@ -302,6 +302,52 @@ html,body{max-width:100%;overflow-x:hidden}
   color:var(--navy);font-family:'Inter',sans-serif;white-space:nowrap;max-width:62vw;
   overflow:hidden;text-overflow:ellipsis}
 #flt-btn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+/* ══ منتقي الفروع المتعدد ══ */
+#br-btn{text-align:start;position:relative;padding-inline-end:24px;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:210px}
+#br-btn::after{content:'';position:absolute;inset-inline-end:9px;top:50%;margin-top:-2px;
+  border:4px solid transparent;border-top-color:var(--text3)}
+#br-btn.custom{border-color:var(--navy);color:var(--navy);font-weight:700}
+.br-bd{position:fixed;inset:0;z-index:2000;display:none}
+.br-bd.show{display:block}
+.br-pop{position:fixed;z-index:2001;width:330px;max-width:94vw;background:var(--card-bg);
+  border:1px solid var(--border2);border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.26);
+  display:none;overflow:hidden}
+.br-pop.show{display:block}
+.br-pop input{width:100%;border:none;border-bottom:1px solid var(--border);padding:11px 13px;
+  font-size:13px;font-family:'Inter',sans-serif;outline:none;background:transparent;color:var(--text)}
+.br-quick{display:flex;flex-wrap:wrap;gap:5px;padding:9px 10px;border-bottom:1px solid var(--border);
+  background:var(--system-bg)}
+.br-quick button{background:var(--card-bg);border:1px solid var(--border);border-radius:6px;
+  padding:4px 9px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--text2)}
+.br-quick button:hover{border-color:var(--navy);color:var(--navy);background:var(--navy-light)}
+.br-list{max-height:290px;overflow-y:auto;padding:5px}
+.br-row{display:flex;align-items:center;gap:9px;padding:6px 9px;border-radius:7px;cursor:pointer;font-size:12.5px}
+.br-row:hover{background:var(--navy-light)}
+.br-row input{width:auto;border:none;padding:0;margin:0}
+.br-row .br-tag{margin-inline-start:auto;font-size:9.5px;color:var(--text3);background:var(--system-bg);
+  padding:1px 6px;border-radius:4px;border:1px solid var(--border)}
+.br-foot{display:flex;align-items:center;gap:9px;padding:9px 11px;border-top:1px solid var(--border);
+  background:var(--system-bg)}
+.br-foot span{font-size:11.5px;color:var(--text2);font-weight:600}
+.br-foot button{margin-inline-start:auto;background:var(--navy);color:#fff;border:none;border-radius:7px;
+  padding:6px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+/* ══ صفحة التحليل المتقدم ══ */
+.an-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.an-tab{background:var(--card-bg);border:1px solid var(--border);border-radius:9px;padding:8px 16px;
+  font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;color:var(--text2)}
+.an-tab:hover{border-color:var(--navy);color:var(--navy)}
+.an-tab.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.card-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.an-note{background:var(--navy-light);border-inline-start:4px solid var(--navy);border-radius:9px;
+  padding:11px 14px;font-size:12.5px;line-height:1.75;margin-top:12px}
+.an-note b{color:var(--navy)}
+.an-svg{width:100%;height:auto;display:block;overflow:visible}
+.q-box{border-radius:10px;padding:11px 13px;border:1px solid var(--border)}
+.q-ttl{font-size:11.5px;font-weight:800;margin-bottom:5px}
+.q-num{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+.q-sub{font-size:10.5px;color:var(--text3);margin-top:2px}
+.q-list{font-size:11px;color:var(--text2);margin-top:6px;line-height:1.7}
 
 @media(max-width:900px){
   #flt-btn{display:inline-flex}
@@ -390,6 +436,24 @@ html,body{max-width:100%;overflow-x:hidden}
   </div>
 </div>
 
+<!-- منتقي الفروع المتعدد -->
+<div class="br-bd" id="br-bd" onclick="brClose()"></div>
+<div class="br-pop" id="br-pop">
+  <input id="br-q" oninput="brList()" data-ph-en="Search for a branch…" data-ph-ar="ابحث عن فرع…" placeholder="ابحث عن فرع…">
+  <div class="br-quick">
+    <button onclick="brPreset('ALL')" data-en="All" data-ar="الكل">All</button>
+    <button onclick="brPreset('NOHQ')" data-en="Excl. HQ" data-ar="بدون الإدارة">Excl. HQ</button>
+    <button onclick="brPreset('Branch')" data-en="Branches" data-ar="الفروع فقط">Branches</button>
+    <button onclick="brPreset('POS - Corporate')" data-en="POS" data-ar="نقاط البيع">POS</button>
+    <button onclick="brPreset('ACTIVE')" data-en="Selling only" data-ar="اللي بتبيع">Selling only</button>
+    <button onclick="brPreset('INV')" data-en="Invert" data-ar="عكس">Invert</button>
+    <button onclick="brPreset('NONE')" data-en="Clear" data-ar="مسح">Clear</button>
+  </div>
+  <div class="br-list" id="br-list"></div>
+  <div class="br-foot"><span id="br-count"></span>
+    <button onclick="brClose()" data-en="Done" data-ar="تم">Done</button></div>
+</div>
+
 <!-- APP -->
 <div id="app">
   <div class="layout">
@@ -414,6 +478,7 @@ html,body{max-width:100%;overflow-x:hidden}
         <div class="sb-sec" data-en="INSIGHTS" data-ar="رؤى وتنبيهات">INSIGHTS</div>
         <div class="sb-item" onclick="goPage('alerts',this)"><span class="sb-icon">🔔</span><span class="sb-lbl" data-en="Alerts" data-ar="التنبيهات">Alerts</span></div>
         <div class="sb-item" onclick="goPage('forecast',this)"><span class="sb-icon">📈</span><span class="sb-lbl" data-en="Forecast 2026" data-ar="توقعات 2026">Forecast 2026</span></div>
+        <div class="sb-item" onclick="goPage('analysis',this)"><span class="sb-icon">🔬</span><span class="sb-lbl" data-en="Advanced Analysis" data-ar="التحليل المتقدم">Advanced Analysis</span></div>
       </nav>
       <div class="sb-foot">
         <div class="sb-user" id="sb-user">
@@ -448,7 +513,7 @@ html,body{max-width:100%;overflow-x:hidden}
             </select>
           </div>
           <div class="fgrp"><div class="flbl" data-en="Branch" data-ar="الفرع">Branch</div>
-            <select class="fsel" id="f-branch" onchange="onFilter()"><option value="ALL" data-en="All Branches" data-ar="كل الفروع">All Branches</option></select>
+            <button class="fsel" id="br-btn" onclick="brOpen(event)" data-en="All Branches" data-ar="كل الفروع">All Branches</button>
           </div>
           <div class="fsep"></div>
           <div class="fgrp"><div class="flbl" data-en="From" data-ar="من">From</div>
@@ -760,6 +825,52 @@ html,body{max-width:100%;overflow-x:hidden}
             <div class="card"><div class="card-hdr"><div class="card-title" data-en="What-If Scenarios" data-ar="سيناريوهات افتراضية">What-If Scenarios</div></div><div class="card-body" id="whatif-box"></div></div>
           </div>
         </div>
+
+        <!-- ══ التحليل المتقدم — صفحة مستقلة تماماً، قراءة فقط ══ -->
+        <div id="page-analysis" class="page">
+          <div class="an-tabs" id="an-tabs">
+            <button class="an-tab on" data-t="wf"   onclick="anTab('wf')"   data-en="Waterfall" data-ar="الشلال">Waterfall</button>
+            <button class="an-tab"    data-t="par"  onclick="anTab('par')"  data-en="Pareto" data-ar="باريتو">Pareto</button>
+            <button class="an-tab"    data-t="mat"  onclick="anTab('mat')"  data-en="Branch Matrix" data-ar="مصفوفة الفروع">Branch Matrix</button>
+            <button class="an-tab"    data-t="vert" onclick="anTab('vert')" data-en="Common-size" data-ar="التحليل الرأسي">Common-size</button>
+          </div>
+
+          <div class="an-pane" id="an-wf">
+            <div class="card"><div class="card-hdr"><div>
+              <div class="card-title" data-en="From sales to net profit" data-ar="من المبيعات لصافي الربح">From sales to net profit</div>
+              <div class="card-sub" id="an-wf-sub"></div></div></div>
+              <div class="card-body" id="an-wf-box"></div></div>
+            <div class="card"><div class="card-hdr"><div class="card-title" data-en="Every step in figures" data-ar="كل خطوة بالأرقام">Every step in figures</div></div>
+              <div class="tw"><table id="an-wf-tbl"></table></div></div>
+          </div>
+
+          <div class="an-pane" id="an-par" style="display:none">
+            <div class="card"><div class="card-hdr"><div>
+              <div class="card-title" data-en="Which expenses actually matter" data-ar="أنهي مصروفات بتستاهل وقتك">Which expenses actually matter</div>
+              <div class="card-sub" id="an-par-sub"></div></div></div>
+              <div class="card-body" id="an-par-box"></div></div>
+            <div class="card"><div class="card-hdr"><div class="card-title" data-en="Items ranked" data-ar="البنود بالترتيب">Items ranked</div>
+              <button class="btn no-print" onclick="anExp('an-par-tbl','باريتو-المصروفات')" data-en="Export CSV" data-ar="تصدير CSV">Export CSV</button></div>
+              <div class="tw"><table id="an-par-tbl"></table></div></div>
+          </div>
+
+          <div class="an-pane" id="an-mat" style="display:none">
+            <div class="card"><div class="card-hdr"><div>
+              <div class="card-title" data-en="Size vs margin" data-ar="الحجم مقابل الهامش">Size vs margin</div>
+              <div class="card-sub" id="an-mat-sub"></div></div></div>
+              <div class="card-body" id="an-mat-box"></div></div>
+            <div class="card"><div class="card-hdr"><div class="card-title" data-en="The four groups" data-ar="الأرباع الأربعة">The four groups</div></div>
+              <div class="tw"><table id="an-mat-tbl"></table></div></div>
+          </div>
+
+          <div class="an-pane" id="an-vert" style="display:none">
+            <div class="card"><div class="card-hdr"><div>
+              <div class="card-title" data-en="Every line as % of sales" data-ar="كل بند كنسبة من المبيعات">Every line as % of sales</div>
+              <div class="card-sub" id="an-vert-sub"></div></div>
+              <button class="btn no-print" onclick="anExp('an-vert-tbl','التحليل-الرأسي')" data-en="Export CSV" data-ar="تصدير CSV">Export CSV</button></div>
+              <div class="tw"><table id="an-vert-tbl"></table></div></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -979,7 +1090,35 @@ function gv(sh,item,from,to){
 function getFrom(){return parseInt(document.getElementById('f-from').value);}
 function getTo(){return Math.max(getFrom(),parseInt(document.getElementById('f-to').value));}
 function getType(){return document.getElementById('f-type').value;}
-function getBranch(){return document.getElementById('f-branch').value;}
+/* ══ اختيار الفروع المتعدد ═══════════════════════════════════════════════
+   BR_SEL = null يعني كل الفروع. غير كده مصفوفة بأسماء الشيتات المختارة.
+   كل الحسابات بتمر من getActiveBranches، فالتعديل هنا بيسري على الداشبورد كله. */
+var BR_SEL=null;
+function inSel(sh){ return !BR_SEL || BR_SEL.indexOf(sh)>=0; }
+function allBranchKeys(){ return Object.keys(BM); }
+function getBranch(){
+  var all=allBranchKeys();
+  if(!BR_SEL||BR_SEL.length>=all.length)return 'ALL';
+  if(BR_SEL.length===1)return BR_SEL[0];
+  return 'MULTI';               // أكتر من فرع: الحساب بيروح لمجموع الفروع مش المجمّع
+}
+function setBranchSel(list){
+  var all=allBranchKeys();
+  if(!list||list.length===0||list.length>=all.length)BR_SEL=null;
+  else BR_SEL=list.slice();
+  brBtnLabel(); if(typeof onFilter==='function')onFilter();
+}
+function brBtnLabel(){
+  var b=document.getElementById('br-btn'); if(!b)return;
+  var ar=(typeof LANG!=='undefined'&&LANG==='ar');
+  var all=allBranchKeys(), n=BR_SEL?BR_SEL.length:all.length;
+  var txt;
+  if(!BR_SEL)txt=ar?'كل الفروع':'All Branches';
+  else if(n===1)txt=BM[BR_SEL[0]]||BR_SEL[0];
+  else txt=ar?(n+' فروع مختارة'):(n+' branches');
+  b.textContent=txt;
+  b.classList.toggle('custom',!!BR_SEL);
+}
 // مطابقة نوع الفرع. NOHQ = كل الفروع ما عدا الإدارة.
 function typeMatch(sh,t){
   if(!t||t==='ALL')return true;
@@ -987,11 +1126,8 @@ function typeMatch(sh,t){
   return BT[sh]===t;
 }
 function getActiveBranches(){
-  const t=getType(),br=getBranch();
-  return Object.keys(BM).filter(sh=>{
-    if(br!=='ALL')return sh===br;
-    return typeMatch(sh,t);
-  });
+  const t=getType();
+  return Object.keys(BM).filter(sh=>inSel(sh)&&typeMatch(sh,t));
 }
 function sumBranch(item,from,to){return getActiveBranches().reduce((s,sh)=>s+gv(sh,item,from,to),0);}
 function sumAll(item,from,to){return Object.keys(BM).reduce((s,sh)=>s+gv(sh,item,from,to),0);}
@@ -1128,6 +1264,7 @@ function renderKPIs(){
 
   // Update loss badge
   const lossCount=Object.keys(BM).filter(sh=>{
+    if(!inSel(sh))return false;
     if(BT[sh]==='HQ')return false;
     return gv(sh,'صافي الربح / الخسارة',fr,to)<0;
   }).length;
@@ -1141,7 +1278,7 @@ function renderBranchRank(){
   const dir=document.getElementById('br-rank-dir').value;
   const sort=document.getElementById('br-rank-sort').value;
 
-  let list=Object.entries(BM).map(([sh,dn])=>{
+  let list=Object.entries(BM).filter(([sh])=>inSel(sh)).map(([sh,dn])=>{
     const c=gv(sh,'تكلفة البضاعة المباعة',fr,to);
     const g=gvGP(sh,fr,to);
     const n=gv(sh,'صافي الربح / الخسارة',fr,to);
@@ -1437,7 +1574,7 @@ function renderBranches(){
   const fr=getFrom(),to=getTo(),type=getType();
   const sort=document.getElementById('br-sort').value;
   const filt=document.getElementById('br-filt').value;
-  let list=Object.entries(BM).map(([sh,dn])=>{
+  let list=Object.entries(BM).filter(([sh])=>inSel(sh)).map(([sh,dn])=>{
     const s=gv(sh,'المبيعات',fr,to),c=gv(sh,'تكلفة البضاعة المباعة',fr,to),g=gvGP(sh,fr,to),n=gv(sh,'صافي الربح / الخسارة',fr,to),a=gv(sh,'خصم أبليكيشن',fr,to),e=gv(sh,'إجمالي المصروفات',fr,to);
     const cogsP=s?c/s:0,margin=s?g/s:0,nm=s?n/s:0,expR=s?e/s:0;
     return{sh,dn,s,c,g,n,a,e,cogsP,margin,nm,expR,type:BT[sh]};
@@ -1481,7 +1618,7 @@ function renderBranches(){
 
   // ── TOP SUMMARY (board view) ──
   // use the full unfiltered branch set for the summary (real branches only)
-  var allB=Object.entries(BM).map(function(e){
+  var allB=Object.entries(BM).filter(function(e){return inSel(e[0]);}).map(function(e){
     var sh=e[0],dn=e[1];
     var s=gv(sh,'المبيعات',fr,to),n=gv(sh,'صافي الربح / الخسارة',fr,to),ex=gv(sh,'إجمالي المصروفات',fr,to);
     return {sh,dn,s,n,nm:s?n/s:null,expR:s?ex/s:null};
@@ -1539,7 +1676,7 @@ function renderExpenses(){
 
   const tA=sumBranch('خصم أبليكيشن',fr,to)+sumBranch('عروض مبيعات ابليكشن',fr,to);
   const tE=sumBranch('إجمالي المصروفات',fr,to);
-  const appBr=Object.entries(BM).map(([sh,dn])=>{
+  const appBr=Object.entries(BM).filter(([sh])=>inSel(sh)).map(([sh,dn])=>{
     const a=gv(sh,'خصم أبليكيشن',fr,to)+gv(sh,'عروض مبيعات ابليكشن',fr,to);
     const s=gv(sh,'المبيعات',fr,to);
     return{dn,a,p:s?a/s:0};
@@ -1589,6 +1726,7 @@ function renderExpenses(){
 function renderHeatmap(){
   const type=getType();
   const active=Object.entries(BM).filter(([sh])=>{
+    if(!inSel(sh))return false;
     if(!typeMatch(sh,type))return false;
     return MNS.some((_,mi)=>gv(sh,'المبيعات',mi,mi)!==0);
   });
@@ -1735,6 +1873,7 @@ function renderAlerts(){
   var Lz=(typeof LANG!=='undefined'&&LANG==='ar');
   const als=[];
   for(const[sh,dn]of Object.entries(BM)){
+    if(!inSel(sh))continue;
     if(!typeMatch(sh,type))continue;
     const n=gv(sh,'صافي الربح / الخسارة',fr,to),s=gv(sh,'المبيعات',fr,to),a=gv(sh,'خصم أبليكيشن',fr,to);
     const mg=s?n/s:0;
@@ -1793,7 +1932,7 @@ function renderForecast(){
         [Lf?'لو قلّ خصم الأبليكيشن 10%':'If App Discount reduced by 10%',`+${fmt(tSales*0.026*0.1)}`,'green'],
         [Lf?'لو زادت المبيعات 10%':'If Sales grow by 10%',`+${fmt(tSales*0.1*0.195)}`,'green'],
         [Lf?'لو قلّت التكلفة 2%':'If COGS reduced by 2%',`+${fmt(getStats('cogs',fr,to)*0.02)}`,'green'],
-        [Lf?'لو اتقفلت الفروع الخاسرة':'If losing branches closed',`+${fmt(Object.keys(BM).filter(sh=>gv(sh,'صافي الربح / الخسارة',fr,to)<0).reduce((s,sh)=>s+Math.abs(gv(sh,'صافي الربح / الخسارة',fr,to)),0))}`,'green'],
+        [Lf?'لو اتقفلت الفروع الخاسرة':'If losing branches closed',`+${fmt(Object.keys(BM).filter(sh=>inSel(sh)&&gv(sh,'صافي الربح / الخسارة',fr,to)<0).reduce((s,sh)=>s+Math.abs(gv(sh,'صافي الربح / الخسارة',fr,to)),0))}`,'green'],
         [Lf?'لو زادت الرواتب 5%':'If salaries increase by 5%',`-${fmt(sumAll('مرتبات الفروع',fr,to)*0.05)}`,'danger'],
       ].map(([l,v,c])=>`
         <div style="background:var(--system-bg);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center">
@@ -2438,9 +2577,7 @@ function doLogout(){
 }
 
 function initDashboard(){
-  const sel=document.getElementById('f-branch');
-  sel.innerHTML='<option value="ALL" data-en="All Branches" data-ar="كل الفروع">All Branches</option>';
-  for(const[sh,dn]of Object.entries(BM))sel.innerHTML+=`<option value="${sh}">${dn}</option>`;
+  brBtnLabel();                 // زرار اختيار الفروع بدل القايمة القديمة
   ['a','b'].forEach(s=>{
     const sel2=document.getElementById('c'+s+'-br');
     sel2.innerHTML='<option value="ALL" data-en="All Branches" data-ar="كل الفروع">All Branches</option>';
@@ -2473,13 +2610,396 @@ var PAGE_RENDERERS={
   compare:['renderKPIs','renderCompare'],
   yoy:['renderYoY'],
   alerts:['renderKPIs','renderAlerts'],
-  forecast:['renderKPIs','renderForecast']
+  forecast:['renderKPIs','renderForecast'],
+  analysis:['renderKPIs','renderAnalysis']
 };
-var ALL_RENDERERS=['renderKPIs','renderBranchRank','renderMonthlyChart','renderMixChart','renderExpChart','renderPnL','renderBranches','renderExpenses','renderHeatmap','renderCompare','renderAlerts','renderForecast','renderYoY'];
+var ALL_RENDERERS=['renderKPIs','renderBranchRank','renderMonthlyChart','renderMixChart','renderExpChart','renderPnL','renderBranches','renderExpenses','renderHeatmap','renderCompare','renderAlerts','renderForecast','renderYoY','renderAnalysis'];
 var __deferTimer=null;
 function runRenderers(list){
   list.forEach(function(fn){ try{ if(typeof window[fn]==='function')window[fn](); }catch(e){} });
 }
+/* ══ لوحة اختيار الفروع ══ */
+function brOpen(ev){
+  var pop=document.getElementById('br-pop'),bd=document.getElementById('br-bd'),
+      btn=document.getElementById('br-btn');
+  if(!pop||!btn)return;
+  bd.classList.add('show');pop.classList.add('show');
+  var r=btn.getBoundingClientRect();
+  var w=Math.min(330,window.innerWidth*0.94);
+  var left=Math.max(8,Math.min(r.left,window.innerWidth-w-8));
+  pop.style.left=left+'px';
+  pop.style.top=Math.min(r.bottom+6,window.innerHeight-120)+'px';
+  var q=document.getElementById('br-q');if(q){q.value='';}
+  brList();
+  if(!isPhone()&&q)q.focus();
+  if(ev&&ev.stopPropagation)ev.stopPropagation();
+}
+function brClose(){
+  document.getElementById('br-bd').classList.remove('show');
+  document.getElementById('br-pop').classList.remove('show');
+}
+function brList(){
+  var box=document.getElementById('br-list');if(!box)return;
+  var ar=(typeof LANG!=='undefined'&&LANG==='ar');
+  var q=(document.getElementById('br-q').value||'').trim().toLowerCase();
+  var all=allBranchKeys(),h='';
+  all.forEach(function(sh){
+    var dn=BM[sh]||sh;
+    if(q&&dn.toLowerCase().indexOf(q)<0&&sh.toLowerCase().indexOf(q)<0)return;
+    var on=inSel(sh);
+    var tag=BT[sh]==='HQ'?(ar?'إدارة':'HQ'):(BT[sh]==='POS - Corporate'?'POS':'');
+    h+='<label class="br-row"><input type="checkbox" '+(on?'checked':'')+
+       ' onchange="brToggle(\''+String(sh).replace(/'/g,"\\'")+'\',this.checked)">'+
+       '<span>'+dn+'</span>'+(tag?'<span class="br-tag">'+tag+'</span>':'')+'</label>';
+  });
+  box.innerHTML=h||('<div style="padding:14px;color:var(--text3);font-size:12.5px">'+
+    (ar?'مافيش فرع بالاسم ده':'No branch matches')+'</div>');
+  var n=BR_SEL?BR_SEL.length:all.length;
+  document.getElementById('br-count').textContent=ar?(n+' من '+all.length+' مختار'):(n+' of '+all.length+' selected');
+}
+function brToggle(sh,on){
+  var all=allBranchKeys();
+  var cur=BR_SEL?BR_SEL.slice():all.slice();
+  var i=cur.indexOf(sh);
+  if(on&&i<0)cur.push(sh);
+  if(!on&&i>=0)cur.splice(i,1);
+  if(cur.length===0)cur=[sh];            // مايبقاش فاضي خالص
+  setBranchSel(cur); brList();
+}
+function brPreset(p){
+  var all=allBranchKeys(),out;
+  if(p==='ALL')out=null;
+  else if(p==='NONE')out=null;
+  else if(p==='INV')out=all.filter(function(sh){return !inSel(sh);});
+  else if(p==='NOHQ')out=all.filter(function(sh){return BT[sh]!=='HQ';});
+  else if(p==='ACTIVE')out=all.filter(function(sh){return gv(sh,'المبيعات',0,11)>0;});
+  else out=all.filter(function(sh){return BT[sh]===p;});
+  if(out&&out.length===0)out=null;
+  setBranchSel(out); brList();
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   التحليل المتقدم — صفحة قراءة فقط.
+   بتقرا من نفس الدوال الموجودة (getActiveBranches · gv · sumBranch)
+   وبتحترم منتقي الفروع وفلتر النوع والشهور.
+   مابتكتبش في أي عنصر خارج page-analysis.
+   ══════════════════════════════════════════════════════════════════════ */
+var AN_TAB='wf';
+function anTab(t){
+  AN_TAB=t;
+  ['wf','par','mat','vert'].forEach(function(k){
+    var p=document.getElementById('an-'+k); if(p)p.style.display=(k===t)?'':'none';
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.an-tab'),function(b){
+    b.classList.toggle('on',b.getAttribute('data-t')===t);
+  });
+  renderAnalysis();
+}
+function anExp(tid,name){
+  var t=document.getElementById(tid); if(!t)return;
+  var rows=[];
+  Array.prototype.forEach.call(t.querySelectorAll('tr'),function(tr){
+    var c=[];
+    Array.prototype.forEach.call(tr.querySelectorAll('th,td'),function(td){
+      c.push('"'+String(td.textContent||'').replace(/−/g,'-').replace(/\s+/g,' ').trim().replace(/"/g,'""')+'"');
+    });
+    if(c.length)rows.push(c.join(','));
+  });
+  var blob=new Blob(['﻿'+rows.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=name+'-'+YEAR+'.csv';document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+function anPct(v,d){return ((v||0)*100).toFixed(d===undefined?1:d)+'%';}
+
+function renderAnalysis(){
+  if(!window.__dataReady)return;
+  var L=(typeof LANG!=='undefined'&&LANG==='ar');
+  var fr=getFrom(),to=getTo();
+  var brs=getActiveBranches();
+  var MN=L?MNS_AR:MNS_S;
+  var per=(fr===to)?MN[fr]:(MN[fr]+' – '+MN[to]);
+  var scope=(getBranch()==='ALL')?(L?'كل الفروع':'All branches')
+            :(getBranch()==='MULTI'?(brs.length+(L?' فروع':' branches')):(BM[getBranch()]||''));
+  var sub=per+' · '+scope+' · '+brs.length+(L?' فرع':' branches');
+  ['an-wf-sub','an-par-sub','an-mat-sub','an-vert-sub'].forEach(function(id){
+    var e=document.getElementById(id); if(e)e.textContent=sub;
+  });
+  if(AN_TAB==='wf')anWaterfall(L,fr,to,brs);
+  else if(AN_TAB==='par')anPareto(L,fr,to,brs);
+  else if(AN_TAB==='mat')anMatrix(L,fr,to,brs);
+  else anVertical(L,fr,to,brs);
+}
+
+/* ── 1) الشلال ───────────────────────────────────────────────────── */
+function anWaterfall(L,fr,to,brs){
+  var sum=function(it){return brs.reduce(function(a,sh){return a+gv(sh,it,fr,to);},0);};
+  var net=sum('المبيعات'), disc=brs.reduce(function(a,sh){return a+getBranchDisc(sh,fr,to);},0);
+  var cogs=sum('تكلفة البضاعة المباعة'), oi=sum('إجمالي الايرادات اخرى'), ex=sum('إجمالي المصروفات');
+  var gross=net+disc, gp=net-cogs, np=gp+oi-ex;
+  // أكبر 4 مجموعات مصروفات + الباقي
+  var grp=[];
+  (EXPENSE_CAT_ORDER||[]).forEach(function(pair){
+    var t=(EG[pair[0]]||[]).reduce(function(a,it){return a+sum(it);},0);
+    if(Math.abs(t)>0.005)grp.push({n:L?pair[1]:pair[0],v:t});
+  });
+  grp.sort(function(a,b){return b.v-a.v;});
+  var top=grp.slice(0,4), rest=grp.slice(4).reduce(function(a,g){return a+g.v;},0);
+  var steps=[{n:L?'إجمالي المبيعات':'Gross sales',v:gross,t:'s'},
+             {n:L?'خصم المبيعات':'Sales discount',v:-disc},
+             {n:L?'تكلفة البضاعة':'COGS',v:-cogs},
+             {n:L?'مجمل الربح':'Gross profit',v:gp,t:'s'},
+             {n:L?'إيرادات أخرى':'Other income',v:oi}];
+  top.forEach(function(g){steps.push({n:g.n,v:-g.v});});
+  if(Math.abs(rest)>0.005)steps.push({n:L?'باقي المصروفات':'Other expenses',v:-rest});
+  steps.push({n:L?'صافي الربح':'Net profit',v:np,t:'s'});
+
+  var W=980,H=420,pl=70,pb=92,pt=26;
+  var run=0,tops=[],mx=0,mn=0;
+  steps.forEach(function(s){
+    if(s.t==='s'){tops.push([0,s.v]);run=s.v;}
+    else{tops.push([run,run+s.v]);run+=s.v;}
+    mx=Math.max(mx,run);mn=Math.min(mn,run);
+  });
+  mx=Math.max(mx,gross);
+  var hi=mx*1.08, lo=Math.min(0,mn*1.12), rg=(hi-lo)||1;
+  var yOf=function(v){return pt+(hi-v)/rg*(H-pt-pb);};
+  var bw=(W-pl-16)/steps.length, bar=bw*0.6;
+  var h='<svg class="an-svg" viewBox="0 0 '+W+' '+H+'" style="min-width:760px">';
+  [0,.25,.5,.75,1].forEach(function(f){
+    var v=lo+(hi-lo)*f,y=yOf(v);
+    h+='<line x1="'+pl+'" y1="'+y.toFixed(1)+'" x2="'+(W-8)+'" y2="'+y.toFixed(1)+
+       '" stroke="var(--border)" stroke-width="1"/>'+
+       '<text x="'+(pl-8)+'" y="'+(y+3.5).toFixed(1)+'" text-anchor="end" font-size="10" fill="var(--text3)">'+
+       fmtShort(v)+'</text>';
+  });
+  steps.forEach(function(s,i){
+    var t=tops[i],x=pl+10+i*bw+(bw-bar)/2;
+    var y1=yOf(Math.max(t[0],t[1])),y2=yOf(Math.min(t[0],t[1]));
+    var hh=Math.max(2.5,y2-y1);
+    var col=(s.t==='s')?(s.v<0?'var(--danger)':'var(--navy)'):(s.v>=0?'var(--green)':'var(--warn)');
+    h+='<rect x="'+x.toFixed(1)+'" y="'+y1.toFixed(1)+'" width="'+bar.toFixed(1)+'" height="'+hh.toFixed(1)+
+       '" rx="3" fill="'+col+'"><title>'+s.n+': '+fmt(s.v,true)+'</title></rect>';
+    if(i<steps.length-1)h+='<line x1="'+(x+bar).toFixed(1)+'" y1="'+yOf(t[1]).toFixed(1)+'" x2="'+
+       (pl+10+(i+1)*bw+(bw-bar)/2).toFixed(1)+'" y2="'+yOf(t[1]).toFixed(1)+
+       '" stroke="var(--border2)" stroke-width="1" stroke-dasharray="2 2"/>';
+    h+='<text x="'+(x+bar/2).toFixed(1)+'" y="'+(y1-6).toFixed(1)+'" text-anchor="middle" font-size="10.5" '+
+       'font-weight="800" fill="'+(s.t==='s'?'var(--navy)':(s.v>=0?'var(--green)':'var(--warn)'))+'">'+fmtShort(s.v)+'</text>';
+    var words=String(s.n).split(' '),line='',lines=[];
+    words.forEach(function(w){ if((line+' '+w).trim().length>14){lines.push(line.trim());line=w;} else line+=' '+w; });
+    if(line.trim())lines.push(line.trim());
+    lines.slice(0,3).forEach(function(ln,k){
+      h+='<text x="'+(x+bar/2).toFixed(1)+'" y="'+(H-pb+18+k*12)+'" text-anchor="middle" font-size="10" '+
+         'fill="var(--text2)" font-weight="600">'+ln+'</text>';});
+  });
+  h+='</svg>';
+  document.getElementById('an-wf-box').innerHTML=h;
+
+  var rows=[[L?'إجمالي المبيعات':'Gross sales',gross,1],[L?'خصم المبيعات':'Sales discount',-disc,0],
+            [L?'صافي المبيعات':'Net sales',net,1],[L?'تكلفة البضاعة':'COGS',-cogs,0],
+            [L?'مجمل الربح':'Gross profit',gp,1],[L?'إيرادات أخرى':'Other income',oi,0]];
+  top.forEach(function(g){rows.push([g.n,-g.v,0]);});
+  if(Math.abs(rest)>0.005)rows.push([L?'باقي المصروفات':'Other expenses',-rest,0]);
+  rows.push([L?'صافي الربح':'Net profit',np,1]);
+  var t2='<thead><tr><th>'+(L?'البند':'Line')+'</th><th class="n">'+(L?'المبلغ':'Amount')+
+    '</th><th class="n">'+(L?'% من صافي المبيعات':'% of net sales')+'</th></tr></thead><tbody>';
+  rows.forEach(function(r){
+    t2+='<tr'+(r[2]?' class="tot-row"':'')+'><td>'+r[0]+'</td>'+
+      '<td class="n'+(r[1]<0?' neg':'')+'">'+fmt(r[1])+'</td>'+
+      '<td class="n">'+(net?anPct(r[1]/net,2):'—')+'</td></tr>';
+  });
+  document.getElementById('an-wf-tbl').innerHTML=t2+'</tbody>';
+}
+function fmtShort(v){
+  var a=Math.abs(v||0),s=(v<0?'−':'');
+  if(a>=1e6)return s+(a/1e6).toFixed(a>=1e7?0:1)+'M';
+  if(a>=1e3)return s+Math.round(a/1e3)+'K';
+  return s+Math.round(a);
+}
+
+
+/* ── 2) باريتو المصروفات ─────────────────────────────────────────── */
+function anPareto(L,fr,to,brs){
+  var sum=function(it){return brs.reduce(function(a,sh){return a+gv(sh,it,fr,to);},0);};
+  var items=[];
+  (EXPENSE_CAT_ORDER||[]).forEach(function(pair){
+    (EG[pair[0]]||[]).forEach(function(it){
+      var v=sum(it); if(v>0)items.push({n:L?it:enOf(it),v:v,g:L?pair[1]:pair[0]});
+    });
+  });
+  items.sort(function(a,b){return b.v-a.v;});
+  var T=items.reduce(function(a,x){return a+x.v;},0)||1;
+  var cum=0,n50=0,n80=0;
+  items.forEach(function(x,i){cum+=x.v;x.c=cum/T;if(!n50&&x.c>=0.5)n50=i+1;if(!n80&&x.c>=0.8)n80=i+1;});
+  var show=items.slice(0,18);
+  var W=980,H=360,pl=62,pb=104,pt=20;
+  var mx=show.length?show[0].v:1, bw=(W-pl-20)/show.length, bar=bw*0.6;
+  var h='<svg class="an-svg" viewBox="0 0 '+W+' '+H+'" style="min-width:760px">';
+  [0,.25,.5,.75,1].forEach(function(f){
+    var y=pt+(1-f)*(H-pt-pb);
+    h+='<line x1="'+pl+'" y1="'+y.toFixed(1)+'" x2="'+(W-10)+'" y2="'+y.toFixed(1)+'" stroke="var(--border)"/>'+
+       '<text x="'+(pl-8)+'" y="'+(y+3.5).toFixed(1)+'" text-anchor="end" font-size="10" fill="var(--text3)">'+fmtShort(mx*f)+'</text>'+
+       '<text x="'+(W-4)+'" y="'+(y+3.5).toFixed(1)+'" font-size="10" fill="var(--navy)">'+Math.round(f*100)+'%</text>';
+  });
+  var pts=[];
+  show.forEach(function(x,i){
+    var bh=(x.v/mx)*(H-pt-pb), xx=pl+12+i*bw+(bw-bar)/2, y=H-pb-bh;
+    h+='<rect x="'+xx.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bar.toFixed(1)+'" height="'+Math.max(2,bh).toFixed(1)+
+       '" rx="3" fill="'+(x.c<=0.8?'var(--navy)':'var(--border2)')+'"><title>'+x.n+': '+fmt(x.v,true)+' ('+anPct(x.v/T)+')</title></rect>';
+    pts.push((xx+bar/2).toFixed(1)+','+(pt+(1-x.c)*(H-pt-pb)).toFixed(1));
+    var nm=x.n.length>16?x.n.slice(0,15)+'…':x.n;
+    h+='<text transform="translate('+(xx+bar/2).toFixed(1)+','+(H-pb+12)+') rotate(40)" font-size="9.5" fill="var(--text2)">'+nm+'</text>';
+  });
+  h+='<polyline points="'+pts.join(' ')+'" fill="none" stroke="var(--warn)" stroke-width="2"/>';
+  pts.forEach(function(pt2){var c=pt2.split(',');h+='<circle cx="'+c[0]+'" cy="'+c[1]+'" r="2.6" fill="var(--warn)"/>';});
+  h+='</svg>';
+  document.getElementById('an-par-box').innerHTML=h+
+    '<div class="an-note">'+(L
+      ?('من <b>'+items.length+'</b> بند مصروفات، <b>'+n50+'</b> بس بيعملوا نص المصروفات، و<b>'+n80+
+        '</b> بيعملوا ٨٠٪. الباقي <b>'+(items.length-n80)+'</b> بند بيمثلوا ٢٠٪ — ركّز على الأول.')
+      :('Of <b>'+items.length+'</b> expense lines, just <b>'+n50+'</b> make half the total and <b>'+n80+
+        '</b> make 80%. The remaining <b>'+(items.length-n80)+'</b> are the last 20%.'))+'</div>';
+  var t='<thead><tr><th>#</th><th>'+(L?'البند':'Item')+'</th><th>'+(L?'التصنيف':'Group')+
+    '</th><th class="n">'+(L?'المبلغ':'Amount')+'</th><th class="n">%</th><th class="n">'+(L?'تراكمي':'Cumulative')+'</th></tr></thead><tbody>';
+  items.forEach(function(x,i){
+    t+='<tr'+(x.c<=0.8?'':' class="acc-child"')+'><td class="mut">'+(i+1)+'</td><td>'+x.n+'</td>'+
+       '<td class="mut" style="font-size:11px">'+x.g+'</td><td class="n neg">'+fmt(x.v)+'</td>'+
+       '<td class="n">'+anPct(x.v/T,2)+'</td><td class="n'+(x.c<=0.8?'':' mut')+'">'+anPct(x.c)+'</td></tr>';
+  });
+  t+='<tr class="tot-row"><td></td><td>'+(L?'الإجمالي':'Total')+'</td><td></td><td class="n">'+fmt(T)+'</td><td class="n">100%</td><td></td></tr>';
+  document.getElementById('an-par-tbl').innerHTML=t+'</tbody>';
+}
+
+/* ── 3) مصفوفة الفروع ────────────────────────────────────────────── */
+function anMatrix(L,fr,to,brs){
+  var R=brs.filter(function(sh){return BT[sh]!=='HQ';}).map(function(sh){
+    var s=gv(sh,'المبيعات',fr,to);
+    var np=s-gv(sh,'تكلفة البضاعة المباعة',fr,to)+gv(sh,'إجمالي الايرادات اخرى',fr,to)-gv(sh,'إجمالي المصروفات',fr,to);
+    return {sh:sh,dn:BM[sh]||sh,s:s,np:np,m:s?np/s:0};
+  }).filter(function(r){return r.s>0;});
+  if(!R.length){document.getElementById('an-mat-box').innerHTML=
+    '<div class="empty"><div class="empty-i">⚖</div>'+(L?'مافيش فروع في الاختيار ده':'No branches in this selection')+'</div>';
+    document.getElementById('an-mat-tbl').innerHTML='';return;}
+  var ss=R.map(function(r){return r.s;}).slice().sort(function(a,b){return a-b;});
+  var medS=ss[Math.floor(ss.length/2)];
+  var TS=R.reduce(function(a,r){return a+r.s;},0), TN=R.reduce(function(a,r){return a+r.np;},0);
+  var avgM=TS?TN/TS:0;
+  var W=980,H=430,pl=64,pb=56,pt=20,pr=16;
+  var mxS=Math.max.apply(null,R.map(function(r){return r.s;}))*1.08;
+  var mM=Math.max.apply(null,R.map(function(r){return Math.abs(r.m);}));
+  var hiM=Math.max(0.06,mM*1.15), loM=-hiM;
+  var X=function(v){return pl+(v/mxS)*(W-pl-pr);};
+  var Y=function(v){return pt+((hiM-v)/(hiM-loM))*(H-pt-pb);};
+  var h='<svg class="an-svg" viewBox="0 0 '+W+' '+H+'" style="min-width:760px">';
+  h+='<rect x="'+X(medS)+'" y="'+pt+'" width="'+(W-pr-X(medS))+'" height="'+(Y(avgM)-pt)+'" fill="var(--green)" opacity=".05"/>';
+  h+='<rect x="'+X(medS)+'" y="'+Y(avgM)+'" width="'+(W-pr-X(medS))+'" height="'+(H-pb-Y(avgM))+'" fill="var(--danger)" opacity=".06"/>';
+  h+='<line x1="'+X(medS)+'" y1="'+pt+'" x2="'+X(medS)+'" y2="'+(H-pb)+'" stroke="var(--border2)" stroke-dasharray="4 3"/>';
+  h+='<line x1="'+pl+'" y1="'+Y(avgM)+'" x2="'+(W-pr)+'" y2="'+Y(avgM)+'" stroke="var(--border2)" stroke-dasharray="4 3"/>';
+  h+='<line x1="'+pl+'" y1="'+Y(0)+'" x2="'+(W-pr)+'" y2="'+Y(0)+'" stroke="var(--text3)" stroke-width="1"/>';
+  [0,.25,.5,.75,1].forEach(function(f){
+    h+='<text x="'+X(mxS*f)+'" y="'+(H-pb+16)+'" text-anchor="middle" font-size="10" fill="var(--text3)">'+fmtShort(mxS*f)+'</text>';
+  });
+  [-1,-0.5,0,0.5,1].forEach(function(f){
+    var v=f*hiM;
+    h+='<text x="'+(pl-8)+'" y="'+(Y(v)+3.5)+'" text-anchor="end" font-size="10" fill="var(--text3)">'+anPct(v,0)+'</text>';
+  });
+  R.forEach(function(r){
+    var big=r.s>=medS, good=r.m>=avgM;
+    var col=big?(good?'var(--green)':'var(--danger)'):(good?'#0d9488':'var(--warn)');
+    var rad=4+Math.sqrt(r.s/mxS)*9;
+    h+='<circle cx="'+X(r.s).toFixed(1)+'" cy="'+Y(r.m).toFixed(1)+'" r="'+rad.toFixed(1)+
+       '" fill="'+col+'" opacity=".82"><title>'+r.dn+'\n'+(L?'مبيعات: ':'Sales: ')+fmt(r.s,true)+
+       '\n'+(L?'صافي: ':'Net: ')+fmt(r.np,true)+' ('+anPct(r.m)+')</title></circle>';
+    if(r.s>=medS||Math.abs(r.m)>avgM*2)
+      h+='<text x="'+X(r.s).toFixed(1)+'" y="'+(Y(r.m)-rad-4).toFixed(1)+'" text-anchor="middle" font-size="9.5" '+
+         'fill="var(--text2)" font-weight="600">'+(r.dn.length>14?r.dn.slice(0,13)+'…':r.dn)+'</text>';
+  });
+  h+='<text x="'+(W/2)+'" y="'+(H-10)+'" text-anchor="middle" font-size="11" fill="var(--text2)" font-weight="700">'+
+     (L?'المبيعات ←':'Sales →')+'</text>';
+  h+='</svg>';
+  var Q={},names={bg:L?'كبير · هامش جيد':'Large · good margin',bb:L?'كبير · هامش ضعيف':'Large · weak margin',
+                  sg:L?'صغير · هامش جيد':'Small · good margin',sb:L?'صغير · هامش ضعيف':'Small · weak margin'};
+  R.forEach(function(r){var k=(r.s>=medS?'b':'s')+(r.m>=avgM?'g':'b');(Q[k]=Q[k]||[]).push(r);});
+  var cards='<div class="g2" style="margin-top:14px">';
+  [['bb','danger'],['bg','green'],['sb','warn'],['sg','teal']].forEach(function(e){
+    var arr=(Q[e[0]]||[]).sort(function(a,b){return b.s-a.s;});
+    if(!arr.length)return;
+    var ts=arr.reduce(function(a,r){return a+r.s;},0), tn=arr.reduce(function(a,r){return a+r.np;},0);
+    var col=e[1]==='teal'?'#0d9488':'var(--'+e[1]+')';
+    cards+='<div class="q-box" style="border-inline-start:4px solid '+col+'">'+
+      '<div class="q-ttl" style="color:'+col+'">'+names[e[0]]+' · '+arr.length+(L?' فرع':'')+'</div>'+
+      '<div class="q-num" style="color:'+col+'">'+fmt(tn)+'</div>'+
+      '<div class="q-sub">'+(L?'مبيعات ':'Sales ')+fmt(ts)+' · '+(L?'هامش ':'margin ')+anPct(ts?tn/ts:0)+'</div>'+
+      '<div class="q-list">'+arr.slice(0,6).map(function(r){return r.dn+' ('+anPct(r.m)+')';}).join(' · ')+
+      (arr.length>6?' …':'')+'</div></div>';
+  });
+  cards+='</div>';
+  document.getElementById('an-mat-box').innerHTML=h+cards+
+    '<div class="an-note">'+(L
+      ?'الخط الرأسي = متوسط حجم الفروع، والأفقي = متوسط الهامش. الربع <b>كبير · هامش ضعيف</b> هو اللي بياكل الأرباح: مبيعات كبيرة بهامش ضعيف أو سالب.'
+      :'Vertical line = median branch size, horizontal = average margin. The <b>large · weak margin</b> quadrant is where profit leaks: big sales, thin or negative margin.')+'</div>';
+  var t='<thead><tr><th>'+(L?'الربع':'Quadrant')+'</th><th>'+(L?'الفرع':'Branch')+
+    '</th><th class="n">'+(L?'المبيعات':'Sales')+'</th><th class="n">'+(L?'صافي الربح':'Net profit')+
+    '</th><th class="n">'+(L?'الهامش':'Margin')+'</th></tr></thead><tbody>';
+  [['bb'],['bg'],['sb'],['sg']].forEach(function(e){
+    var arr=(Q[e[0]]||[]).sort(function(a,b){return a.m-b.m;});
+    arr.forEach(function(r,i){
+      t+='<tr><td class="mut" style="font-size:11px">'+(i===0?names[e[0]]:'')+'</td><td>'+r.dn+'</td>'+
+         '<td class="n">'+fmt(r.s)+'</td><td class="n '+(r.np>=0?'pos':'neg')+'">'+fmt(r.np)+'</td>'+
+         '<td class="n"><span class="pp '+(r.m>=avgM?'pp-g':(r.m>=0?'pp-a':'pp-r'))+'">'+anPct(r.m)+'</span></td></tr>';
+    });
+  });
+  document.getElementById('an-mat-tbl').innerHTML=t+'</tbody>';
+}
+
+
+/* ── 4) التحليل الرأسي: الفرع مقابل متوسط المجموعة ──────────────── */
+function anVertical(L,fr,to,brs){
+  var list=brs.filter(function(sh){return gv(sh,'المبيعات',fr,to)>0;});
+  if(!list.length){document.getElementById('an-vert-tbl').innerHTML=
+    '<tbody><tr><td style="padding:22px;text-align:center;color:var(--text3)">'+
+    (L?'مافيش فروع ليها مبيعات في الاختيار ده':'No selling branches in this selection')+'</td></tr></tbody>';return;}
+  // البنود: الأساسية + أكبر 6 مصروفات في الاختيار
+  var sumSel=function(it){return list.reduce(function(a,sh){return a+gv(sh,it,fr,to);},0);};
+  var expItems=[];
+  (EXPENSE_CAT_ORDER||[]).forEach(function(pair){
+    (EG[pair[0]]||[]).forEach(function(it){var v=sumSel(it);if(v>0)expItems.push({it:it,v:v});});
+  });
+  expItems.sort(function(a,b){return b.v-a.v;});
+  var rows=[{it:'تكلفة البضاعة المباعة',n:L?'تكلفة البضاعة':'COGS'}]
+    .concat(expItems.slice(0,6).map(function(x){return {it:x.it,n:L?x.it:enOf(x.it)};}));
+  var TS=list.reduce(function(a,sh){return a+gv(sh,'المبيعات',fr,to);},0);
+  var gAvg={};rows.forEach(function(r){gAvg[r.it]=TS?sumSel(r.it)/TS:0;});
+  var data=list.map(function(sh){
+    var s=gv(sh,'المبيعات',fr,to);
+    var o={sh:sh,dn:BM[sh]||sh,s:s,r:{}};
+    rows.forEach(function(r){o.r[r.it]=s?gv(sh,r.it,fr,to)/s:0;});
+    var np=s-gv(sh,'تكلفة البضاعة المباعة',fr,to)+gv(sh,'إجمالي الايرادات اخرى',fr,to)-gv(sh,'إجمالي المصروفات',fr,to);
+    o.m=s?np/s:0;return o;
+  }).sort(function(a,b){return b.s-a.s;});
+  var t='<thead><tr><th>'+(L?'الفرع':'Branch')+'</th><th class="n">'+(L?'المبيعات':'Sales')+'</th>';
+  rows.forEach(function(r){t+='<th class="n">'+(r.n.length>18?r.n.slice(0,17)+'…':r.n)+'</th>';});
+  t+='<th class="n">'+(L?'هامش صافي':'Net %')+'</th></tr></thead><tbody>';
+  t+='<tr class="tot-row"><td>'+(L?'متوسط المجموعة':'Group average')+'</td><td class="n">'+fmt(TS)+'</td>';
+  rows.forEach(function(r){t+='<td class="n">'+anPct(gAvg[r.it],2)+'</td>';});
+  var TN=data.reduce(function(a,d){return a+d.s*d.m;},0);
+  t+='<td class="n">'+anPct(TS?TN/TS:0,2)+'</td></tr>';
+  data.forEach(function(d){
+    t+='<tr class="clik"><td style="font-weight:600">'+d.dn+'</td><td class="n mut">'+fmt(d.s)+'</td>';
+    rows.forEach(function(r){
+      var v=d.r[r.it], g=gAvg[r.it], diff=v-g;
+      // انحراف أكتر من نقطة مئوية = ملوّن. الأعلى في التكلفة/المصروف = أسوأ.
+      var cls=Math.abs(diff)<0.01?'':(diff>0?'neg':'pos');
+      var bold=Math.abs(diff)>=0.02?'font-weight:700':'';
+      t+='<td class="n '+cls+'" style="'+bold+'" title="'+(L?'الفرق عن المجموعة: ':'vs group: ')+
+         ((diff>=0?'+':'−')+Math.abs(diff*100).toFixed(2)+(L?' نقطة':' pp'))+'">'+anPct(v,2)+'</td>';
+    });
+    t+='<td class="n"><span class="pp '+(d.m>=0.02?'pp-g':(d.m>=0?'pp-a':'pp-r'))+'">'+anPct(d.m,2)+'</span></td></tr>';
+  });
+  document.getElementById('an-vert-tbl').innerHTML=t+'</tbody>';
+  var sub=document.getElementById('an-vert-sub');
+  if(sub)sub.textContent=sub.textContent+(L?' · الأحمر = أعلى من المجموعة':' · red = above group average');
+}
+
 function isPhone(){ return window.innerWidth<=900; }
 
 // زرار الفلاتر على الموبايل + شريحة بتلخّص المختار
@@ -2500,9 +3020,10 @@ function updateFilterChip(){
   try{
     var MN=ar?MNS_AR:MNS_S, fr=getFrom(), to=getTo();
     var per=(fr===to)?MN[fr]:(MN[fr]+'–'+MN[to]);
-    var brSel=document.getElementById('f-branch');
-    var br=(brSel&&brSel.value!=='ALL')?(BM[brSel.value]||brSel.value)
-          :(ar?'كل الفروع':'All branches');
+    var bb=getBranch();
+    var br=(bb==='ALL')?(ar?'كل الفروع':'All branches')
+          :(bb==='MULTI'?((BR_SEL?BR_SEL.length:0)+(ar?' فروع':' branches'))
+                        :(BM[bb]||bb));
     txt=per+' · '+br;
   }catch(e){}
   b.textContent='☰ '+txt;
@@ -2532,8 +3053,8 @@ function enOf(item){ var k=normAr(item); return ITEM_EN[k]||EE[item]||EE[k]||ite
 // and the top KPI cards so the cards reflect the selected branch.
 function bsBranchChange(){
   var bs=document.getElementById('bs-branch');
-  var top=document.getElementById('f-branch');
-  if(bs&&top){ top.value=bs.value; }  // mirror selection into the global branch filter
+  // اختيار فرع في كشف الحساب ينعكس على الفلتر العام
+  if(bs){ setBranchSel(bs.value==='ALL'?null:[bs.value]); }
   renderKPIs();        // refresh top cards for the selected branch
   renderBStatement();  // refresh the statement table
 }
@@ -2722,8 +3243,8 @@ function renderBStatement(){
 // ===== Language toggle (Arabic ⇄ English). English stays the default; nothing English is removed. =====
 var LANG='en';
 var PAGE_TITLES={
-  en:{overview:'Overview',pnl:'P&L Statement',expenses:'Expense Analysis',branches:'Branch Performance',bstatement:'Branch Statement',heatmap:'Performance Map',compare:'Compare Branches',yoy:'Year vs Year',alerts:'Alerts & Insights',forecast:'Forecast '+YEAR},
-  ar:{overview:'الرئيسية',pnl:'قائمة الدخل',expenses:'تحليل المصروفات',branches:'أداء الفروع',bstatement:'كشف حساب الفرع',heatmap:'خريطة الأداء',compare:'مقارنة الفروع',yoy:'مقارنة السنوات',alerts:'التنبيهات والرؤى',forecast:'توقعات '+YEAR}
+  en:{overview:'Overview',pnl:'P&L Statement',expenses:'Expense Analysis',branches:'Branch Performance',bstatement:'Branch Statement',heatmap:'Performance Map',compare:'Compare Branches',yoy:'Year vs Year',alerts:'Alerts & Insights',forecast:'Forecast '+YEAR,analysis:'Advanced Analysis'},
+  ar:{overview:'الرئيسية',pnl:'قائمة الدخل',expenses:'تحليل المصروفات',branches:'أداء الفروع',bstatement:'كشف حساب الفرع',heatmap:'خريطة الأداء',compare:'مقارنة الفروع',yoy:'مقارنة السنوات',alerts:'التنبيهات والرؤى',forecast:'توقعات '+YEAR,analysis:'التحليل المتقدم'}
 };
 var CUR_PAGE='overview';
 function lastUpdText(m){
@@ -3014,7 +3535,7 @@ function useYear(y,reRender){
   var e=YEARS[y];
   var prevBranch=null,prevType=null;
   if(reRender){
-    var fb=document.getElementById('f-branch');if(fb)prevBranch=fb.value;
+    prevBranch=BR_SEL?BR_SEL.slice():null;
     var ftp=document.getElementById('f-type');if(ftp)prevType=ftp.value;
   }
   D=e.D;CON=e.CON;STATS=e.STATS;BM=e.BM;BT=e.BT;
@@ -3030,9 +3551,10 @@ function useYear(y,reRender){
   var bs=document.getElementById('bs-branch');if(bs)bs.innerHTML='';
   if(reRender){
     if(typeof initDashboard==='function')initDashboard();
-    var fb2=document.getElementById('f-branch');
-    // keep the user's branch if this year has it, otherwise fall back to All
-    if(fb2)fb2.value=(prevBranch&&(prevBranch==='ALL'||BM[prevBranch]))?prevBranch:'ALL';
+    // نحتفظ بالفروع المختارة اللي موجودة في السنة الجديدة
+    BR_SEL=prevBranch?prevBranch.filter(function(sh){return !!BM[sh];}):null;
+    if(BR_SEL&&!BR_SEL.length)BR_SEL=null;
+    brBtnLabel();
     var ftp2=document.getElementById('f-type');
     if(ftp2&&prevType)ftp2.value=prevType;
     var ff=document.getElementById('f-from');if(ff)ff.value='0';
