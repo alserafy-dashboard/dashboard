@@ -1096,6 +1096,12 @@ function getType(){return document.getElementById('f-type').value;}
 var BR_SEL=null;
 function inSel(sh){ return !BR_SEL || BR_SEL.indexOf(sh)>=0; }
 function allBranchKeys(){ return Object.keys(BM); }
+// الفروع اللي ليها مبيعات فعلية — من غير الإدارة ومن غير المقفول
+function sellingBranches(){
+  return Object.keys(BM).filter(function(sh){
+    return BT[sh]!=='HQ' && gv(sh,'\u0627\u0644\u0645\u0628\u064a\u0639\u0627\u062a',0,11)>0;
+  });
+}
 function getBranch(){
   var all=allBranchKeys();
   if(!BR_SEL||BR_SEL.length>=all.length)return 'ALL';
@@ -1107,6 +1113,14 @@ function setBranchSel(list){
   if(!list||list.length===0||list.length>=all.length)BR_SEL=null;
   else BR_SEL=list.slice();
   brBtnLabel(); if(typeof onFilter==='function')onFilter();
+}
+// «31 فرع · 28 بيبيع» — عشان العدد مايضللش (الإدارة والفروع المقفولة مش بتبيع)
+function brCountLabel(file){
+  var ar=(typeof LANG!=='undefined'&&LANG==='ar');
+  var tot=window.__brCount||0, sel=window.__brSelling;
+  var t=file+' \u00b7 '+tot+(ar?' فرع':' branches');
+  if(typeof sel==='number'&&sel!==tot)t+=' \u00b7 '+sel+(ar?' بيبيع':' selling');
+  return t;
 }
 function brBtnLabel(){
   var b=document.getElementById('br-btn'); if(!b)return;
@@ -2919,6 +2933,24 @@ function anMatrix(L,fr,to,brs){
   var Q={},names={bg:L?'كبير · هامش جيد':'Large · good margin',bb:L?'كبير · هامش ضعيف':'Large · weak margin',
                   sg:L?'صغير · هامش جيد':'Small · good margin',sb:L?'صغير · هامش ضعيف':'Small · weak margin'};
   R.forEach(function(r){var k=(r.s>=medS?'b':'s')+(r.m>=avgM?'g':'b');(Q[k]=Q[k]||[]).push(r);});
+  // شريط متوسطات — محسوب على الفروع اللي بتبيع فعلاً، مش على كل الشيتات
+  var avgS=TS/R.length, avgN=TN/R.length;
+  var mSorted=R.map(function(r){return r.m;}).sort(function(a,b){return a-b;});
+  var medM=mSorted[Math.floor(mSorted.length/2)];
+  var stats='<div class="g3" style="margin-top:14px;margin-bottom:2px">'+
+    '<div class="q-box"><div class="q-ttl" style="color:var(--text2)">'+
+      (L?'فروع بتبيع':'Selling branches')+'</div>'+
+      '<div class="q-num" style="color:var(--navy)">'+R.length+'</div>'+
+      '<div class="q-sub">'+(L?('من '+Object.keys(BM).length+' شيت في الملف'):('of '+Object.keys(BM).length+' sheets'))+'</div></div>'+
+    '<div class="q-box"><div class="q-ttl" style="color:var(--text2)">'+
+      (L?'متوسط مبيعات الفرع':'Avg sales per branch')+'</div>'+
+      '<div class="q-num" style="color:var(--navy)">'+fmt(avgS)+'</div>'+
+      '<div class="q-sub">'+(L?'إجمالي ':'total ')+fmt(TS)+' \u00f7 '+R.length+'</div></div>'+
+    '<div class="q-box"><div class="q-ttl" style="color:var(--text2)">'+
+      (L?'متوسط صافي ربح الفرع':'Avg net profit per branch')+'</div>'+
+      '<div class="q-num" style="color:var(--'+(avgN>=0?'green':'danger')+')">'+fmt(avgN)+'</div>'+
+      '<div class="q-sub">'+(L?'الهامش المتوسط ':'avg margin ')+anPct(avgM)+' \u00b7 '+
+      (L?'الوسيط ':'median ')+anPct(medM)+'</div></div></div>';
   var cards='<div class="g2" style="margin-top:14px">';
   [['bb','danger'],['bg','green'],['sb','warn'],['sg','teal']].forEach(function(e){
     var arr=(Q[e[0]]||[]).sort(function(a,b){return b.s-a.s;});
@@ -2933,7 +2965,7 @@ function anMatrix(L,fr,to,brs){
       (arr.length>6?' …':'')+'</div></div>';
   });
   cards+='</div>';
-  document.getElementById('an-mat-box').innerHTML=h+cards+
+  document.getElementById('an-mat-box').innerHTML=h+stats+cards+
     '<div class="an-note">'+(L
       ?'الخط الرأسي = متوسط حجم الفروع، والأفقي = متوسط الهامش. الربع <b>كبير · هامش ضعيف</b> هو اللي بياكل الأرباح: مبيعات كبيرة بهامش ضعيف أو سالب.'
       :'Vertical line = median branch size, horizontal = average margin. The <b>large · weak margin</b> quadrant is where profit leaks: big sales, thin or negative margin.')+'</div>';
@@ -3264,7 +3296,7 @@ updateFilterChip();
   var lu2=document.getElementById('last-upd');
   if(lu2&&typeof window.__lastM==='number')lu2.textContent=lastUpdText(window.__lastM);
   var fl2=document.getElementById('file-lbl');
-  if(fl2&&window.__srcLabel)fl2.textContent=window.__srcLabel+' \u00b7 '+window.__brCount+((LANG==='ar')?' فرع':' Branches');
+  if(fl2&&window.__srcLabel)fl2.textContent=brCountLabel(window.__srcLabel);
   document.body.setAttribute('dir', LANG==='ar'?'rtl':'ltr');
   // 2) repaint dynamic content — visible page first, the rest deferred
   if(window.__dataReady && typeof onFilter==='function'){
@@ -3542,8 +3574,9 @@ function useYear(y,reRender){
   YEAR=String(y);applyYearLabels();
   var lastM=detectLastMonth();
   window.__lastM=lastM;window.__srcLabel=e.file;window.__brCount=Object.keys(BM).length;
+  window.__brSelling=sellingBranches().length;
   var fl=document.getElementById('file-lbl');
-  if(fl)fl.textContent=e.file+' \u00b7 '+window.__brCount+((typeof LANG!=='undefined'&&LANG==='ar')?' فرع':' Branches');
+  if(fl)fl.textContent=brCountLabel(e.file);
   var lu=document.getElementById('last-upd');if(lu)lu.textContent=lastUpdText(lastM);
   var ys=document.getElementById('f-year');if(ys&&ys.value!==String(y))ys.value=String(y);
   // the Branch Statement dropdown is filled once from BM — clear it so it is
