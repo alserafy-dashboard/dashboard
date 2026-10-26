@@ -330,8 +330,13 @@ html,body{max-width:100%;overflow-x:hidden}
 .br-foot{display:flex;align-items:center;gap:9px;padding:9px 11px;border-top:1px solid var(--border);
   background:var(--system-bg)}
 .br-foot span{font-size:11.5px;color:var(--text2);font-weight:600}
-.br-foot button{margin-inline-start:auto;background:var(--navy);color:#fff;border:none;border-radius:7px;
+.br-foot button{background:var(--navy);color:#fff;border:none;border-radius:7px;
   padding:6px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+.br-foot .br-cancel{margin-inline-start:auto;background:var(--card-bg);color:var(--text2);border:1px solid var(--border)}
+.br-foot .br-cancel:hover{border-color:var(--danger);color:var(--danger)}
+.br-foot button:disabled{opacity:.45;cursor:not-allowed}
+.br-quick .br-clear{border-color:var(--danger);color:var(--danger)}
+.br-quick .br-clear:hover{background:var(--danger-bg);border-color:var(--danger);color:var(--danger)}
 /* ══ صفحة التحليل المتقدم ══ */
 .an-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
 .an-tab{background:var(--card-bg);border:1px solid var(--border);border-radius:9px;padding:8px 16px;
@@ -447,11 +452,12 @@ html,body{max-width:100%;overflow-x:hidden}
     <button onclick="brPreset('POS - Corporate')" data-en="POS" data-ar="نقاط البيع">POS</button>
     <button onclick="brPreset('ACTIVE')" data-en="Selling only" data-ar="اللي بتبيع">Selling only</button>
     <button onclick="brPreset('INV')" data-en="Invert" data-ar="عكس">Invert</button>
-    <button onclick="brPreset('NONE')" data-en="Clear" data-ar="مسح">Clear</button>
+    <button onclick="brPreset('NONE')" class="br-clear" data-en="Clear all" data-ar="مسح الكل">Clear all</button>
   </div>
   <div class="br-list" id="br-list"></div>
   <div class="br-foot"><span id="br-count"></span>
-    <button onclick="brClose()" data-en="Done" data-ar="تم">Done</button></div>
+    <button class="br-cancel" onclick="brCancel()" data-en="Cancel" data-ar="إلغاء">Cancel</button>
+    <button id="br-apply" onclick="brApply()" data-en="Apply" data-ar="تطبيق">Apply</button></div>
 </div>
 
 <!-- APP -->
@@ -2633,7 +2639,9 @@ function runRenderers(list){
   list.forEach(function(fn){ try{ if(typeof window[fn]==='function')window[fn](); }catch(e){} });
 }
 /* ══ لوحة اختيار الفروع ══ */
+var BR_DRAFT=null;   // المسوّدة: بنعدّل فيها، والداشبورد مايتحركش غير مع «تطبيق»
 function brOpen(ev){
+  BR_DRAFT=BR_SEL?BR_SEL.slice():allBranchKeys().slice();
   var pop=document.getElementById('br-pop'),bd=document.getElementById('br-bd'),
       btn=document.getElementById('br-btn');
   if(!pop||!btn)return;
@@ -2660,7 +2668,7 @@ function brList(){
   all.forEach(function(sh){
     var dn=BM[sh]||sh;
     if(q&&dn.toLowerCase().indexOf(q)<0&&sh.toLowerCase().indexOf(q)<0)return;
-    var on=inSel(sh);
+    var on=BR_DRAFT?(BR_DRAFT.indexOf(sh)>=0):inSel(sh);
     var tag=BT[sh]==='HQ'?(ar?'إدارة':'HQ'):(BT[sh]==='POS - Corporate'?'POS':'');
     h+='<label class="br-row"><input type="checkbox" '+(on?'checked':'')+
        ' onchange="brToggle(\''+String(sh).replace(/'/g,"\\'")+'\',this.checked)">'+
@@ -2668,28 +2676,37 @@ function brList(){
   });
   box.innerHTML=h||('<div style="padding:14px;color:var(--text3);font-size:12.5px">'+
     (ar?'مافيش فرع بالاسم ده':'No branch matches')+'</div>');
-  var n=BR_SEL?BR_SEL.length:all.length;
-  document.getElementById('br-count').textContent=ar?(n+' من '+all.length+' مختار'):(n+' of '+all.length+' selected');
+  var n=BR_DRAFT?BR_DRAFT.length:(BR_SEL?BR_SEL.length:all.length);
+  var cEl=document.getElementById('br-count');
+  cEl.textContent=n===0?(ar?'مفيش فرع مختار':'No branch selected')
+                       :(ar?(n+' من '+all.length+' مختار'):(n+' of '+all.length+' selected'));
+  cEl.style.color=n===0?'var(--danger)':'';
+  var ap=document.getElementById('br-apply');
+  if(ap)ap.disabled=(n===0);
 }
 function brToggle(sh,on){
-  var all=allBranchKeys();
-  var cur=BR_SEL?BR_SEL.slice():all.slice();
-  var i=cur.indexOf(sh);
-  if(on&&i<0)cur.push(sh);
-  if(!on&&i>=0)cur.splice(i,1);
-  if(cur.length===0)cur=[sh];            // مايبقاش فاضي خالص
-  setBranchSel(cur); brList();
+  if(!BR_DRAFT)BR_DRAFT=allBranchKeys().slice();
+  var i=BR_DRAFT.indexOf(sh);
+  if(on&&i<0)BR_DRAFT.push(sh);
+  if(!on&&i>=0)BR_DRAFT.splice(i,1);
+  brList();                              // الداشبورد مايترسمش دلوقتي
 }
+function brApply(){
+  if(!BR_DRAFT||!BR_DRAFT.length)return; // لازم فرع واحد على الأقل
+  setBranchSel(BR_DRAFT.slice());
+  brClose();
+}
+function brCancel(){ BR_DRAFT=null; brClose(); }
 function brPreset(p){
-  var all=allBranchKeys(),out;
-  if(p==='ALL')out=null;
-  else if(p==='NONE')out=null;
-  else if(p==='INV')out=all.filter(function(sh){return !inSel(sh);});
-  else if(p==='NOHQ')out=all.filter(function(sh){return BT[sh]!=='HQ';});
-  else if(p==='ACTIVE')out=all.filter(function(sh){return gv(sh,'المبيعات',0,11)>0;});
-  else out=all.filter(function(sh){return BT[sh]===p;});
-  if(out&&out.length===0)out=null;
-  setBranchSel(out); brList();
+  var all=allBranchKeys();
+  if(!BR_DRAFT)BR_DRAFT=all.slice();
+  if(p==='ALL')BR_DRAFT=all.slice();
+  else if(p==='NONE')BR_DRAFT=[];                       // يفضّي المربعات — تختار من الأول
+  else if(p==='INV')BR_DRAFT=all.filter(function(sh){return BR_DRAFT.indexOf(sh)<0;});
+  else if(p==='NOHQ')BR_DRAFT=all.filter(function(sh){return BT[sh]!=='HQ';});
+  else if(p==='ACTIVE')BR_DRAFT=all.filter(function(sh){return gv(sh,'المبيعات',0,11)>0;});
+  else BR_DRAFT=all.filter(function(sh){return BT[sh]===p;});
+  brList();
 }
 
 /* ══════════════════════════════════════════════════════════════════════
