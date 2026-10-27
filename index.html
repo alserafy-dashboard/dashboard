@@ -2530,9 +2530,17 @@ function bootRetry(){
   window.__dataReady=false;
   bootMsg('loading');
   scanYears(function(list){
-    (list||[]).forEach(function(y){ fetchYearRaw(y,function(){}); });
+    if(list&&list.length)fetchYearRaw(list[0],function(){});
     bootData(0);
   });
+}
+// باقي السنين بتتنزّل بهدوء بعد ما الشاشة تشتغل — عشان ماتزاحمش السنة الحالية
+function prefetchOtherYears(){
+  setTimeout(function(){
+    (YEAR_LIST||[]).slice(1).forEach(function(y){
+      if(YEARS[y]&&!YEARS[y].raw&&!YEARS[y].ready)fetchYearRaw(y,function(){});
+    });
+  },4000);
 }
 function bootData(tries){
   if(window.__dataReady)return;
@@ -2543,6 +2551,7 @@ function bootData(tries){
     window.__dataReady=true;
     buildYearSelect();
     useYear(y,true);
+    prefetchOtherYears();
     return;
   }
   // 160 محاولة × 250 مللي = 40 ثانية بدل 20 — الملفات 3 ميجا
@@ -3770,7 +3779,9 @@ window.addEventListener('DOMContentLoaded',function(){
   loadExpenseMapping(function(){ __mapDone=true; });
   setTimeout(function(){ __mapDone=true; },9000);   // never block on it
   scanYears(function(list){
-    list.forEach(function(y){ fetchYearRaw(y,function(){}); });
+    // السنة الأحدث بس. باقي السنين بتتنزّل بعد ما الداشبورد يشتغل (prefetchOtherYears)
+    // أو عند الطلب لما تبدّل السنة أو تفتح مقارنة السنوات.
+    if(list&&list.length)fetchYearRaw(list[0],function(){});
   });
 });
 
