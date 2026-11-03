@@ -2538,7 +2538,7 @@ function bootRetry(){
 function prefetchOtherYears(){
   setTimeout(function(){
     (YEAR_LIST||[]).slice(1).forEach(function(y){
-      if(YEARS[y]&&!YEARS[y].raw&&!YEARS[y].ready)fetchYearRaw(y,function(){});
+      if(YEARS[y]&&!YEARS[y].raw&&!YEARS[y].parsed&&!YEARS[y].ready)fetchYearRaw(y,function(){});
     });
   },4000);
 }
@@ -2547,7 +2547,7 @@ function bootData(tries){
   if(tries===0)bootMsg('loading');
   if(!__mapDone&&tries<40){setTimeout(function(){bootData(tries+1);},250);return;}
   var y=YEAR_LIST[0];
-  if(y&&YEARS[y]&&YEARS[y].raw&&ensureYearParsed(y)){
+  if(y&&YEARS[y]&&(YEARS[y].raw||YEARS[y].parsed)&&ensureYearParsed(y)){
     window.__dataReady=true;
     buildYearSelect();
     useYear(y,true);
@@ -3578,6 +3578,9 @@ function ensureYearParsed(y){
   var e=YEARS[y];
   if(!e)return false;
   if(e.ready)return true;
+  if(e.parsed){                       // جاي من data-<سنة>.json — جاهز من غير تحليل
+    try{ return registerYear(y,e.parsed,e.file); }catch(err){return false;}
+  }
   if(!e.raw)return false;
   try{
     var wb=XLSX.read(e.raw,{type:'array'});
@@ -3641,7 +3644,7 @@ function onYearChange(){
     sel.value=YEAR;sel.disabled=false;
   };
   if(!e){fail();return;}
-  if(e.ready||e.raw){ if(!useYear(y,true))fail(); return; }
+  if(e.ready||e.raw||e.parsed){ if(!useYear(y,true))fail(); return; }
   sel.disabled=true;                       // bytes still on the way
   fetchYearRaw(y,function(ok){
     sel.disabled=false;
@@ -3690,7 +3693,10 @@ function scanYears(cb){
   function finish(){
     if(done)return;done=true;
     YEAR_LIST=Object.keys(found).sort(function(a,b){return Number(b)-Number(a);});
-    YEAR_LIST.forEach(function(y){ if(!YEARS[y])YEARS[y]={file:found[y].name,raw:null,ready:false}; });
+    YEAR_LIST.forEach(function(y){
+      if(!YEARS[y])YEARS[y]={file:found[y].name,raw:null,ready:false};
+      YEARS[y].srcSize=found[y].size||0;     // لمقارنة الـJSON بالإكسل
+    });
     if(cb)cb(YEAR_LIST);
   }
   if(!pending){finish();return;}
@@ -3701,7 +3707,10 @@ function scanYears(cb){
         // order in yearFileCandidates (P_L_<year>.xlsx wins), never by whichever
         // HTTP response happens to come back first — otherwise the file picked
         // changes from one page load to the next.
-        if(r&&r.ok&&(!found[j[0]]||j[2]<found[j[0]].rank))found[j[0]]={name:j[1],rank:j[2]};
+        if(r&&r.ok&&(!found[j[0]]||j[2]<found[j[0]].rank)){
+          var cl=0; try{cl=parseInt(r.headers.get('content-length')||'0',10)||0;}catch(e){}
+          found[j[0]]={name:j[1],rank:j[2],size:cl};
+        }
       })
       .catch(function(){})
       .then(function(){ if(--pending<=0)finish(); });
@@ -3711,11 +3720,40 @@ function scanYears(cb){
 
 // Fetch one year's raw bytes. Nothing is parsed here — parsing waits for the
 // password, and for the year to actually be opened.
+// الداشبورد بيحاول يقرا data-<سنة>.json الأول — أصغر 38 مرة من الإكسل
+// ومش محتاج يفك ضغط 40 شيت. لو مش موجود أو قديم، بيرجع للإكسل تلقائياً.
+function fetchYearJson(y,cb){
+  var e=YEARS[y];
+  fetch('data-'+y+'.json?t='+Date.now())
+    .then(function(r){ if(!r.ok)throw 0; return r.json(); })
+    .then(function(j){
+      if(!j||!j.D||!j.CON||!j.STATS)throw 0;
+      // حماية من التقادم: لو الإكسل اتغيّر من غير ما الـJSON يتحدّث، نتجاهله
+      var want=(j.__src&&j.__src.size)||0;
+      if(want&&e.srcSize&&want!==e.srcSize){
+        console.warn('data-'+y+'.json قديم — هنقرا الإكسل');
+        throw 0;
+      }
+      // __order مش بيعدّي في JSON لأنه غير مرئي — بنرجّعه
+      if(j.__order)Object.keys(j.D).forEach(function(sh){
+        if(j.__order[sh])try{Object.defineProperty(j.D[sh],'__order',
+          {value:j.__order[sh],enumerable:false,configurable:true});}catch(err){}
+      });
+      e.parsed=j; e.__loading=false; __excelLoaded=true;
+      if(cb)cb(true);(e.__waiting||[]).forEach(function(f){f(true);});e.__waiting=[];
+    })
+    .catch(function(){ fetchYearXlsx(y,cb); });
+}
 function fetchYearRaw(y,cb){
   var e=YEARS[y];
   if(!e){if(cb)cb(false);return;}
-  if(e.ready||e.raw){if(cb)cb(true);return;}
+  if(e.ready||e.raw||e.parsed){if(cb)cb(true);return;}
   if(e.__loading){e.__waiting=(e.__waiting||[]).concat([cb]);return;}
+  e.__loading=true;
+  fetchYearJson(y,cb);
+}
+function fetchYearXlsx(y,cb){
+  var e=YEARS[y];
   e.__loading=true;
   fetch(encodeURIComponent(e.file)+'?t='+Date.now())
     .then(function(r){ if(!r.ok)throw 0; return r.arrayBuffer(); })
