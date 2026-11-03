@@ -605,7 +605,7 @@ html,body{max-width:100%;overflow-x:hidden}
         <!-- P&L -->
         <div id="page-pnl" class="page">
           <div class="card">
-            <div class="card-hdr"><div class="card-title" data-en="P&amp;L Statement" data-ar="قائمة الدخل">P&amp;L Statement</div><div class="card-title" id="pnl-lbl" style="font-weight:400;color:var(--text2)"></div></div>
+            <div class="card-hdr"><div class="card-title" data-en="P&amp;L Statement" data-ar="قائمة الدخل">P&amp;L Statement</div><div style="display:flex;gap:6px;flex-wrap:wrap" class="no-print"><button class="fsel" style="cursor:pointer;min-width:0;padding:5px 12px;font-weight:700" onclick="pnlAccAll(true)" data-en="Expand all" data-ar="افتح الكل">Expand all</button><button class="fsel" style="cursor:pointer;min-width:0;padding:5px 12px;font-weight:700" onclick="pnlAccAll(false)" data-en="Collapse all" data-ar="اقفل الكل">Collapse all</button></div><div class="card-title" id="pnl-lbl" style="font-weight:400;color:var(--text2)"></div></div>
             <div class="tw" style="max-height:calc(100vh - 200px);overflow:auto"><table id="pnl-tbl"></table></div>
           </div>
         </div>
@@ -1540,12 +1540,12 @@ function renderPnL(){
     if(gt===0)continue;
     totalOp+=gt;
     const gid='grp_'+grp.replace(/\W/g,'_');
-    h+=`<tr class="acc-grp" onclick="toggleAcc('${gid}')"><td colspan="2"><span class="acc-arr" id="arr_${gid}">▶</span> ${Lp?(grpAr(grp)):grp}</td><td class="neg" title="${fmt(gt,true)}">${fmt(gt)}</td></tr>`;
+    h+=`<tr class="acc-grp" onclick="toggleAcc('${gid}')"><td colspan="2"><span class="acc-arr${PNL_OPEN[gid]?' open':''}" id="arr_${gid}">▶</span> ${Lp?(grpAr(grp)):grp}</td><td class="neg" title="${fmt(gt,true)}">${fmt(gt)}</td></tr>`;
     for(const it of items){
       const v=sumBranch(it,fr,to);
       if(v===0)continue;
       if(!isHQ&&HQ_ITEMS.includes(it))continue;
-      h+=`<tr class="acc-child hidden" data-grp="${gid}"><td style="padding-left:28px;color:var(--text2)">${Lp?it:en(it)}</td><td class="neg" title="${fmt(v,true)}">${fmt(v)}</td><td><span class="pp ${pc(v/sRef)}" title="${fpf(v/sRef)}">${fp(v/sRef)}</span></td></tr>`;
+      h+=`<tr class="acc-child${PNL_OPEN[gid]?'':' hidden'}" data-grp="${gid}"><td style="padding-left:28px;color:var(--text2)">${Lp?it:en(it)}</td><td class="neg" title="${fmt(v,true)}">${fmt(v)}</td><td><span class="pp ${pc(v/sRef)}" title="${fpf(v/sRef)}">${fp(v/sRef)}</span></td></tr>`;
     }
   }
   h+=`<tr class="tot-row"><td>${Lp?'إجمالي التكلفة التشغيلية':'Total Operating Cost'}</td><td title="${fmt(totalOp,true)}">${fmt(totalOp)}</td><td>${fp(totalOp/sRef)}</td></tr>`;
@@ -1555,20 +1555,20 @@ function renderPnL(){
 
   // Depreciation
   if(dep!==0){
-    h+=`<tr class="acc-grp" onclick="toggleAcc('grp_dep')"><td colspan="2"><span class="acc-arr" id="arr_grp_dep">▶</span> ${Lp?'الإهلاك والاستهلاك':'Depreciation & Amortization'}</td><td class="neg" title="${fmt(dep,true)}">${fmt(dep)}</td></tr>`;
+    h+=`<tr class="acc-grp" onclick="toggleAcc('grp_dep')"><td colspan="2"><span class="acc-arr${PNL_OPEN['grp_dep']?' open':''}" id="arr_grp_dep">▶</span> ${Lp?'الإهلاك والاستهلاك':'Depreciation & Amortization'}</td><td class="neg" title="${fmt(dep,true)}">${fmt(dep)}</td></tr>`;
     for(const it of egDep()){
       const v=sumBranch(it,fr,to);if(v===0)continue;
-      h+=`<tr class="acc-child hidden" data-grp="grp_dep"><td style="padding-left:28px;color:var(--text2)">${Lp?it:en(it)}</td><td class="neg" title="${fmt(v,true)}">${fmt(v)}</td><td></td></tr>`;
+      h+=`<tr class="acc-child${PNL_OPEN['grp_dep']?'':' hidden'}" data-grp="grp_dep"><td style="padding-left:28px;color:var(--text2)">${Lp?it:en(it)}</td><td class="neg" title="${fmt(v,true)}">${fmt(v)}</td><td></td></tr>`;
     }
   }
 
   h+='<tr class="ebitda-row" style="background:#0e7490!important"><td>'+(Lp?'الأرباح قبل الفوائد والضرائب (EBIT)':'EBIT')+'</td><td title="'+fmt(ebit,true)+'">'+fmt(ebit)+'</td><td>'+fp(ebit/sRef)+'</td></tr>';
 
   if(inter!==0&&isHQ){
-    h+=`<tr class="acc-grp" onclick="toggleAcc('grp_int')"><td colspan="2"><span class="acc-arr" id="arr_grp_int">▶</span> ${Lp?'فوائد القروض':'Interest on Loans'}</td><td class="neg" title="${fmt(inter,true)}">${fmt(inter)}</td></tr>`;
+    h+=`<tr class="acc-grp" onclick="toggleAcc('grp_int')"><td colspan="2"><span class="acc-arr${PNL_OPEN['grp_int']?' open':''}" id="arr_grp_int">▶</span> ${Lp?'فوائد القروض':'Interest on Loans'}</td><td class="neg" title="${fmt(inter,true)}">${fmt(inter)}</td></tr>`;
     for(const it of egInt()){
       const v=sumBranch(it,fr,to);if(v===0)continue;
-      h+=`<tr class="acc-child hidden" data-grp="grp_int"><td style="padding-left:28px;color:var(--text2)">${Lp?it:en(it)}</td><td class="neg" title="${fmt(v,true)}">${fmt(v)}</td><td></td></tr>`;
+      h+=`<tr class="acc-child${PNL_OPEN['grp_int']?'':' hidden'}" data-grp="grp_int"><td style="padding-left:28px;color:var(--text2)">${Lp?it:en(it)}</td><td class="neg" title="${fmt(v,true)}">${fmt(v)}</td><td></td></tr>`;
     }
   }
 
@@ -1581,12 +1581,32 @@ function renderPnL(){
   document.getElementById('pnl-tbl').innerHTML=h;
 }
 
+// حالة الطي بتتخزن عشان ما تضيعش مع كل تغيير فلتر
+var PNL_OPEN={};
 function toggleAcc(gid){
-  const ch=document.querySelectorAll('[data-grp="'+gid+'"]');
-  const ar=document.getElementById('arr_'+gid);
-  const open=ar&&ar.classList.contains('open');
-  ch.forEach(c=>c.classList.toggle('hidden',open));
-  if(ar)ar.classList.toggle('open',!open);
+  PNL_OPEN[gid]=!PNL_OPEN[gid];
+  applyAcc(gid);
+}
+function applyAcc(gid){
+  var open=!!PNL_OPEN[gid];
+  document.querySelectorAll('[data-grp="'+gid+'"]').forEach(function(c){c.classList.toggle('hidden',!open);});
+  var ar=document.getElementById('arr_'+gid);
+  if(ar)ar.classList.toggle('open',open);
+}
+// معرّفات مجموعات قائمة الدخل — محسوبة من البيانات مش من الـDOM
+function pnlGroupIds(){
+  var ids=[];
+  Object.keys(EG||{}).forEach(function(grp){
+    if(['Depreciation & Amortization','Interest','Taxes'].indexOf(grp)>=0)return;
+    ids.push('grp_'+grp.replace(/\W/g,'_'));
+  });
+  ids.push('grp_dep','grp_int');
+  return ids;
+}
+// افتح الكل / اقفل الكل
+function pnlAccAll(open){
+  pnlGroupIds().forEach(function(g){PNL_OPEN[g]=!!open;applyAcc(g);});
+  if(typeof renderPnL==='function')renderPnL();
 }
 
 // ── BRANCHES ──
