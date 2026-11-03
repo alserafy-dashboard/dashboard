@@ -3682,7 +3682,25 @@ function yearFileCandidates(y){
 // Look for every year's workbook next to this page. Cheap HEAD requests, all
 // fired at once. Drop P_L_2027.xlsx in the repo and it appears on its own —
 // nothing in this file needs editing.
+// فهرس السنين: طلب واحد بدل ~49 طلب تخمين لأسماء ملفات محتملة.
+// لو الفهرس مش موجود، بنرجع للتخمين القديم تلقائياً.
 function scanYears(cb){
+  fetch('years.json?t='+Date.now())
+    .then(function(r){ if(!r.ok)throw 0; return r.json(); })
+    .then(function(j){
+      if(!j||!j.years||!j.years.length)throw 0;
+      YEAR_LIST=j.years.map(function(x){return String(x.y);})
+        .sort(function(a,b){return Number(b)-Number(a);});
+      j.years.forEach(function(x){
+        var y=String(x.y);
+        if(!YEARS[y])YEARS[y]={file:x.file||('P_L_'+y+'.xlsx'),raw:null,ready:false};
+        YEARS[y].srcSize=x.size||0;
+      });
+      if(cb)cb(YEAR_LIST);
+    })
+    .catch(function(){ scanYearsProbe(cb); });
+}
+function scanYearsProbe(cb){
   var now=new Date().getFullYear(),found={},jobs=[],done=false;
   for(var y=now+1;y>=2020;y--){
     (function(yy){
